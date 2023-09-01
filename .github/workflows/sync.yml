@@ -1,6 +1,8 @@
 name: Sync (pull) changes from Overleaf to this repository
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
   schedule:
   - cron: '0 * * * *'

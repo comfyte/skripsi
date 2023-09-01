@@ -49,7 +49,11 @@ jobs:
       shell: node
 
     - name: Retrieve
-      run: wget -O $TEMP_ZIP_FILE_NAME --header "cookie: $(cat $TEMP_COOKIEVAL_FILE_NAME)" $(cat $TEMP_DLURL_FILE_NAME)
+      run: |
+        wget \
+          -O $TEMP_ZIP_FILE_NAME \
+          --header "cookie: $(cat $TEMP_COOKIEVAL_FILE_NAME)" \
+          $(cat $TEMP_DLURL_FILE_NAME)
 
     - name: Hash
       run: |

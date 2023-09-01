@@ -1,0 +1,46 @@
+# The Overleaf project must have link-sharing turned on (public) before this workflow can be used!
+
+name: Sync (pull) changes from Overleaf to this repository
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: '0 * * * *'
+
+jobs:
+  sync-job:
+    if: startsWith(vars.OVERLEAF_PROJECT_URL, 'https://www.overleaf.com/project/')
+
+    runs-on: ubuntu-latest
+
+    env:
+      ZIP_URL: ${{ vars.OVERLEAF_PROJECT_URL }}/download/zip
+      SKRIPSI_DIR_NAME: 'skripsi'
+      TEMP_ZIP_FILE_NAME: 'temp-skripsi-archive.zip'
+
+    steps:
+    - name: Initialize
+      uses: actions/checkout@v3
+      
+    - name: Retrieve
+      run: wget -O $TEMP_ZIP_FILE_NAME $ZIP_URL
+
+    - name: Hash
+      run: |
+        OBTAINED_HASH=$(sha256sum $TEMP_ZIP_FILE_NAME)
+        echo "UNIQUE_COMMIT_IDENTITY=${OBTAINED_HASH:0:10}" >> "$GITHUB_ENV"
+
+    - name: Apply
+      run: |
+        rm -rf $SKRIPSI_DIR_NAME
+        unzip $TEMP_ZIP_FILE_NAME -d $SKRIPSI_DIR_NAME
+
+    - name: Clean-up
+      run: rm $TEMP_ZIP_FILE_NAME
+
+    - name: Commit
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add --all
+        git commit -m "Update ($UNIQUE_COMMIT_IDENTITY)" && git push || echo "Files in this repository are already up-to-date."

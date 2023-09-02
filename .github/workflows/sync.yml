@@ -29,26 +29,27 @@ jobs:
       
     - name: Authorize
       run: |
-        const puppeteer = require('puppeteer');
-        const fs = require('fs').promises;
+        cat <<ENDOFSCRIPT | node -
+          const puppeteer = require('puppeteer');
+          const fs = require('fs').promises;
         
-        (async () => {
-          const browser = await puppeteer.launch();
-          const page = await browser.newPage();
+          (async () => {
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
 
-          await page.goto(process.env.OVERLEAF_READ_URL);
-          await page.waitForSelector('div.pdfViewer');
+            await page.goto(process.env.OVERLEAF_READ_URL);
+            await page.waitForSelector('div.pdfViewer');
 
-          const cookies = await page.cookies();
-          const sessionCookieName = 'overleaf_session2';
-          const sessionCookieValue = cookies.find((item) => item.name === sessionCookieName).value;
+            const cookies = await page.cookies();
+            const sessionCookieName = 'overleaf_session2';
+            const sessionCookieValue = cookies.find((item) => item.name === sessionCookieName).value;
 
-          await fs.writeFile('./' + process.env.TEMP_COOKIEVAL_FILE_NAME, `${sessionCookieName}=${sessionCookieValue}`);
-          await fs.writeFile('./' + process.env.TEMP_DLURL_FILE_NAME, `${await page.url()}/download/zip`);
+            await fs.writeFile('./' + process.env.TEMP_COOKIEVAL_FILE_NAME, `${sessionCookieName}=${sessionCookieValue}`);
+            await fs.writeFile('./' + process.env.TEMP_DLURL_FILE_NAME, `${await page.url()}/download/zip`);
 
-          await browser.close();
-        })()
-      shell: node {0}
+            await browser.close();
+          })()
+        ENDOFSCRIPT
 
     - name: Retrieve
       run: |

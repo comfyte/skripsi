@@ -1,0 +1,54 @@
+\chapter{Metode Penelitian}
+
+Bab ini menjelaskan metode atau cara yang digunakan dalam penelitian ini untuk 
+mencapai maksud dan tujuan seperti yang tertulis dalam sub-bab 1.3 [jika diinginkan, kalian dapat menuliskan Kembali tujuan penelitian yang ingin dicapai di sini].
+
+\section{Alat dan Bahan Tugas Akhir}
+
+\subsection{Alat Tugas Akhir}
+
+\begin{enumerate}
+    \item Perangkat komputer \textit{desktop} atau komputer jinjing (\textit{laptop}) yang mumpuni untuk menjalankan sistem operasi Ubuntu 22.04 LTS secara langsung (instalasi secara \textit{bare metal}) ataupun secara tervirtualisasi. Bila memilih penjalanan sistem operasi Ubuntu secara tervirtualisasi, dibutuhkan pula perangkat lunak \textit{virtual machine} yang kompatibel dengan perangkat komputer terkait; terdapat berbagai macam perangkat lunak \textit{virtual machine} yang dapat dipilih, baik yang versi berbayar maupun yang versi bebas biaya. Pada tugas akhir ini, digunakan komputer jinjing Apple MacBook Air keluaran tahun 2020 (berprosesor M1) dengan sistem operasi macOS 13 "Ventura" yang memvirtualisasikan sistem operasi Ubuntu 22.04 LTS melalui perangkat lunak \textit{virtual machine} bebas biaya UTM.
+    \item Perangkat komputer \textit{desktop} atau komputer jinjing (\textit{laptop}) dengan sistem operasi Windows 11 Home, Pro, atau SKU lain yang mendukung fitur WSL2; arsitektur x86\_64 (64-bit) dengan prosesor seri Intel Core generasi ke-8 atau lebih tinggi; memori (RAM) minimal 8 GB; dan ruang penyimpanan minimal 64 GB. Bila menggunakan \textit{virtual machine}, harap pastikan fungsionalitas "\textit{nested virtualization}" bekerja dengan baik karena Windows Subsystem for Linux versi kedua (WSL2) membutuhkan dukungan virtualisasi. Pada tugas akhir ini, digunakan (insert spek komputer jarkom here).
+    % \item Fitur "Windows Subsystem for Linux 2" edisi Microsoft Store yang terinstal dan telah diaktifkan.
+    % \item Perangkat lunak "Windows Subsystem for Linux 2" edisi Microsoft Store yang telah terbarukan (\textit{up-to-date}). Mengingat metode distribusi Windows Subsystem for Linux yang bervariasi, cara pasti untuk memastikan bahwa versi WSL yang dimiliki telah terbarukan adalah dengan memasukkan 
+    \item Perangkat lunak "Windows Subsystem for Linux 2" edisi Microsoft Store versi terbaru dengan distribusi Ubuntu 22.04 LTS (distribusi asali pada WSL). Mengingat metode distribusi Windows Subsystem for Linux yang bervariasi, cara yang dapat diandalkan untuk mendapatkan edisi Microsoft Store yang paling baru adalah dengan memasukkan perintah \begin{verbatim}wsl.exe --install\end{verbatim} ke dalam Command Prompt atau PowerShell pada perangkat komputer yang belum memiliki WSL terinstal. Perintah tersebut juga akan menginstal distribusi asali WSL, Ubuntu 22.04 LTS, secara otomatis. Pada perangkat komputer yang telah memiliki suatu edisi WSL, perintah yang sama akan memastikan secara otomatis bahwa WSL yang terinstal adalah versi terbaru dan edisi Microsoft Store (fact check?). Apabila terdapat perangkat lunak \textit{virtual machine} pihak ketiga yang terinstal pada lingkungan yang sama (VirtualBox, VMware, dan sebagainya), harap pastikan bahwa perangkat lunak \textit{virtual machine} tersebut telah diperbarui ke versi paling baru dan kompatibel dengan WSL2 atau Hyper-V. (Catatan: Dalam kasus ini, performa pada perangkat lunak \textit{virtual machine} pihak ketiga tersebut mungkin akan mengalami sedikit degradasi karena mengakomodasi aktifnya fitur Hyper-V di Windows.)
+    \item Perangkat lunak untuk diujikan: Microsoft Edge for Linux, (...), dan (...). Semua perangkat lunak ini akan diinstal di dalam lingkungan Windows Subsystem for Linux versi kedua (WSL2).
+
+    \item Perangkat lunak "Visual Studio 2022" edisi Community guna mengembangkan perangkat lunak penjembatan (\textit{bridge}) di sisi Windows.
+
+    \item Perangkat lunak editor teks atau editor kode untuk keperluan pengembangan perangkat lunak yang tidak menggunakan Visual Studio, seperti pengimplementasian perangkat lunak di sisi WSL. Pada tugas akhir ini, digunakan "Visual Studio Code" sebagai editor kode.
+
+    \item Perangkat lunak \textit{compiler} yang memadai yang terinstal di lingkungan WSL. (TODO: Decide what language to use!)
+\end{enumerate}
+
+\subsection{Bahan Tugas Akhir}
+
+Bahan tugas akhir adalah segala sesuatu yang bersifat fisik atau digital yang digunakan untuk kebutuhan tugas akhir. Bahan tugas akhir dapat berupa:
+
+\begin{enumerate}
+	\item Bahan habis pakai. Bahan yang digunakan untuk tugas akhir. Sebagai contoh 
+	mungkin dibutuhkan kertas transparansi, baterai, atau yang lain 
+	\item Bahan yang berupa data atau informasi yang menjadi dataset tugas akhir. Dataset tugas akhir dapat berupa:
+\end{enumerate}
+\begin{itemize}
+	\item Dataset pihak lain yang diperoleh dengan izin atau dalam lisensi yang diizinkan untuk digunakan secara langsung 
+	\item Dataset pihak pertama yang disusun sendiri melalui quisioner, observasi, atau interview 
+	\item Dokumen panduan yang mengacu pada standar, hasil tugas akhir, atau artikel yang disitasi dan digunakan.
+\end{itemize}
+
+
+\section{Metode yang Digunakan}
+
+
+
+
+\section{Alur Tugas Akhir}
+
+Menguraikan prosedur yang akan digunakan dan jadwal atau alur penyelesaian setiap 
+tahap. Alur penelian ini dapat disajikan dalam bentuk diagram. Diagram dapat disusun dengan aturan yang baik semisal menggunakan \textit{flowchart}. Aturan dan tutorial pembuatan \textit{flowchart} dapat dilihat di \textcolor{blue}{http://ugm.id/flowcharttutorial}. Setelah menggambarkannya, penulis wajib menjelaskan langkah-langkah setiap alur tugas akhir dalam sub bab tersendiri sesuai dengan kebutuhan.
+
+\section{Etika, Masalah, dan Keterbatasan Penelitian (Opsional))}
+
+Bagian ini membahas pertimbangan etis penelitian dan [potensi] masalah serta
+keterbatasannya. Jika menyangkut penelitian dengan makhluk hidup, maka dibutuhkan adanya \textit{ethical clearance}, di bagian ini hal itu akan dibahas. Demikian juga tentang keterbatasan ataupun masalah yang akan timbul.

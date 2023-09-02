@@ -25,7 +25,7 @@ jobs:
 
     - uses: actions/setup-node@v3
 
-    - run: npm install puppeteer
+    - run: npm install puppeteer && pwd && ls -alF
       
     - name: Authorize
       run: |

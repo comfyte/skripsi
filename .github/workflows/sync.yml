@@ -25,11 +25,11 @@ jobs:
 
     - uses: actions/setup-node@v3
 
-    - run: npm install puppeteer && pwd && ls -alF
+    - run: npm install puppeteer
       
     - name: Authorize
       run: |
-        cat <<ENDOFSCRIPT | node -
+        cat <<"ENDOFSCRIPT" | node -
           const puppeteer = require('puppeteer');
           const fs = require('fs').promises;
         
@@ -67,13 +67,11 @@ jobs:
       run: |
         rm -rf $SKRIPSI_DIR_NAME
         unzip $TEMP_ZIP_FILE_NAME -d $SKRIPSI_DIR_NAME
-
-    - name: Clean-up
-      run: rm $TEMP_ZIP_FILE_NAME $TEMP_COOKIEVAL_FILE_NAME $TEMP_DLURL_FILE_NAME
+        ls -alF
 
     - name: Commit
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add --all
+        git add $SKRIPSI_DIR_NAME
         git commit -m "Update ($UNIQUE_COMMIT_IDENTITY)" && git push || echo "Files in this repository are already up-to-date."

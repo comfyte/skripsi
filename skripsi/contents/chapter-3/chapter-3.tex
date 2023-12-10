@@ -1,8 +1,8 @@
 \chapter{Metode Penelitian}
 
-Pengerjaan serta pencapaian tujuan skripsi ini dapat ditempuh melalui berbagai macam metode. Setelah melalui berbagai peninjauan pustaka serta riset tentang teknologi terkait, penulis merumuskan enam buah metode penghubungan (\textit{bridging}) lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows untuk mencapai tujuan skripsi ini.
+Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (\textit{bridging}) lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows, dapat ditempuh melalui berbagai macam metode. Setelah meninjau berbagai macam pustaka yang telah ada serta melakukan riset tentang teknologi terkait, penulis merumuskan enam macam pendekatan yang mungkin dilakukan:
 \begin{enumerate}
-    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix.
+    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix. Hal ini dimungkinkan dengan diperkenalkannya dukungan \textit{socket} Unix (AF\_UNIX) di sistem operasi Windows 10 ke atas pada tahun 2017 \cite{bringing-afunix-to-windows}.
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan mengutilisasikan \textit{named pipes}.
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan memanfaatkan \textit{server} HTTP.
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui perangkat lunak tambahan "D-Bus for Windows" yang diinstal di lingkungan \textit{host} Windows.

@@ -4,14 +4,30 @@ Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (
 \begin{enumerate}
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix. Hal ini dimungkinkan dengan diperkenalkannya dukungan \textit{socket} Unix (AF\_UNIX) pada sistem operasi Windows 10 ke atas pada tahun 2017 \cite{bringing-afunix-to-windows}. Penelusuran lebih lanjut mengindikasikan bahwa kemampuan ini rupanya hanya mendukung Windows Subsystem for Linux versi 1 (WSL1) dan belum mendukung Windows Subsystem for Linux versi 2 (WSL2) \cite{github-issues-afunix-not-supported-in-wsl2}. Oleh karena itu, mengingat kemampuan grafis (\textit{graphical user interface}) pada Windows Subsystem for Linux hanya tersedia pada Windows Subsytem for Linux versi 2 (WSL2), metode ini tidak relevan dengan tujuan skripsi ini.
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan mengutilisasikan \textit{named pipes}.
-    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan memanfaatkan \textit{server} HTTP. Metode ini dapat dibagi kembali menjadi dua submetode:
+    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan memanfaatkan \textit{server} HTTP. Metode ini ikut dipertimbangkan mengingat pengalaman penulis yang cukup banyak berhubungan dengan bidang pengembangan web (\textit{web development}). Metode ini dapat dibagi kembali menjadi dua submetode:
     \begin{enumerate}
-        \item Penghubungan kedua lingkungan melibatkan dua buah \textit{server} HTTP yang masing-masing berjalan di sisi Windows Subsystem for Linux (WSL) dan di sisi \textit{host} Windows. Dua buah \textit{server} diperlukan karena komunikasi bersifat dua arah; Windows Subsystem for Linux (WSL) mengirimkan konten yang ingin ditampilkan ke sisi \textit{host} Windows dan \textit{host} Windows meng
+        \item Penghubungan kedua lingkungan melibatkan dua buah \textit{server} HTTP yang masing-masing berjalan di sisi Windows Subsystem for Linux (WSL) dan di sisi \textit{host} Windows. Dua buah \textit{server} diperlukan karena komunikasi bersifat dua arah; Windows Subsystem for Linux (WSL) mengirimkan konten yang ingin ditampilkan ke sisi \textit{host} Windows dan \textit{host} Windows mengomunikasikan hasil interaksi pengguna (\textit{user input}) kembali ke sisi Windows Subsystem for Linux (WSL). Meskipun implementasi submetode ini dapat dibuat seefisien mungkin, penjalanan dua buah \textit{server} tetap saja terasa kurang efisien, terutama bila dibandingkan dengan metode-metode lainnya.
+        \item Penghubungan kedua lingkungan menggunakan cukup satu buah \textit{server} saja untuk menghindari duplikasi penggunaan \textit{resources}, tetapi memanfaatkan teknologi yang memungkinkan komunikasi secara dua arah seperti HTTP \textit{long polling} dan WebSocket. Penggunaan HTTP \textit{long polling} memiliki kemungkinan menghasilkan performa yang kurang efisien \cite{problems-in-http-long-polling}, sedangkan penggunaan WebSocket sama saja dengan penggunaan Unix \textit{socket} biasa namun dengan \textit{overhead} protokol HTTP yang dapat berefek pada performa.
+    \end{enumerate}
+    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan komunikasi secara tekstual atau terserialisasi (\textit{serialized}). Pertukaran informasi berbentuk teks (tekstual) ini dapat melalui berbagai perantara; berikut beberapa di antaranya.
+    \begin{enumerate}
+        \item Informasi tekstual dipertukarkan melalui berkas \textit{executable} pembantu (\textit{helper}) sebagai argumen pengeksekusian berkas \textit{executable} tersebut. Pada sisi WSL, hal ini dimungkinkan oleh kemampuan WSL menjalankan berkas \textit{executable} Windows (umumnya berekstensi \verb|.exe|) secara langsung di dalam \textit{command-line} WSL \cite{msdocs-run-windows-tools-from-linux}. Pada sisi Windows, hal ini dimungkinkan oleh kemampuan memanggil WSL secara programatik atau \textit{scripted} dengan perintah yang telah ditetapkan. Sebagai contoh, pengiriman informasi dari sisi WSL dapat dilakukan dengan perintah
+        \begin{lstlisting}[language=bash]
+# Di shell bash
+/path/to/fwsl-send-to-windows.exe --data='<JSON-serialized data>'
+        \end{lstlisting}
+        dan pengiriman informasi dari sisi Windows ke sisi WSL dapat dilakukan dengan perintah
+        \begin{lstlisting}
+# Di shell PowerShell
+wsl.exe /path/to/fwsl-send-to-wsl --data='<JSON-serialized data>'
+        \end{lstlisting}
     \end{enumerate}
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui perangkat lunak tambahan "D-Bus for Windows" yang diinstal di lingkungan \textit{host} Windows.
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan metode komunikasi tekstual melalui penjalanan dan pembacaan perintah `dbus-send` dan `dbus-monitor`.
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan metode komunikasi tekstual melalui berkas biner \textit{executable}.
 \end{enumerate}
+
+Setelah melalui berbagai pertimbangan di atas, metode keenam dirasa paling cocok diterapkan dalam pengerjaan skripsi ini.
 
 \section{Alat dan Bahan Tugas Akhir}
 

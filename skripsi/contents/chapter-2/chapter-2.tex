@@ -117,4 +117,10 @@ Setelah melalui berbagai pertimbangan di atas, metode keenam dirasa paling cocok
 
 \section{Pertanyaan Tugas Akhir}
 
-Dalam serangkaian 
+Dalam serangkaian pengerjaan tugas akhir ini, penulis menemukan beberapa pertanyaan yang berkaitan dengan metode yang telah dipilih. Pertanyaan-pertanyaan ini perlu dijawab sebelum dapat melanjutkan ke langkah selanjutnya dalam pengerjaan.
+
+\begin{enumerate}
+    \item Perangkat lunak \verb|dbus-daemon| dapat melakukan \textit{listening} ke lebih dari satu alamat apabila telah diatur pada berkas konfigurasi (misalnya pada berkas \verb|/usr/share/dbus-1/session.conf|). Namun, \verb|dbus-daemon| juga memiliki seperangkat argumen penjalanan \cite{dbus-daemon-man-page} yang beberapa di antaranya dapat menimpa (\textit{override}) konfigurasi yang telah dilakukan pada berkas konfigurasi; salah satu argumen yang menarik perhatian yaitu argumen \verb|--address|. Apakah argumen ini mendukung pemberian lebih dari satu alamat? Apabila argumen ini hanya mendukung satu alamat, apa yang terjadi jika argumen ini digunakan dalam pemanggilan \verb|dbus-daemon| saat konfigurasi yang tertimpa (\textit{override}) pada berkas konfigurasi memuat lebih dari satu alamat? Apakah penggunaan argumen ini hanya menimpa (\textit{override}) satu buah alamat pada berkas konfigurasi saja atau menimpa (\textit{override}) semua alamat yang telah diatur pada berkas konfigurasi?
+
+    \item Selain secara lokal melalui \textit{socket} Unix, D-Bus memiliki kemampuan dihubungkan dengan komputer lain melalui protokol TCP. Apakah komputer lain tersebut memerlukan penjalanan \verb|dbus-daemon| milik komputer itu sendiri atau perangkat lunak \textit{client} di komputer tersebut dapat langsung terhubung ke D-Bus pusat tanpa memerlukan adanya \verb|dbus-daemon| tambahan yang berjalan pada komputer tersebut? (TODO: Rephrase this one.)
+\end{enumerate}

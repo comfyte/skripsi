@@ -103,7 +103,7 @@ Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (
 wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"
         \end{lstlisting}
 
-        \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), penggunaan \textit{named pipe} memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL).
+        \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), submetode ini memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data \textcolor{orange}{(TODO: Elaborate more about the programs)}. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL).
         \begin{verbatim}
  ________________               ________________
 |                |             |                |
@@ -114,13 +114,25 @@ wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"
 |________________|             |________________|
 
         \end{verbatim}
+
+        \item Informasi tekstual dipertukarkan dengan memanfaatkan perintah \verb|dbus-send| dan \verb|dbus-monitor| secara programatik. Mengingat topik utama skripsi ini selalu berkaitan dengan protokol D-Bus, submetode ini dapat mensimplifikasi rangkaian proses pengerjaan karena menggunakan peralatan yang berasal dari D-Bus itu sendiri. Sebagai contoh, dengan pemantauan keluaran (\textit{output}) perintah \verb|dbus-monitor|, pemulaian pemutaran media (musik, video, dan lain-lain) dari suatu perangkat lunak yang berjalan di dalam WSL menghasilkan keluaran sebagai berikut.
+        \begin{lstlisting}
+            signal time=1702386858.242218 sender=:1.19 -> destination=(null destination) serial=24 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+   string "org.mpris.MediaPlayer2.Player"
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Playing"
+      )
+   ]
+   array [
+   ]
+        \end{lstlisting}
+        Meskipun demikian, proses integrasi dalam skripsi ini melibatkan lebih dari sekadar perintah-perintah D-Bus dan dapat dipastikan membutuhkan perangkat lunak tambahan, sehingga akan lebih baik apabila seluruh fungsionalitas dan logika dalam pengerjaan skripsi ini disatukan ke dalam perangkat lunak tambahan tersebut. Selain itu, keluaran (\textit{output}) perintah \verb|dbus-monitor| tidak selalu lengkap (pada contoh keluaran perintah \verb|dbus-monitor| di atas, tida
     \end{enumerate}
     
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui perangkat lunak tambahan "D-Bus for Windows" yang diinstal di lingkungan \textit{host} Windows.
-    
-    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan metode komunikasi tekstual melalui penjalanan dan pembacaan perintah `dbus-send` dan `dbus-monitor`.
-    
-    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan metode komunikasi tekstual melalui berkas biner \textit{executable}.
+        
 \end{enumerate}
 
 Setelah melalui berbagai pertimbangan di atas, metode keenam dirasa paling cocok diterapkan dalam pengerjaan skripsi ini.

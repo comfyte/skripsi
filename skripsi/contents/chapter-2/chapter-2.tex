@@ -74,7 +74,7 @@ Dalam pengembangan fungsionalitas antarmuka grafis pada Windows Subsystem for Li
 
 \subsection{Windows API: System Media Transport Controls (SMTC)}
 
-\subsection{\textit{Standard Stream} dan \textit{Piping}}
+\subsection{\textit{Standard Stream}, Mekanisme \textit{Piping}, dan Soket}
 
 \section{Analisis Perbandingan Metode}
 
@@ -82,11 +82,11 @@ Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (
 \begin{enumerate}
     \item Lingkungan WSL dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix. Hal ini dimungkinkan dengan diperkenalkannya dukungan \textit{socket} Unix (AF\_UNIX) pada sistem operasi Windows 10 ke atas pada tahun 2017 \cite{bringing-afunix-to-windows}. Penelusuran lebih lanjut mengindikasikan bahwa kemampuan ini rupanya hanya mendukung Windows Subsystem for Linux versi 1 (WSL1) dan belum mendukung Windows Subsystem for Linux versi 2 (WSL2) \cite{github-issues-afunix-not-supported-in-wsl2}. Oleh karena itu, mengingat kemampuan grafis (\textit{graphical user interface}) pada Windows Subsystem for Linux hanya tersedia pada Windows Subsytem for Linux versi 2 (WSL2), metode ini tidak relevan dengan tujuan skripsi ini.
     
-    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan mengutilisasikan \textit{named pipes}.
-    
     \item Lingkungan WSL dihubungkan dengan lingkungan \textit{host} Windows dengan memanfaatkan \textit{server} HTTP. Metode ini ikut dipertimbangkan mengingat pengalaman penulis yang cukup banyak berhubungan dengan bidang pengembangan web (\textit{web development}). Metode ini dapat dibagi kembali menjadi dua submetode:
+    
     \begin{enumerate}
         \item Penghubungan kedua lingkungan melibatkan dua buah \textit{server} HTTP yang masing-masing berjalan di sisi WSL dan di sisi \textit{host} Windows. Dua buah \textit{server} diperlukan karena komunikasi bersifat dua arah: WSL mengirimkan konten yang ingin ditampilkan ke sisi \textit{host} Windows dan \textit{host} Windows mengomunikasikan hasil interaksi pengguna (\textit{user input}) kembali ke sisi WSL. Meskipun implementasi submetode ini dapat dibuat seefisien mungkin, penjalanan dua buah \textit{server} tetap saja terasa kurang efisien, terutama bila dibandingkan dengan metode-metode lainnya.
+        
         \item Penghubungan kedua lingkungan menggunakan cukup satu buah \textit{server} saja untuk menghindari duplikasi penggunaan \textit{resources}, tetapi memanfaatkan teknologi yang memungkinkan komunikasi secara dua arah seperti HTTP \textit{long polling} dan WebSocket. Penggunaan HTTP \textit{long polling} memiliki kemungkinan menghasilkan performa yang kurang efisien \cite{problems-in-http-long-polling}, sedangkan penggunaan WebSocket sama saja dengan penggunaan Unix \textit{socket} biasa namun dengan \textit{overhead} protokol HTTP yang dapat berefek pada performa.
     \end{enumerate}
     
@@ -95,15 +95,25 @@ Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (
         \item Informasi tekstual dipertukarkan melalui berkas \textit{executable} pembantu (\textit{helper}) sebagai argumen pengeksekusian berkas \textit{executable} tersebut. Ditentukan dua buah berkas \textit{executable} yang masing-masing bertugas mengirimkan informasi ke sisi \textit{host} Windows dan mengirimkan informasi ke sisi WSL. Pada sisi WSL, hal ini dimungkinkan oleh kemampuan WSL menjalankan berkas \textit{executable} Windows (umumnya berekstensi \verb|.exe|) secara langsung di dalam \textit{command-line} WSL \cite{msdocs-run-windows-tools-from-linux}. Pada sisi Windows, hal ini dimungkinkan oleh kemampuan memanggil WSL secara programatik atau \textit{scripted} dengan perintah yang telah ditetapkan. Sebagai contoh, pengiriman informasi dari sisi WSL dapat dilakukan dengan perintah
         \begin{lstlisting}[language=bash]
 # Di shell bash
-/path/to/fwsl-send-to-windows.exe --data='<insert JSON-serialized data here>'
+/path/to/fwsl-send-to-windows.exe --data="<insert JSON-serialized data here>"
         \end{lstlisting}
         dan pengiriman informasi dari sisi Windows ke sisi WSL dapat dilakukan dengan perintah
         \begin{lstlisting}
-# Di shell PowerShell
-wsl.exe /path/to/fwsl-send-to-wsl --data='<insert JSON-serialized data here>'
+# Di shell PowerShell atau cmd.exe
+wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"
         \end{lstlisting}
 
-        \item Informasi tekstual dipertukarkan melalui \textit{named pipes}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{named pipes} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Selain berkas-berkas \textit{executable} yang bersangkutan, diperlukan pula Dalam submetode ini, dimungkinkan 
+        \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), penggunaan \textit{named pipe} memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL).
+        \begin{verbatim}
+ ________________               ________________
+|                |             |                |
+|           StdIn(== ← === ← ==(StdOut          |
+|    Windows     |             |   WSL bridge   |
+|    bridge      |             |                |
+|          StdOut)== → === → ==)StdIn           |
+|________________|             |________________|
+
+        \end{verbatim}
     \end{enumerate}
     
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui perangkat lunak tambahan "D-Bus for Windows" yang diinstal di lingkungan \textit{host} Windows.

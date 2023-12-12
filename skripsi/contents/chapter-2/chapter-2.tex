@@ -95,13 +95,11 @@ Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (
         \item Informasi tekstual dipertukarkan melalui berkas \textit{executable} pembantu (\textit{helper}) sebagai argumen pengeksekusian berkas \textit{executable} tersebut. Ditentukan dua buah berkas \textit{executable} yang masing-masing bertugas mengirimkan informasi ke sisi \textit{host} Windows dan mengirimkan informasi ke sisi WSL. Pada sisi WSL, hal ini dimungkinkan oleh kemampuan WSL menjalankan berkas \textit{executable} Windows (umumnya berekstensi \verb|.exe|) secara langsung di dalam \textit{command-line} WSL \cite{msdocs-run-windows-tools-from-linux}. Pada sisi Windows, hal ini dimungkinkan oleh kemampuan memanggil WSL secara programatik atau \textit{scripted} dengan perintah yang telah ditetapkan. Sebagai contoh, pengiriman informasi dari sisi WSL dapat dilakukan dengan perintah
         \begin{lstlisting}[language=bash]
 # Di shell bash
-/path/to/fwsl-send-to-windows.exe --data="<insert JSON-serialized data here>"
-        \end{lstlisting}
+/path/to/fwsl-send-to-windows.exe --data="<insert JSON-serialized data here>"\end{lstlisting}
         dan pengiriman informasi dari sisi Windows ke sisi WSL dapat dilakukan dengan perintah
         \begin{lstlisting}
 # Di shell PowerShell atau cmd.exe
-wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"
-        \end{lstlisting}
+wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"\end{lstlisting}
 
         \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), submetode ini memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data \textcolor{orange}{(TODO: Elaborate more about the programs)}. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL).
         \begin{verbatim}
@@ -115,9 +113,9 @@ wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"
 
         \end{verbatim}
 
-        \item Informasi tekstual dipertukarkan dengan memanfaatkan perintah \verb|dbus-send| dan \verb|dbus-monitor| secara programatik. Mengingat topik utama skripsi ini selalu berkaitan dengan protokol D-Bus, submetode ini dapat mensimplifikasi rangkaian proses pengerjaan karena menggunakan peralatan yang berasal dari D-Bus itu sendiri. Sebagai contoh, dengan pemantauan keluaran (\textit{output}) perintah \verb|dbus-monitor|, pemulaian pemutaran media (musik, video, dan lain-lain) dari suatu perangkat lunak yang berjalan di dalam WSL menghasilkan keluaran sebagai berikut.
+        \item Informasi tekstual dipertukarkan dengan memanfaatkan perintah \verb|dbus-send| dan \verb|dbus-monitor| secara programatik. Mengingat topik utama skripsi ini selalu berkaitan dengan protokol D-Bus, submetode ini dapat mensimplifikasi rangkaian proses pengerjaan karena menggunakan peralatan yang berasal dari D-Bus itu sendiri. Sebagai contoh, dengan pemantauan keluaran (\textit{output}) perintah \verb|dbus-monitor|, pemulaian pemutaran media (musik, video, dan lain-lain) dari suatu perangkat lunak yang berjalan di dalam WSL menghasilkan keluaran
         \begin{lstlisting}
-            signal time=1702386858.242218 sender=:1.19 -> destination=(null destination) serial=24 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+signal time=1702386858.242218 sender=:1.19 -> destination=(null destination) serial=24 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
    string "org.mpris.MediaPlayer2.Player"
    array [
       dict entry(
@@ -126,12 +124,14 @@ wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"
       )
    ]
    array [
-   ]
-        \end{lstlisting}
-        Meskipun demikian, proses integrasi dalam skripsi ini melibatkan lebih dari sekadar perintah-perintah D-Bus dan dapat dipastikan membutuhkan perangkat lunak tambahan, sehingga akan lebih baik apabila seluruh fungsionalitas dan logika dalam pengerjaan skripsi ini disatukan ke dalam perangkat lunak tambahan tersebut. Selain itu, keluaran (\textit{output}) perintah \verb|dbus-monitor| tidak selalu lengkap (pada contoh keluaran perintah \verb|dbus-monitor| di atas, tida
+   ]\end{lstlisting}
+        dan apabila pemutaran media tersebut ingin dijeda (\textit{pause}), dapat dijalankan perintah berikut
+        \begin{lstlisting}[language=bash]
+            dbus-send (TODO: FIND THE EXACT COMMAND)\end{lstlisting}
+        Meskipun demikian, proses integrasi dalam skripsi ini melibatkan lebih dari sekadar perintah-perintah D-Bus dan dapat dipastikan membutuhkan perangkat lunak tambahan, sehingga akan lebih baik apabila seluruh fungsionalitas dan logika dalam pengerjaan skripsi ini disatukan ke dalam perangkat lunak tambahan tersebut. Selain itu, keluaran (\textit{output}) perintah \verb|dbus-monitor| tidak selalu lengkap (pada contoh keluaran perintah \verb|dbus-monitor| di atas, tidak ada informasi bahwa perangkat lunak Spotify adalah perangkat lunak yang memulai memainkan media), sehingga submetode ini kurang bisa diandalkan.
     \end{enumerate}
     
-    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows melalui perangkat lunak tambahan "D-Bus for Windows" yang diinstal di lingkungan \textit{host} Windows.
+    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan meng-\textit{extend} jangkauan bus D-Bus hingga dapat diakses secara langsung di dalam lingkungan Windows. Hal ini dicapai dengan cara mengatur konfigurasi \verb|dbus-daemon| di WSL agar dapat diakses melalui TCP (di samping konfigurasi soket Unix \textit{default} yang telah ada) dan mengonsumsi alamat TCP yang ditentukan di perangkat lunak \textit{bridge} yang berjalan di Windows. Metode ini memiliki keuntungan tersendiri: mengingat koneksi bus D-Bus saat ini tersedia secara langsung di lingkungan Windows, penyediaan \textit{notification server} dan \textit{MPRIS server} dapat dilakukan secara langsung oleh perangkat lunak \textit{bridge} di sisi Windows, sehingga menghilangkan kebutuhan penjalanan perangkat lunak \textit{bridge} kedua di lingkungan WSL.
         
 \end{enumerate}
 

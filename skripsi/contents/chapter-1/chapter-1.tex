@@ -5,8 +5,7 @@
 % Paragraph Topic: Various OS used by home computers, business/corporate/enterprise computers, server computers, etc.
 
 % Paragraph Topic: The fact that developers tend to use Linux (or Unix-like OSes) over Windows
-Dunia pengembangan perangkat lunak dipenuhi oleh pilihan sistem operasi yang beragam. Statistik yang diperoleh oleh StackOverflow pada tahun 2022 menunjukkan bahwa secara umum, Windows menempati urutan pertama sistem operasi yang paling banyak digunakan oleh pengembang perangkat lunak, baik dalam konteks penggunaan personal dengan persentase 62,33\% maupun dalam konteks penggunaan profesional dengan persentase 48,82\%. Posisi Windows diikuti oleh sistem operasi Linux yang menempati posisi kedua, dengan 
-[https://survey.stackoverflow.co/2022#section-most-popular-technologies-operating-system]
+Penggunaan komputer, terutama dalam bidang pengembangan perangkat lunak, dipenuhi oleh pilihan sistem operasi yang beragam. Dalam survei pengembang tahunan yang diselenggarakan oleh StackOverflow, pada tahun 2022 menunjukkan bahwa secara umum, Windows menempati urutan pertama sistem operasi yang paling banyak digunakan oleh pengembang perangkat lunak, baik dalam konteks penggunaan personal dengan persentase 62,33\% maupun dalam konteks penggunaan profesional dengan persentase 48,82\% \cite{stackoverflow-developer-survey-2022-most-popular-os}. Posisi Windows diikuti oleh sistem operasi Linux yang menempati posisi kedua, dengan 
 
 Windows Subsystem for Linux (WSL) merupakan teknologi yang memungkinkan pengguna menjalankan perangkat lunak dan peralatan-peralatan pengembangan (\textit{development tools}) berbasis Linux secara langsung di dalam sistem operasi Windows 10 atau Windows 11 tanpa memerlukan pergantian sistem operasi. Didasari oleh banyaknya permintaan pengguna untuk lingkungan pengembangan (\textit{development environment}) di Windows yang lebih baik, Windows Subsystem for Linux pertama kali diperkenalkan oleh Microsoft melalui pembaruan Windows 10 bertajuk "Anniversary Update" (pembaruan Juli 2016) sebagai fitur eksperimental (\textit{beta}) dengan nama "Bash on Ubuntu on Windows". Nama awal tersebut kemudian dihilangkan dan diubah menjadi cukup "Windows Subsystem for Linux" untuk menandakan dibukanya dukungan distribusi Linux di luar Ubuntu. Teknologi ini terus berkembang seiring waktu dan umpan balik dari pengguna hingga melepas titel "\textit{beta}"-nya dan menjadi fitur stabil secara resmi pada perilisan pembaruan Windows 10 bertajuk "Fall Creators Update" pada September 2019. Pada tahun 2020, seiring dengan peningkatan versi menjadi bernama Windows Subsystem for Linux versi kedua (WSL2), Windows Subsystem for Linux melalui perubahan arsitektur besar yang meningkatkan kompatibilitas terhadap fungsi-fungsi Linux (\textit{system calls}) secara signifikan dengan dibawanya \textit{kernel} Linux sungguhan yang tervirtualisasi alih-alih hanya mengandalkan lapisan translasi (\textit{translation layer}).
 % https://devblogs.microsoft.com/commandline/bash-on-ubuntu-on-windows-download-now-3/
@@ -26,26 +25,14 @@ Melalui skripsi ini, penulis mengeksplor potensial-potensial penyempurnaan yang 
 
 \section{Tujuan Penelitian}
 
-% Secara garis besar, tujuan penelitian ini dikategorikan menjadi empat, yaitu persiapan awal (tujuan pertama, kedua, dan ketiga), pengerjaan di sisi Windows Subsystem for Linux (tujuan ke(...)), penghubungan antara sisi WSL dan sisi Windows (tujuan ke(...)), dan pengerjaan di sisi Windows (tujuan ke(...)).
-
 \begin{enumerate}
     \item Memeriksa bahwa benar belum ada implementasi bawaan (\textit{built-in}) fungsionalitas penanganan notifikasi dan kontrol media secara bawaan di Windows Subsystem for Linux versi terbaru.
 
     \item Memvalidasi adanya permintaan (\textit{demand}) yang cukup dari pengguna terhadap fungsionalitas penanganan notifikasi dan kontrol media di Windows Subsystem for Linux serta, bila ada, mengeksplorasi solusi-solusi sementara dan/atau pihak ketiga yang telah mereka lakukan.
 
-    % \item Menyelidiki dan menginspeksi cara kerja pemrosesan notifikasi dan pengontrolan media di sistem operasi Linux sungguhan (Ubuntu 22.04 LTS dengan lingkungan \textit{desktop} GNOME) guna diadaptasi kemudian ke lingkungan Windows Subsystem for Linux 2 (WSL2).
-
     \item Menyelidiki cara kerja penanganan notifikasi dan kontrol media secara standar di sistem operasi Linux dengan menggunakan instalasi Linux lain.
     
-    % \item Mencoba menerapkan hasil yang didapatkan dari tujuan pertama pada instalasi Windows Subsystem for Linux 2 (WSL2) yang belum dimodifikasi (\textit{stock}) dan menandai celah-celah yang ditemukan pada implementasi WSL2 yang mencegah bekerjanya pemrosesan notifikasi dan pengontrolan media layaknya pada sistem operasi Linux sungguhan.
-
     \item Menyelidiki dan memperbaiki disparitas yang ada di implementasi Windows Subsystem for Linux dibandingkan dengan instalasi Linux sungguhan yang berpotensi menghalangi langkah-langkah pengimplementasian pemrosesan notifikasi dan kontrol media selanjutnya.
-
-    % \item Mengimplementasikan komponen-komponen yang diperlukan untuk menutup kekurangan yang ditemukan pada tujuan kedua.
-
-    % \item Menyelidiki metode yang mungkin untuk dapat mengekspos data dari lingkungan Windows Subsystem ke Linux ke lingkungan Windows.
-
-    % \item Mengimplementasikan perangkat lunak (?) di sisi Windows yang mengonsumsi data yang terekspos dari lingkungan Windows Subsystem for Linux (WSL).
 
     \item Mengembangkan perangkat lunak di sisi Windows Subsystem for Linux (WSL) yang dapat memproses notifikasi dan kontrol media untuk kemudian dihubungkan dengan perangkat lunak di sisi Windows.
 
@@ -54,8 +41,6 @@ Melalui skripsi ini, penulis mengeksplor potensial-potensial penyempurnaan yang 
     \item Mengembangkan perangkat lunak di sisi Windows yang bertindak sebagai penjembatan (\textit{bridge}) yang akan mengonsumsi informasi yang diberikan oleh perangkat lunak dari sisi Windows Subsystem for Linux (WSL).
 
     \item Melakukan pengujian untuk memastikan bahwa seluruh pengembangan yang telah dilakukan dapat bekerja dengan baik dan harmonis.
-
-    % TODO: Move the old "too-detailed" points to the flowchart instead (?)
 \end{enumerate}
 
 %-------------------------------------------------	

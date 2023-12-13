@@ -71,7 +71,7 @@ D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communicatio
 
 \begin{itemize}
     \item \textbf{\textit{Daemon} D-Bus atau \textit{server} D-Bus}\\
-    \textit{Server} D-Bus bertindak sebagai penyedia bus sentral tempat klien-klien D-Bus terhubung. \textit{Server} D-Bus dijalankan oleh sebuah proses yang bernama \textit{daemon} D-Bus yang umumnya memiliki nama berkas \textit{executable} "\path{dbus-daemon}".
+    \textit{Server} D-Bus bertindak sebagai penyedia bus sentral tempat klien-klien D-Bus terhubung. \textit{Server} D-Bus bertugas mengelola klien-klien yang terhubung dan menyalurkan data dari sumbernya ke tujuannya dengan benar \cite{qt-introduction-to-dbus}. \textit{Server} D-Bus umumnya dijalankan oleh sebuah proses yang bernama \textit{daemon} D-Bus yang umumnya memiliki nama berkas \textit{executable} "\path{dbus-daemon}".
 
     \item \textbf{Klien D-Bus}\\
     Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai pengonsumsi layanan (\textit{consumer}) \textcolor{orange}{(TODO: Find the correct terminologies for those)}.
@@ -83,6 +83,8 @@ D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communicatio
     \caption{Diagram arsitektur D-Bus \cite{dbus-main-project-page}}
     \label{fig:enter-label}
 \end{figure}
+
+Dalam satu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}).
 
 \subsection{\textit{Media Player Remote Interfacing Specification} (MPRIS)}
 

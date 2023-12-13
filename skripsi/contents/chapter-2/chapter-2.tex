@@ -8,11 +8,57 @@ Dalam mengerjakan skripsi ini, penulis melakukan penelusuran terlebih dahulu men
 
 \subsection{Antarmuka Sistem Operasi (\textit{Shell})}
 
-\subsection{Linux, \textit{Unix-like}, dan Standar POSIX}
+\subsection{Linux, "Mirip Unix", dan Standar POSIX}
 
-\subsection{Dukungan Kompatibilitas Linux atau \textit{Unix-like} di Windows Pra-WSL}
+Linux merupakan keluarga sistem operasi
 
-Teknologi yang digunakan dalam skripsi ini, Windows Subsystem for Linux, bukan merupakan satu-satunya usaha yang digunakan untuk membawa kompatibilitas Linux atau Unix-like ke dalam lingkungan sistem operasi Windows. Microsoft memiliki sejarah panjang dalam membawa dukungan Linux atau Unix-like ke dalam lingkungan Windows.
+\subsection{D-Bus}
+
+D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communication}) yang populer digunakan di sebagian besar distribusi Linux. Sesuai dengan namanya, D-Bus bekerja dengan konsep arsitektur "bus" yang berarti terdapat sebuah kanal utama (bus) sebagai jalur pertukaran informasi dan terdapat sejumlah klien yang terhubung dengan kanal utama (bus) tersebut. Secara garis besar, terdapat dua komponen utama dalam penggunaan sistem D-Bus:
+
+\begin{itemize}
+    \item \textbf{\textit{Server} atau \textit{daemon} D-Bus}\\
+    \textit{Server} D-Bus bertindak sebagai penyedia bus sentral tempat klien-klien D-Bus terhubung. \textit{Server} D-Bus bertugas mengelola klien-klien yang terhubung dan menyalurkan data dari sumbernya ke tujuannya dengan benar \cite{qt-introduction-to-dbus}. \textit{Server} D-Bus umumnya dijalankan oleh sebuah proses yang bernama \textit{daemon} D-Bus yang umumnya memiliki nama berkas \textit{executable} "\path{dbus-daemon}".
+
+    \item \textbf{Klien D-Bus}\\
+    Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai aplikasi reguler yang mengonsumsi layanan (\textit{consumer}) \textcolor{orange}{(TODO: Find the correct terminologies for those)}.
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{contents//chapter-2/dbus-diagram.png}
+    \caption{Diagram arsitektur D-Bus \cite{dbus-main-project-page}}
+    \label{fig:enter-label}
+\end{figure}
+
+Dalam satu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}). Bus sistem digunakan untuk mengelola dan mengadministrasi hal-hal yang bersifat penting terhadap berjalannya sistem operasi, seperti penyambungan perangkat keras baru, peringatan baterai lemah, dan status jaringan \cite{will2020trusted}. Bus sistem berjalan secara \textit{system-wide} sehingga mencakup seluruh sesi pengguna yang sedang berjalan di sistem operasi. Di sisi lain, bus sesi digunakan untuk hal-hal yang bersifat lebih mengarah ke pengguna (\textit{user-facing}) seperti pengiriman notifikasi dan sistem kontrol media, dua hal yang menjadi topik utama tugas akhir ini. Bus sesi tersedia secara lokal di tiap-tiap sesi pengguna yang sedang berjalan di suatu sistem operasi. Istilah "bus D-Bus", "\textit{server} D-Bus", dan "\textit{daemon} D-Bus" dapat dikatakan identik dalam konteks ini; tiap-tiap bus memiliki \textit{instance} \textit{daemon} D-Bus-nya masing-masing, sehingga sistem operasi Linux secara \textit{default} memiliki dua buah \textit{instance} \textit{daemon} D-Bus yang berjalan dalam satu waktu.
+
+Agar dapat dihubungi oleh para klien, tiap-tiap bus D-Bus memiliki alamat yang diatur pada awal penjalanan \textit{daemon} D-Bus. Bentuk alamat yang digunakan oleh bus D-Bus berbeda-beda sesuai dengan metode transportasi yang digunakan. Berdasarkan spesifikasi D-Bus \cite{dbus-specification}, terdapat sejumlah metode transportasi yang didukung oleh D-Bus:
+\begin{itemize}
+    \item \textbf{Soket Unix}\\
+    Metode transportasi berbasis soket Unix menggunakan berkas soket Unix yang terletak secara lokal pada \textit{file system}. Metode transportasi ini hanya didukung apabila \textit{daemon} D-Bus berjalan di sistem operasi berbasis Unix atau mirip Unix seperti Linux dan macOS. Metode transportasi ini digunakan apabila penulisan alamat diawali oleh "\verb|unix:|".
+
+    \item \textbf{systemd}\\
+    Metode transportasi berbasis systemd memiliki konsep serupa dengan metode transportasi berbasis soket Unix, tetapi memanfaatkan sistem pengelolaan soket otomatis bernama aktivasi soket (\textit{socket activation}) yang dilakukan oleh systemd. Metode transportasi ini memanfaatkan informasi soket yang dikelola oleh systemd untuk digunakan sebagai metode transportasi D-Bus. Seperti namanya, metode transportasi ini hanya tersedia pada sistem operasi Linux yang menggunakan systemd sebagai sistem init-nya. Metode transportasi ini digunakan apabila penulisan alamat berisikan "\verb|systemd:|".
+    
+    \item \textbf{launchd}\\
+    Metode transportasi berbasis launchd juga memiliki konsep yang serupa dengan metode transportasi berbasis soket Unix, tetapi memanfaatkan soket Unix yang telah dialokasikan oleh launchd. Mengingat sistem init launchd hanya tersedia pada sistem operasi macOS, metode transportasi ini hanya didukung apabila \textit{daemon} D-Bus berjalan di sistem operasi macOS. Metode transportasi ini digunakan apabila penulisan alamat berisikan "\verb|launchd:|".
+    
+    \item \textbf{TCP}\\
+    Metode transportasi berbasis TCP memanfaatkan protokol TCP (Transmission Control Protocol) sebagai metode komunikasi antarklien D-Bus, baik yang terletak pada perangkat komputer yang sama maupun yang terletak pada perangkat komputer yang berbeda (\textit{remote}). Metode transportasi ini merupakan satu-satunya metode transportasi yang tersedia apabila \textit{daemon} D-Bus berjalan pada sistem operasi Windows mengingat metode-metode transportasi yang lain tidak didukung pada sistem operasi Windows. Metode transportasi ini digunakan apabila penulisan alamat diawali oleh "\verb|tcp:|" dan diikuti oleh properti-properti yang terdiri dari "\verb|host|" (wajib), "\verb|bind|" (opsional), "\verb|port|" (opsional), dan "\verb|family|" (opsional) yang penulisannya dipisahkan oleh tanda koma (misalnya "\path{tcp:localhost,port=12345,family=ipv4}").
+
+    \item \textbf{TCP dengan metode otentikasi nonce}\\
+    Metode transportasi ini identik dengan metode transportasi berbasis TCP biasa, tetapi dengan tambahan lapisan keamanan berupa otentikasi berbasis nonce. Metode otentikasi berbasis nonce memastikan bahwa hanya klien yang memiliki akses baca (\textit{read access}) pada suatu lokasi tertentu di \textit{file system} dapat terhubung ke \textit{server} D-Bus. Metode transportasi ini memiliki format penulisan alamat yang serupa dengan metode transportasi berbasis TCP biasa (sama-sama berawalan "\verb|tcp:|" dengan tambahan properti "\verb|noncefile|".
+
+    \item \textbf{Subproses}\\
+    Metode transportasi berbasis subproses bekerja dengan cara melakukan \textit{fork} pada suatu proses dan menghubungkan \textit{standard input} dan \textit{standard output} proses tersebut ke sebuah soket Unix anonim. Metode transportasi ini tidak tersedia pada sistem operasi Windows. Metode transportasi ini digunakan apabila alamat diawali oleh "\verb|unixexec:|".
+\end{itemize}
+
+Seperti yang telah disebutkan pada tiap-tiap deskripsi metode transportasi di atas, metode transportasi ditentukan secara otomatis sesuai dengan format penulisan alamat bus D-Bus yang telah diatur. Alamat bus D-Bus dapat diatur melalui dua tempat: argumen penjalanan \textit{daemon} D-Bus dan berkas konfigurasi. Metode pengaturan alamat bus D-Bus melalui argumen penjalanan \textit{daemon} D-Bus dilakukan dengan menambahkan argumen berbentuk \lstinline[language=bash,columns=fixed]{--address="<tuliskan alamat yang diinginkan di sini>"}. Metode pengaturan alamat melalui argumen akan menimpa (\textit{override}) pengaturan apa pun yang dilakukan di berkas konfigurasi. Di sisi lain, metode pengaturan alamat bus D-Bus melalui berkas konfigurasi dilakukan dengan cara memodifikasi berkas konfigurasi \textit{default} yang telah ada (berkas konfigurasi \textit{default} bus sistem berada di \path{/usr/share/dbus-1/system.conf} dan berkas konfigurasi \textit{default} bus sesi berada di \path{/usr/share/dbus-1/session.conf}) atau membuat berkas konfigurasi baru berekstensi berkas "\verb|.conf|" dan memuatnya pada saat penjalanan \textit{daemon} D-Bus melalui argumen \lstinline[language=bash,columns=fixed]{--config-file=<lokasi berkas konfigurasi>}.
+
+\subsection{Dukungan Kompatibilitas Linux atau Mirip Unix di Windows Pra-WSL}
+
+Teknologi yang digunakan dalam skripsi ini, Windows Subsystem for Linux, bukan merupakan satu-satunya usaha yang digunakan untuk membawa kompatibilitas Linux atau Unix-like ke dalam lingkungan sistem operasi Windows. Microsoft memiliki sejarah panjang dalam membawa dukungan Linux atau mirip Unix ke dalam lingkungan Windows.
 
 Sebelum mengembangkan WSL, Microsoft memiliki sejumlah usaha terdahulu yang bertujuan membawa dukungan Linux/Unix-like ke dalam sistem operasi Windows. Dalam proses pengembangan Windows NT yang saat ini mendasari versi-versi Windows modern (Windows 2000 dan setelahnya), Microsoft mendesain sistem operasi tersebut sedemikian rupa agar bersifat modular dan mendukung berbagai macam "subsistem". Pada awal pengembangannya, Windows NT direncanakan memiliki tiga buah subsistem, yakni subsistem Win32, subsistem OS/2 (untuk mendukung interoperabilitas dengan sistem operasi OS/2 milik IBM), dan subsistem POSIX (untuk mendukung interoperabilitas dengan sistem-sistem berbasis Linux, UNIX, atau Unix-like yang sedang populer di kalangan bisnis pada masa itu). Seiring waktu, Microsoft memutus dukungan dan pengembangan lebih lanjut terhadap subsistem OS/2 karena adanya permasalahan bisnis dengan IBM.
 
@@ -47,9 +93,9 @@ Windows Subsystem for Linux merupakan usaha terbaru Microsoft dalam membawa komp
 
 Microsoft tidak sendirian dalam mengembangkan dukungan lingkungan Linux atau \textit{Unix-like} ke dalam sistem operasi Windows; terdapat beragam pilihan pihak ketiga yang dapat membawa dukungan lingkungan Linux atau \textit{Unix-like} ke Windows.
 
-\subsection{Teknologi Penampilan Antarmuka Grafis dan Sistem Perjendelaan (\textit{Windowing System}) pada Lingkungan Linux: X11/Xorg dan Wayland}
+\subsection{Teknologi Sistem Perjendelaan (\textit{Windowing System}) Linux: X11/Xorg dan Wayland}
 
-\subsection{Dukungan Antarmuka Grafis pada Windows Subsystem for Linux: Windows Subsystem for Linux GUI (WSLg)}
+\subsection{Windows Subsystem for Linux GUI (WSLg)}
 
 Microsoft pertama kali menyatakan dukungan penjalanan perangkat lunak berantarmuka grafis (GUI) di Windows Subsystem for Linux versi 2 (WSL2) secara bawaan (\textit{built-in}) pada perhelatan pengembang tahunan Microsoft Build 2021.
 
@@ -65,49 +111,6 @@ Dalam pengembangan fungsionalitas antarmuka grafis pada Windows Subsystem for Li
 % https://link.springer.com/chapter/10.1007/978-1-4842-6873-5_1
 % https://devblogs.microsoft.com/commandline/wslg-architecture/
 
-\subsection{D-Bus}
-
-D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communication}) yang populer digunakan di sebagian besar distribusi Linux. Sesuai dengan namanya, D-Bus bekerja dengan konsep arsitektur "bus" yang berarti terdapat sebuah kanal utama (bus) sebagai jalur pertukaran informasi dan terdapat sejumlah klien yang terhubung dengan kanal utama (bus) tersebut. Secara garis besar, terdapat dua komponen utama dalam penggunaan sistem D-Bus:
-
-\begin{itemize}
-    \item \textbf{\textit{Server} atau \textit{daemon} D-Bus}\\
-    \textit{Server} D-Bus bertindak sebagai penyedia bus sentral tempat klien-klien D-Bus terhubung. \textit{Server} D-Bus bertugas mengelola klien-klien yang terhubung dan menyalurkan data dari sumbernya ke tujuannya dengan benar \cite{qt-introduction-to-dbus}. \textit{Server} D-Bus umumnya dijalankan oleh sebuah proses yang bernama \textit{daemon} D-Bus yang umumnya memiliki nama berkas \textit{executable} "\path{dbus-daemon}".
-
-    \item \textbf{Klien D-Bus}\\
-    Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai aplikasi reguler yang mengonsumsi layanan (\textit{consumer}) \textcolor{orange}{(TODO: Find the correct terminologies for those)}.
-\end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\linewidth]{contents//chapter-2/dbus-diagram.png}
-    \caption{Diagram arsitektur D-Bus \cite{dbus-main-project-page}}
-    \label{fig:enter-label}
-\end{figure}
-
-Dalam satu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}). Bus sistem digunakan untuk mengelola dan mengadministrasi hal-hal yang bersifat penting terhadap berjalannya sistem operasi, seperti penyambungan perangkat keras baru, peringatan baterai lemah, dan status jaringan \cite{will2020trusted}. Bus sistem berjalan secara \textit{system-wide} sehingga mencakup seluruh sesi pengguna yang sedang berjalan di sistem operasi. Di sisi lain, bus sesi digunakan untuk hal-hal yang bersifat lebih mengarah ke pengguna (\textit{user-facing}) seperti pengiriman notifikasi dan sistem kontrol media, dua hal yang menjadi topik utama tugas akhir ini. Bus sesi tersedia secara lokal di tiap-tiap sesi pengguna yang sedang berjalan di suatu sistem operasi. Istilah "bus D-Bus", "\textit{server} D-Bus", dan "\textit{daemon} D-Bus" dapat dikatakan identik dalam konteks ini; tiap-tiap bus memiliki \textit{instance} \textit{daemon} D-Bus-nya masing-masing, sehingga sistem operasi Linux secara \textit{default} memiliki dua buah \textit{instance} \textit{daemon} D-Bus yang berjalan dalam satu waktu.
-
-Agar dapat dihubungi oleh para klien, tiap-tiap bus D-Bus memiliki alamat yang diatur pada awal penjalanan \textit{daemon} D-Bus. Bentuk alamat yang digunakan oleh bus D-Bus berbeda-beda sesuai dengan metode transportasi yang digunakan. Berdasarkan spesifikasi D-Bus \cite{dbus-specification}, terdapat sejumlah metode transportasi yang didukung oleh D-Bus:
-\begin{itemize}
-    \item \textbf{Soket Unix}\\
-    Metode transportasi berbasis soket Unix menggunakan berkas soket Unix yang terletak secara lokal pada \textit{file system}. Metode transportasi ini hanya didukung apabila \textit{daemon} D-Bus berjalan di sistem operasi berbasis Unix atau mirip Unix seperti Linux dan macOS. Metode transportasi ini digunakan apabila penulisan alamat diawali oleh "\verb|unix:|".
-
-    \item \textbf{systemd}\\
-    Metode transportasi berbasis systemd memiliki konsep serupa dengan metode transportasi berbasis soket Unix, tetapi memanfaatkan sistem pengelolaan soket otomatis bernama aktivasi soket (\textit{socket activation}) yang dilakukan oleh systemd. Metode transportasi ini memanfaatkan informasi soket yang dikelola oleh systemd untuk digunakan sebagai metode transportasi D-Bus. Seperti namanya, metode transportasi ini hanya tersedia pada sistem operasi Linux yang menggunakan systemd sebagai sistem init-nya. Metode transportasi ini digunakan apabila penulisan alamat berisikan "\verb|systemd:|".
-    
-    \item \textbf{launchd}\\
-    Metode transportasi berbasis launchd juga memiliki konsep yang serupa dengan metode transportasi berbasis soket Unix, tetapi memanfaatkan soket Unix yang telah dialokasikan oleh launchd. Mengingat sistem init launchd hanya tersedia pada sistem operasi macOS, metode transportasi ini hanya didukung apabila \textit{daemon} D-Bus berjalan di sistem operasi macOS. Metode transportasi ini digunakan apabila penulisan alamat berisikan "\verb|launchd:|".
-    
-    \item \textbf{TCP}\\
-    Metode transportasi berbasis TCP memanfaatkan protokol TCP (Transmission Control Protocol) sebagai metode komunikasi antarklien D-Bus, baik yang terletak pada perangkat komputer yang sama maupun yang terletak pada perangkat komputer yang berbeda (\textit{remote}). Metode transportasi ini merupakan satu-satunya metode transportasi yang tersedia apabila \textit{daemon} D-Bus berjalan pada sistem operasi Windows mengingat metode-metode transportasi yang lain tidak didukung pada sistem operasi Windows. Metode transportasi ini digunakan apabila penulisan alamat diawali oleh "\verb|tcp:|" dan diikuti oleh properti-properti yang terdiri dari "\verb|host|" (wajib), "\verb|bind|" (opsional), "\verb|port|" (opsional), dan "\verb|family|" (opsional) yang penulisannya dipisahkan oleh tanda koma (misalnya "\path{tcp:localhost,port=12345,family=ipv4}").
-
-    \item \textbf{TCP dengan metode otentikasi nonce}\\
-    Metode transportasi ini identik dengan metode transportasi berbasis TCP biasa, tetapi dengan tambahan lapisan keamanan berupa otentikasi berbasis nonce. Metode otentikasi berbasis nonce memastikan bahwa hanya klien yang memiliki akses baca (\textit{read access}) pada suatu lokasi tertentu di \textit{file system} dapat terhubung ke \textit{server} D-Bus. Metode transportasi ini memiliki format penulisan alamat yang serupa dengan metode transportasi berbasis TCP biasa (sama-sama berawalan "\verb|tcp:|" dengan tambahan properti "\verb|noncefile|".
-
-    \item \textbf{Subproses}\\
-    Metode transportasi berbasis subproses bekerja dengan cara melakukan \textit{fork} pada suatu proses dan menghubungkan \textit{standard input} dan \textit{standard output} proses tersebut ke sebuah soket Unix anonim. Metode transportasi ini tidak tersedia pada sistem operasi Windows. Metode transportasi ini digunakan apabila alamat diawali oleh "\verb|unixexec:|".
-\end{itemize}
-
-Seperti yang telah disebutkan pada tiap-tiap deskripsi metode transportasi di atas, metode transportasi ditentukan secara otomatis sesuai dengan format penulisan alamat bus D-Bus yang telah diatur. Alamat bus D-Bus dapat diatur 
 
 \subsection{\textit{Media Player Remote Interfacing Specification} (MPRIS)}
 

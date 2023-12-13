@@ -67,7 +67,22 @@ Dalam pengembangan fungsionalitas antarmuka grafis pada Windows Subsystem for Li
 
 \subsection{D-Bus}
 
-D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communication}) yang populer digunakan di sebagian besar distribusi Linux. Sesuai dengan namanya, D-Bus bekerja dengan konsep arsitektur "bus" yang berarti terdapat sebuah kanal utama (bus) sebagai jalur pertukaran informasi dan terdapat sejumlah klien yang terhubung dengan kanal utama (bus) tersebut. Dalam sistem D-Bus, terdapat 
+D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communication}) yang populer digunakan di sebagian besar distribusi Linux. Sesuai dengan namanya, D-Bus bekerja dengan konsep arsitektur "bus" yang berarti terdapat sebuah kanal utama (bus) sebagai jalur pertukaran informasi dan terdapat sejumlah klien yang terhubung dengan kanal utama (bus) tersebut. Secara garis besar, terdapat dua komponen utama dalam penggunaan sistem D-Bus:
+
+\begin{itemize}
+    \item \textbf{\textit{Daemon} D-Bus atau \textit{server} D-Bus}\\
+    \textit{Server} D-Bus bertindak sebagai penyedia bus sentral tempat klien-klien D-Bus terhubung. \textit{Server} D-Bus dijalankan oleh sebuah proses yang bernama \textit{daemon} D-Bus yang umumnya memiliki nama berkas \textit{executable} "\path{dbus-daemon}".
+
+    \item \textbf{Klien D-Bus}\\
+    Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai pengonsumsi layanan (\textit{consumer}) \textcolor{orange}{(TODO: Find the correct terminologies for those)}.
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{contents//chapter-2/dbus-diagram.png}
+    \caption{Diagram arsitektur D-Bus \cite{dbus-main-project-page}}
+    \label{fig:enter-label}
+\end{figure}
 
 \subsection{\textit{Media Player Remote Interfacing Specification} (MPRIS)}
 

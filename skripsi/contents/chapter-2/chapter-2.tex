@@ -70,11 +70,11 @@ Dalam pengembangan fungsionalitas antarmuka grafis pada Windows Subsystem for Li
 D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communication}) yang populer digunakan di sebagian besar distribusi Linux. Sesuai dengan namanya, D-Bus bekerja dengan konsep arsitektur "bus" yang berarti terdapat sebuah kanal utama (bus) sebagai jalur pertukaran informasi dan terdapat sejumlah klien yang terhubung dengan kanal utama (bus) tersebut. Secara garis besar, terdapat dua komponen utama dalam penggunaan sistem D-Bus:
 
 \begin{itemize}
-    \item \textbf{\textit{Daemon} D-Bus atau \textit{server} D-Bus}\\
+    \item \textbf{\textit{Server} atau \textit{daemon} D-Bus}\\
     \textit{Server} D-Bus bertindak sebagai penyedia bus sentral tempat klien-klien D-Bus terhubung. \textit{Server} D-Bus bertugas mengelola klien-klien yang terhubung dan menyalurkan data dari sumbernya ke tujuannya dengan benar \cite{qt-introduction-to-dbus}. \textit{Server} D-Bus umumnya dijalankan oleh sebuah proses yang bernama \textit{daemon} D-Bus yang umumnya memiliki nama berkas \textit{executable} "\path{dbus-daemon}".
 
     \item \textbf{Klien D-Bus}\\
-    Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai pengonsumsi layanan (\textit{consumer}) \textcolor{orange}{(TODO: Find the correct terminologies for those)}.
+    Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai aplikasi reguler yang mengonsumsi layanan (\textit{consumer}) \textcolor{orange}{(TODO: Find the correct terminologies for those)}.
 \end{itemize}
 
 \begin{figure}
@@ -84,7 +84,7 @@ D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communicatio
     \label{fig:enter-label}
 \end{figure}
 
-Dalam satu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}).
+Dalam satu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}). Bus sistem digunakan untuk mengelola dan mengadministrasi hal-hal yang bersifat penting terhadap berjalannya sistem operasi, seperti penyambungan perangkat keras baru, peringatan baterai lemah, dan status jaringan \cite{will2020trusted}. Bus sistem berjalan  Di sisi lain, bus sesi digunakan untuk hal-hal yang bersifat lebih mengarah ke pengguna (\textit{user-facing}) seperti pengiriman notifikasi dan sistem kontrol media, dua hal yang menjadi topik utama tugas akhir ini.
 
 \subsection{\textit{Media Player Remote Interfacing Specification} (MPRIS)}
 

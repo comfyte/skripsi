@@ -891,4 +891,4 @@
 % List
 %---------------
 \setlist[enumerate]{topsep=0pt,itemsep=0ex,partopsep=1ex,parsep=1ex}
-\setlist[itemize]{align=parleft,left=4em,topsep=0pt,itemsep=0ex,partopsep=1ex,parsep=1ex}
+\setlist[itemize]{topsep=0pt,itemsep=0ex,partopsep=1ex,parsep=1ex}

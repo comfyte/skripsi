@@ -5,10 +5,10 @@
 Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis terdahulu yang menjadi basis ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian. Subbab ini berisi ulasan dan analisis karya-karya tulis tersebut serta hubungannya dengan tugas akhir ini.
 
 Karya tulis pertama yang dibahas adalah sebuah tesis master berjudul \textit{Through the Wormhole: Cross-OS Desktop Integration for Linux Applications} yang ditulis oleh John Ingve Olsen dan dipublikasikan pada tahun 2022 \cite{olsen-2022-through-the-wormhole}. Tesis ini merupakan karya tulis yang paling signifikan dalam penyusunan tugas akhir penulis karena memiliki topik dan tujuan yang serupa dengan tugas akhir penulis dan menjadi inspirasi terbesar dalam perancangan tugas akhir penulis. Tesis ini membahas pengintegrasian sejumlah aspek antarmuka grafis Windows Subsystem for Linux (WSL) dengan \textit{host} Windows yang dicapai melalui pengembangan sejumlah perangkat lunak pembantu:
-\begin{itemize}
+\begin{enumerate}
     \item perangkat lunak pengelola bus sesi D-Bus (\textit{session manager}) yang menyeragamkan bus D-Bus yang dipakai oleh sesi-sesi WSL yang berbeda dan
     \item perangkat lunak "Wormhole" itu sendiri yang mengintegrasikan aspek-aspek antarmuka grafis WSL dengan \textit{desktop} Windows.
-\end{itemize}
+\end{enumerate}
 Olsen menggunakan bahasa pemrograman Rust dalam mengembangkan kedua perangkat lunak tersebut. Aspek-aspek yang diintegrasikan dalam tesis ini yakni
 \begin{itemize}
     \item ikon status (\textit{status icons}) yang umumnya muncul di sisi kanan \textit{taskbar} pada Windows,
@@ -59,8 +59,15 @@ D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communicatio
 
 \begin{figure}
     \centering
+    \includegraphics[width=0.75\linewidth]{archives//contents-template-pak-prapto//chapter-2/dbus-analogy-diagram.png}
+    \caption{Ilustrasi bus D-Bus \cite{dbus-bus-illustration}}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
     \includegraphics[width=1\linewidth]{contents//chapter-2/dbus-diagram.png}
-    \caption{Diagram arsitektur D-Bus \cite{dbus-main-project-page}}
+    \caption{Diagram mendetail arsitektur D-Bus \cite{dbus-main-project-page}}
     \label{fig:enter-label}
 \end{figure}
 
@@ -88,6 +95,11 @@ Agar dapat dihubungi oleh para klien, tiap-tiap bus D-Bus memiliki alamat yang d
 \end{itemize}
 
 Seperti yang telah disebutkan pada tiap-tiap deskripsi metode transportasi di atas, metode transportasi ditentukan secara otomatis sesuai dengan format penulisan alamat bus D-Bus yang telah diatur. Alamat bus D-Bus dapat diatur melalui dua tempat: argumen penjalanan \textit{daemon} D-Bus dan berkas konfigurasi. Metode pengaturan alamat bus D-Bus melalui argumen penjalanan \textit{daemon} D-Bus dilakukan dengan menambahkan argumen berbentuk \lstinline[language=bash,columns=fixed]{--address="<tuliskan alamat yang diinginkan di sini>"}. Metode pengaturan alamat melalui argumen akan menimpa (\textit{override}) pengaturan apa pun yang dilakukan di berkas konfigurasi. Di sisi lain, metode pengaturan alamat bus D-Bus melalui berkas konfigurasi dilakukan dengan cara memodifikasi berkas konfigurasi \textit{default} yang telah ada (berkas konfigurasi \textit{default} bus sistem berada di \path{/usr/share/dbus-1/system.conf} dan berkas konfigurasi \textit{default} bus sesi berada di \path{/usr/share/dbus-1/session.conf}) atau membuat berkas konfigurasi baru berekstensi berkas "\verb|.conf|" dan memuatnya pada saat penjalanan \textit{daemon} D-Bus melalui argumen \lstinline[language=bash,columns=fixed]{--config-file=<lokasi berkas konfigurasi>}.
+
+Terdapat sejumlah konsep yang digunakan dalam pengoperasian D-Bus:
+\begin{itemize}
+    \item 
+\end{itemize}
 
 \subsection{Dukungan Kompatibilitas Linux atau Mirip Unix di Windows Pra-WSL}
 

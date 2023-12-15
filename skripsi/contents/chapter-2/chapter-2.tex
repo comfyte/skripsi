@@ -71,7 +71,7 @@ D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communicatio
     \label{fig:enter-label}
 \end{figure}
 
-Dalam satu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}). Bus sistem digunakan untuk mengelola dan mengadministrasi hal-hal yang bersifat penting terhadap berjalannya sistem operasi, seperti penyambungan perangkat keras baru, peringatan baterai lemah, dan status jaringan \cite{will2020trusted}. Bus sistem berjalan secara \textit{system-wide} sehingga mencakup seluruh sesi pengguna yang sedang berjalan di sistem operasi. Di sisi lain, bus sesi digunakan untuk hal-hal yang bersifat lebih mengarah ke pengguna (\textit{user-facing}) seperti pengiriman notifikasi dan sistem kontrol media, dua hal yang menjadi topik utama tugas akhir ini. Bus sesi tersedia secara lokal di tiap-tiap sesi pengguna yang sedang berjalan di suatu sistem operasi. Istilah "bus perpesanan D-Bus", "\textit{server} D-Bus", dan "\textit{daemon} D-Bus" dapat dikatakan identik dalam konteks ini; tiap-tiap bus memiliki \textit{instance} \textit{daemon} D-Bus-nya masing-masing, sehingga sistem operasi Linux secara \textit{default} memiliki dua buah \textit{instance} \textit{daemon} D-Bus yang berjalan dalam satu waktu.
+Dalam suatu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}). Bus sistem digunakan untuk mengelola dan mengadministrasi hal-hal yang bersifat penting terhadap berjalannya sistem operasi, seperti penyambungan perangkat keras baru, peringatan baterai lemah, dan status jaringan \cite{will2020trusted}. Bus sistem berjalan secara \textit{system-wide} sehingga mencakup seluruh sesi pengguna yang sedang berjalan di sistem operasi. Di sisi lain, bus sesi digunakan untuk hal-hal yang bersifat lebih mengarah ke pengguna (\textit{user-facing}) seperti pengiriman notifikasi dan sistem kontrol media, dua hal yang menjadi topik utama tugas akhir ini. Bus sesi tersedia secara lokal di tiap-tiap sesi pengguna yang sedang berjalan di suatu sistem operasi. Istilah "bus perpesanan D-Bus", "\textit{server} D-Bus", dan "\textit{daemon} D-Bus" dapat dikatakan identik dalam konteks ini; tiap-tiap bus memiliki \textit{instance} \textit{daemon} D-Bus-nya masing-masing, sehingga sistem operasi Linux secara \textit{default} memiliki dua buah \textit{instance} \textit{daemon} D-Bus yang berjalan dalam satu waktu.
 
 Agar dapat dihubungi oleh para klien, tiap-tiap bus perpesanan D-Bus memiliki alamat yang diatur pada awal penjalanan \textit{daemon} D-Bus. Bentuk alamat yang digunakan oleh bus perpesanan D-Bus berbeda-beda sesuai dengan metode transportasi yang digunakan. Berdasarkan spesifikasi D-Bus \cite{dbus-specification}, terdapat sejumlah metode transportasi yang didukung oleh D-Bus:
 \begin{itemize}
@@ -105,6 +105,13 @@ Proses interaksi di dalam D-Bus didesain agar memiliki konsep yang serupa dengan
     \item \textbf{Metode (\textit{method})}\\
 
     \item \textbf{Properti (\textit{property})}\\
+\end{itemize}
+
+Proses pertukaran informasi antarklien D-Bus dilakukan melalui elemen-elemen yang dimiliki oleh klien
+
+Tiap-tiap klien dalam D-Bus mengemban sejumlah elemen yang berguna dalam pertukaran pesan. Berikut elemen-elemen tersebut.
+\begin{itemize}
+    \item Interface
 \end{itemize}
 
 Dalam pengoperasian D-Bus, terdapat sejumlah konsep perpesanan:

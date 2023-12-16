@@ -3,7 +3,7 @@ from dbus_next.service import (ServiceInterface, method,
                                dbus_property, signal)
 from dbus_next import Variant, DBusError
 
-from shell.toast_notification import WindowsToastNotification
+from ..shell.toast_notification import WindowsToastNotification
 
 class NotificationHandlerService(ServiceInterface):
     def __init__(self):

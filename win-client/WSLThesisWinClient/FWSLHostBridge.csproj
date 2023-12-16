@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
+    <PackageReference Include="Tmds.DBus" Version="0.15.0" />
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.15.0" />
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

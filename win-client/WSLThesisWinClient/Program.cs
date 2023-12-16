@@ -10,6 +10,7 @@ using Windows.Media;
 using Windows.Media.Playback;
 using FWSLHostBridge.Services;
 using FWSLHostBridge.Helpers;
+using Tmds.DBus;
 
 namespace FWSLHostBridge
 {
@@ -21,7 +22,8 @@ namespace FWSLHostBridge
         {
             _sysTrayIconManager = new SysTrayIconManager();
             new MPRISControl();
-            new HostServer();
+
+            var busConnection = Tmds.DBus.Protocol.Connection.
         }
     }
 

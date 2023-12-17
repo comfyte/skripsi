@@ -6,11 +6,17 @@ from dbus_next.auth import AuthAnnonymous
 from .helpers.verify_platform import verify_platform
 from .shell.persistent_tray_icon import PersistentTrayIcon
 from .services.notifications import NotificationHandlerService
+from .services.media_control import MediaControlService
 
-async def attach_interfaces_to_bus(bus: MessageBus):
+from .shell.smtc import WindowsSMTC
+
+async def attach_services_to_bus(bus: MessageBus):
     # org.freedesktop.Notifications
     bus.export('/org/freedesktop/Notifications', NotificationHandlerService())
     await bus.request_name('org.freedesktop.Notifications')
+
+    mcs_test = MediaControlService(bus)
+    await mcs_test.percobaan()
 
 async def fwsl_daemon(bus_address: str):
     # Do checks first
@@ -35,7 +41,7 @@ async def fwsl_daemon(bus_address: str):
         print('Some error happened. Exiting FancyWSL Daemon...', file=sys.stderr)
         sys.exit(1)
 
-    await attach_interfaces_to_bus(bus)
+    await attach_services_to_bus(bus)
 
     # Define clean-up function before exiting the program
     def cleanup_before_exiting():
@@ -45,7 +51,7 @@ async def fwsl_daemon(bus_address: str):
         cleanup_before_exiting()
         print('Killed the system tray icon.')
 
-    PersistentTrayIcon(persistent_tray_icon_quit_handler)
+    PersistentTrayIcon(bus_address, persistent_tray_icon_quit_handler)
 
     await bus.wait_for_disconnect()
     print(f'Connection to bus "{bus_address}" disconnected.')

@@ -12,16 +12,14 @@ class NotificationHandlerService(ServiceInterface):
     
     @method()
     def GetCapabilities(self):
-        print('GC called')
         # return [
         #     'body'
         # ]
+        pass
     
     @method()
     def Notify(self, app_name: 's', replaces_id: 'u', app_icon: 's',
                summary: 's', body: 's', actions: 'as', hints: 'a{sv}', expire_timeout: 'i') -> 'u':
-        print('N called')
-
         print(app_name)
         print(replaces_id)
         print(app_icon)
@@ -30,8 +28,6 @@ class NotificationHandlerService(ServiceInterface):
         print(actions)
         print(hints)
         print(expire_timeout)
-
-        print(type(body))
 
         wtn = WindowsToastNotification()
         wtn.display()
@@ -43,8 +39,6 @@ class NotificationHandlerService(ServiceInterface):
 
     @method()
     def GetServerInformation(self) -> 'ssss':
-        print('GSC called')
-
         return [
             'FancyWSL Notification Server',
             'Independent',

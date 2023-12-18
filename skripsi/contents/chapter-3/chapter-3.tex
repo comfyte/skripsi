@@ -19,42 +19,51 @@
         \item Kemampuan layar sentuh dengan multisentuh hingga sepuluh jari secara bersamaan
     \end{itemize}
 
-    \item Perangkat lunak "Windows Subsystem for Linux 2 (WSL2)" versi perilisan terbaru yang terinstal pada komputer utama. Untuk menginstal atau memastikan bahwa WSL sudah versi terbaru, jalankan perintah berikut pada PowerShell atau Command Prompt.
+    \item Perangkat lunak "Windows Subsystem for Linux 2 (WSL2)" versi perilisan terbaru yang terinstal pada komputer utama. Untuk menginstal WSL2 serta distribusi Linux \textit{default}-nya atau memastikan keterbaruan versi WSL yang telah terinstal, jalankan perintah berikut pada PowerShell atau Command Prompt.
     \begin{lstlisting}
 wsl --install\end{lstlisting}
     Apabila terdapat perangkat lunak \textit{virtual machine} pihak ketiga (VirtualBox, VMware, dan sebagainya) yang terinstal pada komputer utama tersebut, harap pastikan bahwa perangkat lunak \textit{virtual machine} tersebut telah diperbarui ke versi paling baru dan kompatibel dengan WSL2 atau Hyper-V (kapabilitas yang menenagai WSL2); instalasi WSL2 dan perangkat lunak \textit{virtual machine} pihak ketiga tersebut dalam sistem yang sama dapat menyebabkan degradasi performa pada perangkat lunak \textit{virtual machine} pihak ketiga tersebut karena perangkat lunak \textit{virtual machine} pihak ketiga tersebut mencoba mengakomodasi aktifnya kapabilitas Hyper-V.
 
 
     \item \textbf{Opsional:} Perangkat komputer bersistem operasi Ubuntu 22.04 (LTS) sebagai \textbf{komputer referensi (\textit{reference machine})}. Perangkat komputer dapat berupa komputer \textit{desktop} ataupun komputer jinjing (\textit{laptop}). Apabila tidak memungkinkan, mesin referensi dapat disubstitusikan dengan \textit{virtual machine} yang berjalan di suatu perangkat komputer \textit{host} melalui perangkat lunak \textit{virtual machine}. Pada tugas akhir ini, penulis menggunakan \textit{virtual machine} yang menjalankan sistem operasi Ubuntu 22.04 (LTS) melalui perangkat lunak virtualisasi "UTM" dengan \textit{host} komputer jinjing Apple MacBook Air keluaran tahun 2020 (berprosesor M1) bersistem operasi macOS 13 "Ventura".
+
+    \item Perangkat lunak untuk keperluan pengembangan (semuanya diinstal di lingkungan Windows):
+    \begin{itemize}
+        \item Microsoft Visual Studio Code (versi terbaru)
+        \item Python versi 3.11 atau lebih baru
+    \end{itemize}
     
-    
-    \item Perangkat lunak untuk diujikan: Microsoft Edge for Linux, (...), dan (...). Semua perangkat lunak ini akan diinstal di dalam lingkungan Windows Subsystem for Linux versi kedua (WSL2).
-
-    \item Perangkat lunak "Visual Studio 2022" edisi Community guna mengembangkan perangkat lunak penjembatan (\textit{bridge}) di sisi Windows.
-
-    \item Perangkat lunak editor teks atau editor kode untuk keperluan pengembangan perangkat lunak yang tidak menggunakan Visual Studio, seperti pengimplementasian perangkat lunak di sisi WSL. Pada tugas akhir ini, digunakan "Visual Studio Code" sebagai editor kode.
-
-    \item Perangkat lunak \textit{compiler} yang memadai yang terinstal di lingkungan WSL. (TODO: Decide what language to use!)
+    \item Perangkat lunak untuk keperluan pengujian akhir (semuanya diinstal di dalam WSL):
+    \begin{itemize}
+        \item Spotify
+        \item Mozilla Thunderbird
+        \item Google Chrome
+    \end{itemize}
 \end{enumerate}
 
 \subsection{Bahan Tugas Akhir}
 
-Bahan tugas akhir adalah segala sesuatu yang bersifat fisik atau digital yang digunakan untuk kebutuhan tugas akhir. Bahan tugas akhir dapat berupa:
-
+Dalam pengerjaan tugas akhir ini, digunakan sejumlah dokumen standar atau spesifikasi yang berkaitan dengan protokol atau perangkat lunak yang digunakan. Berikut dokumen-dokumen yang dimaksud.
 \begin{enumerate}
-	\item Bahan habis pakai. Bahan yang digunakan untuk tugas akhir. Sebagai contoh 
-	mungkin dibutuhkan kertas transparansi, baterai, atau yang lain 
-	\item Bahan yang berupa data atau informasi yang menjadi dataset tugas akhir. Dataset tugas akhir dapat berupa:
+    \item Dokumen spesifikasi D-Bus \cite{dbus-specification}
 \end{enumerate}
-\begin{itemize}
-	\item Dataset pihak lain yang diperoleh dengan izin atau dalam lisensi yang diizinkan untuk digunakan secara langsung 
-	\item Dataset pihak pertama yang disusun sendiri melalui quisioner, observasi, atau interview 
-	\item Dokumen panduan yang mengacu pada standar, hasil tugas akhir, atau artikel yang disitasi dan digunakan.
-\end{itemize}
 
 \section{Alur Tugas Akhir}
 
-Lorem ipsum.
+Guna menciptakan arah penelitian yang terstruktur, ditentukan alur tugas akhir sebagai berikut.
+\begin{enumerate}
+    \item \textbf{Pemeriksaan Fungsionalitas Penanganan Notifikasi dan Kontrol Media di Windows Subsystem for Linux (WSL)}\\
+    Pertama-tama, dilakukan pemeriksaan terlebih dahulu mengenai kedua aspek yang akan dibahas dalam tugas akhir ini, yakni aspek penanganan notifikasi (\textit{notification handling}) dan aspek kontrol media (\textit{media control}). Hal ini dilakukan guna memvalidasi alasan utama yang melatarbelakangi tugas akhir ini, yakni ketiadaan dukungan penanganan notifikasi dan kontrol media di Windows Subsystem for Linux (WSL).
+
+    \item \textbf{Analisis \textit{Behavior} Penanganan Notifikasi dan Kontrol Media pada Instalasi Sistem Operasi Linux Sungguhan sebagai Basis Implementasi di Windows Subsystem for Linux (WSL)}\\
+    Dilakukan analisis kedua aspek utama yang dibahas dalam tugas akhir ini, penanganan notifikasi dan kontrol media, pada sistem operasi Linux sungguhan yang terinstal di komputer referensi. Pada tahap ini, dilakukan investigasi tentang bagaimana sistem D-Bus berperan dalam pencapaian kedua aspek tersebut. Guna meminimalkan perbedaan yang dapat terjadi, sistem operasi Linux sungguhan yang terinstal menggunakan distribusi yang sama dengan distribusi \textit{default} pada WSL, yakni Ubuntu (versi 22.04 pada waktu penyusunan tugas akhir ini).
+
+    \item \textbf{Penyesuaian Konfigurasi Windows Subsystem for Linux untuk Mendukung Perangkat Lunak FancyWSL}
+    Secara \textit{default}, instalasi Windows Subsystem for Linux (WSL) tidak bisa langsung dihubungkan dengan perangkat lunak FancyWSL yang akan dikembangkan; diperlukan beberapa modifikasi pada sejumlah konfigurasi di WSL, yakni pemastian penggunaan systemd sebagai sistem init dan pengaturan \textit{daemon} D-Bus agar menerima penghubungan melalui TCP.
+
+    \item \textbf{Pengembangan Perangkat Lunak FancyWSL}\\
+    Pada tahap ini, dilakukan pengembangan perangkat lunak FancyWSL dari awal hingga 
+\end{enumerate}
 
 \section{Metode yang Digunakan}
 

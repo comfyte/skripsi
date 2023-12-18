@@ -123,44 +123,9 @@ Dalam pengoperasian D-Bus, terdapat sejumlah konsep perpesanan:
 
 systemd merupakan salah satu sistem init yang tersedia untuk digunakan di sistem operasi Linux di samping sistem-sistem init lain seperti SysV Init, .
 
-\subsection{Dukungan Kompatibilitas Linux atau Mirip Unix di Windows Pra-WSL}
-
-Teknologi yang digunakan dalam skripsi ini, Windows Subsystem for Linux, bukan merupakan satu-satunya usaha yang digunakan untuk membawa kompatibilitas Linux atau Unix-like ke dalam lingkungan sistem operasi Windows. Microsoft memiliki sejarah panjang dalam membawa dukungan Linux atau mirip Unix ke dalam lingkungan Windows.
-
-Sebelum mengembangkan WSL, Microsoft memiliki sejumlah usaha terdahulu yang bertujuan membawa dukungan Linux/Unix-like ke dalam sistem operasi Windows. Dalam proses pengembangan Windows NT yang saat ini mendasari versi-versi Windows modern (Windows 2000 dan setelahnya), Microsoft mendesain sistem operasi tersebut sedemikian rupa agar bersifat modular dan mendukung berbagai macam "subsistem". Pada awal pengembangannya, Windows NT direncanakan memiliki tiga buah subsistem, yakni subsistem Win32, subsistem OS/2 (untuk mendukung interoperabilitas dengan sistem operasi OS/2 milik IBM), dan subsistem POSIX (untuk mendukung interoperabilitas dengan sistem-sistem berbasis Linux, UNIX, atau Unix-like yang sedang populer di kalangan bisnis pada masa itu). Seiring waktu, Microsoft memutus dukungan dan pengembangan lebih lanjut terhadap subsistem OS/2 karena adanya permasalahan bisnis dengan IBM.
-
-Berbeda dengan subsistem OS/2 yang telah mati, dukungan dan pengembangan terhadap subsistem POSIX masih terus berjalan. Secara umum, terdapat tiga iterasi teknologi subsistem POSIX/UNIX yang dikembangkan oleh Microsoft:
-
-\begin{enumerate}
-    \item \textbf{Microsoft POSIX Subsystem.} Teknologi ini merupakan teknologi asli kembangan Microsoft yang ada sejak awal pengembangan Windows NT. Teknologi ini tersedia untuk sistem operasi Windows NT 3.1 hingga Windows 2000.
-    \item \textbf{Windows Services for Unix (SFU).} Produk ini sesungguhnya adalah teknologi milik perusahaan bernama PTS yang dilisensikan kepada Microsoft. Produk ini menggantikan Microsoft POSIX Subsystem sejak sistem operasi Windows XP dan Windows Server 2003.
-    %Teknologi yang membawahi (...) ini sejatinya merupakan hasil pengembangan
-    \item \textbf{Subsystem for Unix-based Applications (SUA).}
-    % Teknologi ini sejatinya merupakan pengembangan lebih lanjut dari SFU.
-    % Teknologi ini pada awalnya bernama subsistem Interix dan berganti nama setelah Microsoft mengakuisisi perusahaan pengembangnya. Setelah akuisisi, produk ini tidak lagi berdiri sebagai produk terpisah, tetapi menjadi salah satu komponen dari Windows Services for Unix (SFU). Komponen ini tersedia sejak 
-\end{enumerate}
-
-% Reason against elaborationg further: The lack of new sources due to the nature of this topic that is "historical information".
-
-% https://link.springer.com/chapter/10.1007/978-1-4842-6038-8_1
-
-Di samping solusi-solusi yang [telah] ditawarkan oleh Microsoft tersebut, terdapat pula beragam solusi-solusi pihak ketiga yang meraih tujuan yang sama. Solusi-solusi pihak ketiga ini ada baik guna mengisi kekosongan dukungan oleh Microsoft secara langsung maupun sebagai substitusi (\textit{substitute}) yang menggantikan solusi bawaan milik/buatan Microsoft karena [mungkin] solusi tersebut dirasa kurang atau masih belum sempurna.
-
-\begin{enumerate}
-    \item \textbf{Colinux.}
-
-    \item \textbf{Cygwin.}
-\end{enumerate}
-
 \subsection{Windows Subsystem for Linux (WSL)}
 
 Windows Subsystem for Linux merupakan usaha terbaru Microsoft dalam membawa kompatibilitas Unix/Linux ke dalam lingkungan Windows.
-
-\subsection{Dukungan Kompatibilitas Linux atau \textit{Unix-like} di Windows oleh Pihak Ketiga}
-
-Microsoft tidak sendirian dalam mengembangkan dukungan lingkungan Linux atau \textit{Unix-like} ke dalam sistem operasi Windows; terdapat beragam pilihan pihak ketiga yang dapat membawa dukungan lingkungan Linux atau \textit{Unix-like} ke Windows.
-
-\subsection{Teknologi Sistem Perjendelaan (\textit{Windowing System}) Linux: X11/Xorg dan Wayland}
 
 \subsection{Windows Subsystem for Linux GUI (WSLg)}
 
@@ -183,11 +148,13 @@ Dalam pengembangan fungsionalitas antarmuka grafis pada Windows Subsystem for Li
 
 \subsection{Windows API: System Media Transport Controls (SMTC)}
 
-\subsection{\textit{Standard Stream}, Mekanisme \textit{Piping}, dan Soket}
-
 \section{Analisis Perbandingan Metode}
 
 Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (\textit{bridging}) lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows, dapat ditempuh melalui berbagai macam metode. Setelah meninjau berbagai macam pustaka yang telah ada serta melakukan riset tentang teknologi terkait, penulis merumuskan enam macam pendekatan yang mungkin dilakukan:
+
+Dalam penyusunan tugas akhir ini, penulis mengkaji serta membandingkan metode-metode yang mungkin dilakukan untuk sejumlah aspek pengerjaan. Aspek-aspek yang dimaksud yaitu penghubungan (\textit{bridging}) lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows dan penentuan bahasa pemrograman yang paling praktis dan cocok digunakan dalam pengembangan perangkat lunak yang terlibat.
+
+Dalam aspek penghubungan lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows, metode yang dipilih menentukan jumlah dan cakupan perangkat lunak yang perlu dikembangkan, tingkat kesulitan pengembangan perangkat lunak tersebut, serta efisiensi penjalanan perangkat lunak yang telah jadi. Berikut pemaparan metode-metode yang mungkin dilakukan.
 \begin{enumerate}
     \item Lingkungan WSL dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix. Hal ini dimungkinkan dengan diperkenalkannya dukungan \textit{socket} Unix (AF\_UNIX) pada sistem operasi Windows 10 ke atas pada tahun 2017 \cite{bringing-afunix-to-windows}. Penelusuran lebih lanjut mengindikasikan bahwa kemampuan ini rupanya hanya mendukung Windows Subsystem for Linux versi 1 (WSL1) dan belum mendukung Windows Subsystem for Linux versi 2 (WSL2) \cite{github-issues-afunix-not-supported-in-wsl2}. Oleh karena itu, mengingat kemampuan grafis (\textit{graphical user interface}) pada Windows Subsystem for Linux hanya tersedia pada Windows Subsytem for Linux versi 2 (WSL2), metode ini tidak relevan dengan tujuan skripsi ini.
     

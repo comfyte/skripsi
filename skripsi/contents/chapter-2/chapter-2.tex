@@ -106,7 +106,24 @@ Dalam mengidentifikasi dirinya sendiri dan berkomunikasi dengan klien lain, tiap
     Antarmuka dalam konteks komunikasi D-Bus merupakan suatu "kontrak" yang disetujui oleh berbagai klien yang digunakan untuk memfasilitasi komunikasi antarklien. Antarmuka diperlukan agar dua klien dapat berkomunikasi dengan bentuk dan struktur data yang sama yang telah disetujui oleh masing-masing pihak.
 \end{itemize}
 
-Proses komunikasi di dalam suatu bus perpesanan D-Bus dilakukan dalam bentuk "pesan" (\textit{message})
+Secara garis besar, proses komunikasi di dalam suatu bus perpesanan D-Bus dilakukan dalam bentuk "pesan" (\textit{message}). Pesan-pesan dalam D-Bus dapat dikategorikan menjadi dua jenis di bawah ini yang juga memiliki kemiripan dengan konsep pemrograman berorientasi objek.
+\begin{itemize}
+    \item \textbf{Metode (\textit{method})}\\
+    Metode merupakan pesan yang dikirimkan secara spesifik dan terarah dari klien pengirim (\textit{sender}) ke tujuan (\textit{destination}) yang jelas. Pesan jenis metode dikirimkan dengan cara memanggil metode yang bersangkutan pada objek D-Bus yang diinginkan.
+    \item \textbf{Sinyal (\textit{signal})}\\
+    Sinyal merupakan pesan yang dikirimkan secara tidak terarah (tidak memiliki tujuan spesifik). Pesan berjenis sinyal disebarluaskan (\textit{advertise}) di dalam bus perpesanan untuk didengarkan oleh klien-klien lain yang berkepentingan.
+\end{itemize}
+
+Selain dua jenis pesan di atas, objek-objek pada klien D-Bus juga memiliki elemen bernama "properti" (\textit{property}) yang juga berkonsep serupa dengan pemrograman berorientasi objek. Properti pada suatu objek D-Bus umumnya berisi informasi-informasi yang berkaitan dengan objek tersebut dan/atau klien yang memiliki objek tersebut. Pada umumnya, setiap pergantian nilai properti akan menyebabkan sinyal bernama "\path{PropertiesChanged}" pada antarmuka "\path{org.freedesktop.DBus.Properties}" tersebar sehingga pergantian nilai properti tersebut dapat diketahui oleh klien-klien lain yang berkepentingan.
+
+Dalam menginspeksi bus perpesanan D-Bus, terdapat berbagai macam perangkat lunak atau peralatan (\textit{tools}) yang dapat membantu. Secara \textit{default}, perangkat lunak D-Bus yang terinstal juga memiliki peralatan-peralatan bawaan seperti \verb|dbus-monitor| dan \verb|dbus-send| yang dapat bermanfaat untuk memeriksa serta berinteraksi langsung dengan bus perpesanan D-Bus dalam antarmuka baris perintah (\textit{command-line interface}). Selain itu, tersedia pula solusi-solusi pihak ketiga seperti perangkat lunak D-Feet yang dapat memeriksa bus perpesanan D-Bus dalam antarmuka grafis (\textit{graphical user interface}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{archives//contents-template-pak-prapto//chapter-2/dfeet-window-screenshot.png}
+    \caption{Tangkapan layar perangkat lunak "D-Feet" yang berjalan di Windows Subsystem for Linux (WSL)}
+    \label{fig:enter-label}
+\end{figure}
 
 
 \subsection{Sistem Init systemd}

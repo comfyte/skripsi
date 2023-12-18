@@ -209,7 +209,30 @@ dbus-send --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpri
         
 \end{enumerate}
 
-Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal seperti kelengkapan integrasi dengan \textit{application programming interface} (API) \textit{shell} Windows dan kemampuan berkomunikasi dengan D-Bus (ketersediaan pustaka pemrograman apabila menggunakan)
+Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal seperti kelengkapan integrasi dengan \textit{application programming interface} (API) \textit{shell} Windows dan kemampuan berkomunikasi dengan D-Bus (baik dengan solusi bawaan atau pihak pertama, apabila tersedia, maupun dengan bantuan pustaka pihak ketiga yang tersedia pada bahasa pemrograman tersebut). Berikut perbandingan platform dan bahasa pemrograman yang dapat digunakan yang disajikan dalam bentuk tabel.
+
+\begin{table}
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|X|} \hline
+        \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline
+        C\# & Tersedia (mengingat C\# adalah salah satu platform \textit{native} di Windows & Terbatas dan kurang terdokumentasi (\textit{undocumented})\\ \hline
+        Python & Tersedia melalui \textit{binding} pihak ketiga & Tersedia pustaka-pustaka (\textit{library}) yang beraneka ragam\\ \hline
+    \end{tabularx}
+    \caption{Perbandingan platform dan bahasa pemrograman}
+\end{table}
+
+
+% \begin{table}
+%     \centering
+%     \begin{tabular}{|c|c|c|} \hline 
+%          &  & \\ \hline 
+%          &  & \\ \hline 
+%          &  & \\ \hline
+%     \end{tabular}
+%     \caption{Caption}
+%     \label{tab:my_label}
+% \end{table}
+
 
 \section{Pertanyaan Tugas Akhir}
 

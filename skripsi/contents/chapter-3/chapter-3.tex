@@ -28,22 +28,26 @@ wsl --install\end{lstlisting}
     \item \textbf{Opsional:} Perangkat komputer bersistem operasi Ubuntu 22.04 (LTS) sebagai \textbf{komputer referensi (\textit{reference machine})}. Perangkat komputer dapat berupa komputer \textit{desktop} ataupun komputer jinjing (\textit{laptop}). Apabila tidak memungkinkan, mesin referensi dapat disubstitusikan dengan \textit{virtual machine} yang berjalan di suatu perangkat komputer \textit{host} melalui perangkat lunak \textit{virtual machine}. Pada tugas akhir ini, penulis menggunakan \textit{virtual machine} yang menjalankan sistem operasi Ubuntu 22.04 (LTS) melalui perangkat lunak virtualisasi "UTM" dengan \textit{host} komputer jinjing Apple MacBook Air keluaran tahun 2020 (berprosesor M1) bersistem operasi macOS 13 "Ventura".
 
     \item Perangkat lunak untuk keperluan pengembangan (semuanya diinstal di lingkungan Windows):
-    \begin{itemize}
+    \begin{enumerate}
         \item Microsoft Visual Studio Code (versi terbaru)
-        \item Python versi 3.11 atau lebih baru
-    \end{itemize}
+        \item Python versi 3.11 atau lebih baru dengan sejumlah pustaka (\textit{library}) pihak ketiga yang terinstal (menggunakan \verb|pip|):
+        \begin{enumerate}
+            \item \verb|dbus-next|
+            \item \verb|winsdk|
+        \end{enumerate}
+    \end{enumerate}
     
     \item Perangkat lunak untuk keperluan pengujian akhir (semuanya diinstal di dalam WSL):
-    \begin{itemize}
+    \begin{enumerate}
         \item Spotify
         \item Mozilla Thunderbird
         \item Google Chrome
-    \end{itemize}
+    \end{enumerate}
 \end{enumerate}
 
 \subsection{Bahan Tugas Akhir}
 
-Dalam pengerjaan tugas akhir ini, digunakan sejumlah dokumen standar atau spesifikasi yang berkaitan dengan protokol atau perangkat lunak yang digunakan. Berikut dokumen-dokumen yang dimaksud.
+Dalam pengerjaan tugas akhir ini, digunakan sejumlah dokumen standar atau spesifikasi yang berkaitan dengan protokol atau perangkat lunak yang digunakan. Berikut dokumen-dokumen yang dimaksud. \textcolor{orange}{(TODO: Add more according to the relevant citations listed in the Daftar Pustaka)}
 \begin{enumerate}
     \item Dokumen spesifikasi D-Bus \cite{dbus-specification}
 \end{enumerate}
@@ -87,17 +91,17 @@ Berikut perencanaan agenda pelaksanaan tahap-tahap yang telah disebutkan di atas
 
 \begin{table}
     \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} \hline 
-        \multirow{2}{*}{No.} & Tahap & \multicolumn{4}{c}{Okt} & \multicolumn{4}{c}{Nov} \\ \hline 
-        && W1 & W2 & W3 & W4 & W1 & W2 & W3 & W4\\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline 
-         &  &  &  &  &  &  &  &  & \\ \hline
+    \begin{tabular}{|c|p{4cm}|c|c|c|c|c|c|c|c|} \hline 
+        \multirow{3}{*}{\textbf{No.}} & \multirow{3}{*}{\textbf{Tahap}} & \multicolumn{8}{c|}{\textbf{2023}}\\ \cline{3-10} 
+        & & \multicolumn{4}{c|}{\textbf{Oktober}} & \multicolumn{4}{c|}{\textbf{November}}\\ \cline{3-10} 
+        & & \textbf{W1} & \textbf{W2} & \textbf{W3} & \textbf{W4} & \textbf{W1} & \textbf{W2} & \textbf{W3} & \textbf{W4}\\ \hline 
+        1 & Pemeriksaan fungsionalitas di WSL & \cellcolor{black} &  &  &  &  &  &  & \\ \hline 
+        2 & Analisis pada sistem operasi Linux sungguhan & \cellcolor{black} & \cellcolor{black} &  &  &  &  &  & \\ \hline 
+        3 & Penyesuaian konfigurasi WSL untuk mendukung perangkat lunak FancyWSL &  &  & \cellcolor{black} & \cellcolor{black} &  &  &  & \\ \hline 
+        4 & Analisis kesamaan antarmuka notifikasi &  &  & \cellcolor{black} & \cellcolor{black} & \cellcolor{black} & &  & \\ \hline 
+        5 & Analisis kesamaan antarmuka pengontrolan media &  &  & \cellcolor{black} & \cellcolor{black} & \cellcolor{black} &  &  & \\ \hline 
+        6 & Pengembangan perangkat lunak FancyWSL &  &  &  &  & \cellcolor{black} & \cellcolor{black} & \cellcolor{black} & \cellcolor{black}\\ \hline 
+        7 & Pengintegrasian FancyWSL dengan \textit{lifecycle} WSL &  &  &  &  &  &  &  & \cellcolor{black}\\ \hline 
     \end{tabular}
     \caption{Agenda pelaksanaan tugas akhir per minggu (\textit{week})}
     \label{tab:my_label}

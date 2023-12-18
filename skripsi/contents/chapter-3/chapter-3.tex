@@ -58,11 +58,26 @@ Guna menciptakan arah penelitian yang terstruktur, ditentukan alur tugas akhir s
     \item \textbf{Analisis \textit{Behavior} Penanganan Notifikasi dan Kontrol Media pada Instalasi Sistem Operasi Linux Sungguhan sebagai Basis Implementasi di Windows Subsystem for Linux (WSL)}\\
     Dilakukan analisis kedua aspek utama yang dibahas dalam tugas akhir ini, penanganan notifikasi dan kontrol media, pada sistem operasi Linux sungguhan yang terinstal di komputer referensi. Pada tahap ini, dilakukan investigasi tentang bagaimana sistem D-Bus berperan dalam pencapaian kedua aspek tersebut. Guna meminimalkan perbedaan yang dapat terjadi, sistem operasi Linux sungguhan yang terinstal menggunakan distribusi yang sama dengan distribusi \textit{default} pada WSL, yakni Ubuntu (versi 22.04 pada waktu penyusunan tugas akhir ini).
 
-    \item \textbf{Penyesuaian Konfigurasi Windows Subsystem for Linux untuk Mendukung Perangkat Lunak FancyWSL}
+    \item \textbf{Penyesuaian Konfigurasi Windows Subsystem for Linux untuk Mendukung Perangkat Lunak FancyWSL}\\
     Secara \textit{default}, instalasi Windows Subsystem for Linux (WSL) tidak bisa langsung dihubungkan dengan perangkat lunak FancyWSL yang akan dikembangkan; diperlukan beberapa modifikasi pada sejumlah konfigurasi di WSL, yakni pemastian penggunaan systemd sebagai sistem init dan pengaturan \textit{daemon} D-Bus agar menerima penghubungan melalui TCP.
 
+    \item \textbf{Analisis Kesamaan Antarmuka FreeDesktop Desktop Notifications di Linux dengan ToastNotification di Windows}\\
+    Guna menghubungkan ekosistem penanganan notifikasi WSL dengan ekosistem penanganan notifikasi Windows, diperlukan analisis mendalam pada detail implementasi penanganan notifikasi pada masing-masing platform (Linux dan Windows) dan pencocokan antarmuka keduanya agar dapat dihubungkan.
+
+    \item \textbf{Analisis Kesamaan Antarmuka Media Player Remote Interfacing Specification (MPRIS) di Linux dengan System Media Transport Controls (SMTC) di Windows}\\
+    Guna menghubungkan ekosistem pengontrolan media WSL dengan ekosistem pengontrolan media Windows, diperlukan analisis mendalam pada detail implementasi sistem pengontrolan media pada masing-masing platform (Linux dan Windows) dan pencocokan antarmuka keduanya agar dapat dihubungkan.
+
     \item \textbf{Pengembangan Perangkat Lunak FancyWSL}\\
-    Pada tahap ini, dilakukan pengembangan perangkat lunak FancyWSL dari awal hingga 
+    Pada tahap ini, dilakukan pengembangan perangkat lunak FancyWSL dari awal hingga akhir. Mengingat perangkat lunak ini mencakup sejumlah fungsi, tahap ini dibagi menjadi enam subtahap:
+    \begin{enumerate}
+        \item \textbf{Pengembangan Tahap Awal: Penghubungan dengan D-Bus dan Pengimplementasian Aspek \textit{Persistence} (\textit{Daemon})}\\
+
+        \item \textbf{Pengembangan Fungsi Penanganan Notifikasi}\\
+
+        \item \textbf{Pengembangan Fungsi Kontrol Media}\\
+
+        \item \textbf{Pengimplementasian \textit{Guards} Tambahan}\\
+    \end{enumerate}
 \end{enumerate}
 
 \section{Metode yang Digunakan}

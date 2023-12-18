@@ -24,7 +24,6 @@
 wsl --install\end{lstlisting}
     Apabila terdapat perangkat lunak \textit{virtual machine} pihak ketiga (VirtualBox, VMware, dan sebagainya) yang terinstal pada komputer utama tersebut, harap pastikan bahwa perangkat lunak \textit{virtual machine} tersebut telah diperbarui ke versi paling baru dan kompatibel dengan WSL2 atau Hyper-V (kapabilitas yang menenagai WSL2); instalasi WSL2 dan perangkat lunak \textit{virtual machine} pihak ketiga tersebut dalam sistem yang sama dapat menyebabkan degradasi performa pada perangkat lunak \textit{virtual machine} pihak ketiga tersebut karena perangkat lunak \textit{virtual machine} pihak ketiga tersebut mencoba mengakomodasi aktifnya kapabilitas Hyper-V.
 
-
     \item Perangkat komputer bersistem operasi Ubuntu 22.04 (LTS) sebagai \textbf{komputer referensi (\textit{reference machine})}. Perangkat komputer dapat berupa komputer \textit{desktop} ataupun komputer jinjing (\textit{laptop}). Apabila tidak memungkinkan, mesin referensi dapat disubstitusikan dengan \textit{virtual machine} yang berjalan di suatu perangkat komputer \textit{host} melalui perangkat lunak \textit{virtual machine}. Pada tugas akhir ini, penulis menggunakan \textit{virtual machine} yang menjalankan sistem operasi Ubuntu 22.04 (LTS) melalui perangkat lunak virtualisasi "UTM" dengan \textit{host} komputer jinjing Apple MacBook Air keluaran tahun 2020 (berprosesor M1) bersistem operasi macOS 13 "Ventura".
 
     \item Perangkat lunak untuk keperluan pengembangan (semuanya diinstal di lingkungan Windows):
@@ -63,7 +62,7 @@ Guna menciptakan arah penelitian yang terstruktur, ditentukan alur pelaksanaan t
     Dilakukan analisis kedua aspek utama yang dibahas dalam tugas akhir ini, penanganan notifikasi dan kontrol media, pada sistem operasi Linux sungguhan yang terinstal di komputer referensi. Pada tahap ini, dilakukan investigasi tentang bagaimana sistem D-Bus berperan dalam pencapaian kedua aspek tersebut. Guna meminimalkan perbedaan yang dapat terjadi, sistem operasi Linux sungguhan yang terinstal menggunakan distribusi yang sama dengan distribusi \textit{default} pada WSL, yakni Ubuntu (versi 22.04 pada waktu penyusunan tugas akhir ini).
 
     \item \textbf{Penyesuaian konfigurasi Windows Subsystem for Linux untuk mendukung perangkat lunak FancyWSL}\\
-    Secara \textit{default}, instalasi Windows Subsystem for Linux (WSL) tidak bisa langsung dihubungkan dengan perangkat lunak FancyWSL yang akan dikembangkan; diperlukan beberapa modifikasi terlebih dahulu pada sejumlah konfigurasi di WSL, yakni pemastian penggunaan systemd sebagai sistem init dan pengaturan \textit{daemon} D-Bus agar menerima penghubungan melalui TCP.
+    Secara \textit{default}, instalasi Windows Subsystem for Linux (WSL) tidak bisa langsung dihubungkan dengan perangkat lunak FancyWSL yang akan dikembangkan; diperlukan sejumlah modifikasi terlebih dahulu pada sejumlah konfigurasi di WSL, yakni pemastian penggunaan systemd sebagai sistem init dan pengaturan \textit{daemon} D-Bus agar menerima penghubungan melalui TCP.
 
     \item \textbf{Analisis kesamaan antarmuka FreeDesktop Desktop Notifications di Linux dengan ToastNotification di Windows}\\
     Guna menghubungkan ekosistem penanganan notifikasi WSL dengan ekosistem penanganan notifikasi Windows, diperlukan analisis mendalam pada detail implementasi penanganan notifikasi pada masing-masing platform (Linux dan Windows) dan pencocokan antarmuka keduanya agar dapat dihubungkan.
@@ -111,7 +110,11 @@ Guna menciptakan arah penelitian yang terstruktur, ditentukan alur pelaksanaan t
 
 \section{Metode yang Digunakan}
 
-Some placeholder text given here.
+Sesuai dengan analisis perbandingan metode yang telah dibahas di Bab II, tugas akhir ini menggunakan metode penghubungan lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows dengan memperluas cakupan koneksi bus perpesanan D-Bus yang berjalan di dalam WSL sehingga dapat dicapai oleh perangkat lunak FancyWSL yang berjalan di sisi Windows. Oleh karena itu, secara garis besar, metode tugas akhir ini dilakukan adalah dengan
+\begin{enumerate}
+    \item mengembangkan satu buah perangkat lunak bernama FancyWSL yang berjalan di lingkungan \textit{host} Windows dan
+    \item melakukan sejumlah konfigurasi yang diperlukan di Windows Subsystem for Linux (WSL) agar dapat terhubung dengan perangkat lunak yang dikembangkan pada poin (1).
+\end{enumerate}
 
 \section{Metode Analisis Data}
 

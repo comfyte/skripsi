@@ -96,28 +96,18 @@ Agar dapat dihubungi oleh para klien, tiap-tiap bus perpesanan D-Bus memiliki al
 
 Seperti yang telah disebutkan pada tiap-tiap deskripsi metode transportasi di atas, metode transportasi ditentukan secara otomatis sesuai dengan format penulisan alamat bus perpesanan D-Bus yang telah diatur. Alamat bus perpesanan D-Bus dapat diatur melalui dua tempat: argumen penjalanan \textit{daemon} D-Bus dan berkas konfigurasi. Metode pengaturan alamat bus perpesanan D-Bus melalui argumen penjalanan \textit{daemon} D-Bus dilakukan dengan menambahkan argumen berbentuk \lstinline[language=bash,columns=fixed]{--address="<tuliskan alamat yang diinginkan di sini>"}. Metode pengaturan alamat melalui argumen akan menimpa (\textit{override}) pengaturan apa pun yang dilakukan di berkas konfigurasi. Di sisi lain, metode pengaturan alamat bus perpesanan D-Bus melalui berkas konfigurasi dilakukan dengan cara memodifikasi berkas konfigurasi \textit{default} yang telah ada (berkas konfigurasi \textit{default} bus sistem berada di \path{/usr/share/dbus-1/system.conf} dan berkas konfigurasi \textit{default} bus sesi berada di \path{/usr/share/dbus-1/session.conf}) atau membuat berkas konfigurasi baru berekstensi berkas "\verb|.conf|" dan memuatnya pada saat penjalanan \textit{daemon} D-Bus melalui argumen \lstinline[language=bash,columns=fixed]{--config-file=<lokasi berkas konfigurasi>}.
 
-Klien-klien yang terhubung dengan D-Bus mempertukarkan informasi dalam bentuk "pesan" (\textit{messages}). Tiap-tiap pesan yang dikirimkan pada D-Bus mengandung data yang dipertukarkan serta informasi pengirim dan penerima agar bisa tersampaikan ke tujuan dengan baik.
-
-Proses interaksi di dalam D-Bus didesain agar memiliki konsep yang serupa dengan pemrograman berorientasi objek; tiap-tiap klien D-Bus dapat direpresentasikan sebagai "objek" di dalam bus perpesanan D-Bus. Meskipun demikian, klien D-Bus juga memiliki konsep-konsep yang spesifik terhadap D-Bus yang umumnya tidak ada di pemrograman berbasis objek. Berikut elemen-elemen yang dimiliki oleh klien D-Bus dalam mempertukarkan pesan.
+Dalam mengidentifikasi dirinya sendiri dan berkomunikasi dengan klien lain, tiap-tiap klien yang terhubung dengan bus perpesanan D-Bus mengemban sejumlah elemen yang didesain agar memiliki kemiripan dengan konsep-konsep pemrograman berorientasi objek yang telah familier bagi banyak orang. Berikut elemen-elemen yang dimaksud.
 \begin{itemize}
-    \item \textbf{Sinyal (\textit{signal})}\\
-
-    \item \textbf{Metode (\textit{method})}\\
-
-    \item \textbf{Properti (\textit{property})}\\
+    \item \textbf{Nama bus (\textit{bus name})}\\
+    Tiap-tiap klien D-Bus memiliki identitas berupa "nama bus" yang digunakan untuk mengidentifikasi klien tersebut dalam suatu bus perpesanan D-Bus. Nama bus terdiri dari dua jenis, nama bus unik (\textit{unique name}) dan nama bus yang dikenal (\textit{well-known name}), dan tiap-tiap klien dapat memiliki lebih dari satu nama bus. Secara \textit{default}, tiap-tiap klien baru yang terhubung ke suatu bus perpesanan D-Bus akan mendapatkan nama bus unik (diberikan secara otomatis oleh \textit{daemon} D-Bus) yang tersusun atas sejumlah angka yang dimulai oleh tanda titik dua (misalnya "\verb|:34-907|"). Perlu diingat bahwa istilah "nama bus" di sini berarti nama masing-masing klien yang terhubung dalam suatu bus perpesanan, bukan nama bus perpesanan itu sendiri \cite{official-introduction-to-dbus}.
+    \item \textbf{Objek (\textit{object})}\\
+    Objek dalam konteks komunikasi D-Bus merupakan ujung-ujung komunikasi (\textit{endpoint}) yang dimiliki oleh klien di dalam suatu bus perpesanan D-Bus. Tiap-tiap klien D-Bus dapat memiliki lebih dari satu objek.
+    \item \textbf{Antarmuka (\textit{interface})}\\
+    Antarmuka dalam konteks komunikasi D-Bus merupakan suatu "kontrak" yang disetujui oleh berbagai klien yang digunakan untuk memfasilitasi komunikasi antarklien. Antarmuka diperlukan agar dua klien dapat berkomunikasi dengan bentuk dan struktur data yang sama yang telah disetujui oleh masing-masing pihak.
 \end{itemize}
 
-Proses pertukaran informasi antarklien D-Bus dilakukan melalui elemen-elemen yang dimiliki oleh klien
+Proses komunikasi di dalam suatu bus perpesanan D-Bus dilakukan dalam bentuk "pesan" (\textit{message})
 
-Tiap-tiap klien dalam D-Bus mengemban sejumlah elemen yang berguna dalam pertukaran pesan. Berikut elemen-elemen tersebut.
-\begin{itemize}
-    \item Interface
-\end{itemize}
-
-Dalam pengoperasian D-Bus, terdapat sejumlah konsep perpesanan:
-\begin{itemize}
-    \item 
-\end{itemize}
 
 \subsection{Sistem Init systemd}
 
@@ -211,7 +201,7 @@ dbus-send --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpri
 
 Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal seperti kelengkapan integrasi dengan \textit{application programming interface} (API) \textit{shell} Windows dan kemampuan berkomunikasi dengan D-Bus (baik dengan solusi bawaan atau pihak pertama, apabila tersedia, maupun dengan bantuan pustaka pihak ketiga yang tersedia pada bahasa pemrograman tersebut). Berikut perbandingan platform dan bahasa pemrograman yang dapat digunakan yang disajikan dalam bentuk tabel.
 
-\begin{table}
+\begin{table}[h]
     \centering
     \begin{tabularx}{\textwidth}{|l|X|X|} \hline
         \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline

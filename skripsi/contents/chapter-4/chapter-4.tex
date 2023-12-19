@@ -42,7 +42,21 @@ Dalam pengujian ini, akan dikirimkan sampel notifikasi sederhana yang hanya memu
 \begin{lstlisting}[language=bash]
     notify-send "Percobaan Notifikasi" "Halo! Perkenalkan, nama saya Farrel."
 \end{lstlisting}
-Setelah perintah tersebut dijalankan, muncul notifikasi pada layar komputer seperti pada gambar \ref{}. Karena Ubuntu (salah satu distribusi Linux) menggunakan lingkungan desktop GNOME, penampilan notifikasi mengikuti gaya penampilan notifikasi pada lingkungan \textit{desktop} GNOME, yaitu di atas layar. Setelah beberapa saat (bergantung pada tingkat urgensi yang telah ditentukan pada pemanggilan perintah \verb|notify-send|), notifikasi akan menghilang dengan sendirinya dan masuk ke panel notifikasi yang disediakan oleh \textit{desktop} GNOME seperti pada gambar \cite{}.
+Setelah perintah tersebut dijalankan, muncul notifikasi pada layar komputer seperti pada gambar \ref{ubuntu-notify-send-demo}. Karena Ubuntu (salah satu distribusi Linux) menggunakan lingkungan desktop GNOME, penampilan notifikasi mengikuti gaya penampilan notifikasi pada lingkungan \textit{desktop} GNOME, yaitu di atas layar. Setelah beberapa saat (bergantung pada tingkat urgensi yang telah ditentukan pada pemanggilan perintah \verb|notify-send|), notifikasi akan menghilang dengan sendirinya dan masuk ke panel notifikasi yang disediakan oleh \textit{desktop} GNOME seperti pada gambar \ref{ubuntu-notification-panel}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{archives//contents-template-pak-prapto//chapter-4/Screenshot from 2023-12-19 06-15-10.png}
+    \caption{Notifikasi dari notify-send yang berhasil tertampil di \textit{desktop} GNOME di Ubuntu}
+    \label{ubuntu-notify-send-demo}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{archives//contents-template-pak-prapto//chapter-4/Screenshot from 2023-12-19 06-16-29.png}
+    \caption{Panel notifikasi di \textit{desktop} GNOME yang mengumpulkan notifikasi-notifikasi lampau yang pernah tertampil}
+    \label{ubuntu-notification-panel}
+\end{figure}
 
 Pada sistem operasi Linux, dimungkinkan penampilan notifikasi yang lebih kompleks (seperti mengandung tombol-tombol aksi) daripada sekadar notifikasi simpel seperti yang telah diujicobakan. Namun, mengingat alat \verb|notify-send| tidak mendukung jenis notifikasi kompleks seperti itu, pengujian pada bagian ini hanya mengujikan notifikasi yang simpel saja.
 
@@ -55,14 +69,34 @@ Pada sistem operasi Linux, dimungkinkan penampilan notifikasi yang lebih komplek
 
 Di balik layar, notifikasi yang tertampil tersebut disalurkan dari \verb|notify-send| ke \textit{shell} GNOME melalui bus perpesanan D-Bus yang berjalan pada sesi (\textit{session}) pengguna saat ini. Alat \verb|notify-send| terhubung dengan bus sesi sebagai klien yang memanggil metode .
 
-Dalam serangkaian peralatan yang disediakan secara bawaan oleh paket perangkat lunak D-Bus, terdapat alat bernama \verb|dbus-monitor| yang berfungsi memantau pesan-pesan yang dipertukarkan di dalam bus perpesanan D-Bus. Secara \textit{default}, penjalanan \verb|dbus-monitor| tanpa memberikan argumen apa pun akan memonitor dan mencetak (di \textit{standard output}) seluruh pesan yang dipertukarkan di bus perpesanan D-Bus yang mungkin dirasa berlebihan; penjalanan \verb|dbus-monitor| dapat diatur dengan sebuah argumen yang berupa perintah filter sehingga pesan-pesan yang dimonitor dan dicetak terbatas pada pesan-pesan yang diinginkan saja. Apabila alat \verb|dbus-monitor| dijalankan dengan perintah lengkap
+Dalam serangkaian peralatan yang disediakan secara bawaan oleh paket perangkat lunak D-Bus, terdapat alat bernama \verb|dbus-monitor| yang berfungsi memantau detail pesan-pesan yang dipertukarkan di dalam bus perpesanan D-Bus. Secara \textit{default}, penjalanan \verb|dbus-monitor| tanpa memberikan argumen apa pun akan memonitor dan mencetak (di \textit{standard output}) seluruh pesan yang dipertukarkan di bus perpesanan D-Bus yang mungkin dirasa berlebihan; penjalanan \verb|dbus-monitor| dapat diatur dengan sebuah argumen yang berupa perintah filter sehingga pesan-pesan yang dimonitor dan dicetak terbatas pada pesan-pesan yang diinginkan saja. Apabila alat \verb|dbus-monitor| dijalankan dengan perintah lengkap
 \begin{lstlisting}[language=bash]
     dbus-monitor "path='/org/freedesktop/Notifications'"
 \end{lstlisting}
-untuk memulai proses pemantauan dan perintah pengiriman notifikasi yang menggunakan \verb|notify-send| di atas dijalankan ulang, jendela terminal tempat penjalanan \verb|dbus-monitor| akan mengeluarkan informasi berikut.
+untuk memulai proses pemantauan dan perintah pengiriman notifikasi yang menggunakan \verb|notify-send| di atas dijalankan ulang, jendela terminal tempat penjalanan \verb|dbus-monitor| akan mengeluarkan informasi seperti berikut.
 \begin{lstlisting}
-    
+method call time=1702972516.257275 sender=:1.48 -> destination=:1.35 serial=31 path=/org/freedesktop/Notifications; interface=org.freedesktop.Notifications; member=Notify
+   string "notify-send"
+   uint32 0
+   string ""
+   string "Percobaan Notifikasi"
+   string "Halo! Perkenalkan, nama saya Farrel."
+   array [
+   ]
+   array [
+      dict entry(
+         string "urgency"
+         variant             byte 1
+      )
+      dict entry(
+         string "sender-pid"
+         variant             uint32 3347
+      )
+   ]
+   int32 -1
 \end{lstlisting}
+
+Keluaran (\textit{output}) penjalanan perintah \verb|dbus-monitor| secara gamblang menunjukkan informasi-informasi teknis pada suatu penampilan notifikasi di \textit{desktop} Linux. Di samping dokumen spesifikasi resmi penanganan notifikasi di Linux sebagai acuan utama \cite{xdg-desktop-notifications-specification}, hasil keluaran ini dapat sangat bermanfaat untuk menginspeksi dan men-\textit{debug} mekanisme penanganan notifikasi pada tahap-tahap pengembangan yang dilakukan selanjutnya.
 
 \subsection{Analisis Sistem Kontrol Media}
 

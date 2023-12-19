@@ -100,9 +100,11 @@ Keluaran (\textit{output}) penjalanan perintah \verb|dbus-monitor| secara gambla
 
 \subsection{Analisis Sistem Kontrol Media}
 
-Sistem-sistem operasi modern menawarkan antarmuka pengontrolan yang mudah (umumnya berbentuk panel) saat pengguna memulai pemutaran media, baik musik, video, maupun jenis media lainnya; sistem operasi Linux pun tidak berbeda. Sistem operasi Linux menawarkan akses cepat untuk mengontrol media yang sedang diputar dengan peletakan spesifik yang menyesuaikan lingkungan \textit{desktop} yang digunakan, tetapi dengan protokol dan antarmuka yang seragam antarimplementasi tersebut. Protokol dan antarmuka yang dimaksud bernama Media Player Remote Interfacing Specification (MPRIS).
+Sistem-sistem operasi modern menawarkan antarmuka pengontrolan yang mudah (umumnya berbentuk panel) saat pengguna memulai pemutaran media, baik musik, video, maupun jenis media lainnya; sistem operasi Linux pun tidak berbeda. Sistem operasi Linux menawarkan akses cepat dan universal untuk mengontrol media yang sedang diputar oleh aplikasi-aplikasi pemutar media dengan peletakan spesifik \textit{user interface} yang menyesuaikan lingkungan \textit{desktop} yang digunakan, tetapi dengan protokol dan antarmuka yang seragam antarimplementasi tersebut. Protokol dan antarmuka yang dimaksud bernama Media Player Remote Interfacing Specification (MPRIS).
 
+Serupa dengan sistem penanganan notifikasi pada sistem operasi Linux, sistem pengontrolan media pada sistem operasi Linux juga memanfaatkan bus perpesanan D-Bus yang berjalan pada sesi pengguna (\textit{user session}) yang aktif. Namun, sebagai sesama klien D-Bus, sistem pengontrolan media ini bertindak berbeda dengan sistem penanganan media yang telah dijelaskan pada bagian sebelumnya; bagian ini akan mengeksplor sistem pengontrolan media pada Linux (MPRIS) secara lebih mendetail serta perbedaan dengan sistem penanganan notifikasi tersebut.
 
+Apabila pengguna sistem operasi Linux memutar media (musik, video, atau lainnya) di suatu perangkat lunak pemutar media yang mendukung, perangkat lunak tersebut akan mengekspor informasi dan data mengenai pemutaran media tersebut ke bagian \textit{shell} sistem operasi yang bertugas menangani penampilan kontrol media. Penyaluran informasi dan data ini dilakukan melalui bus perpesanan D-Bus yang berjalan di sesi pengguna \textit{user session} yang bersangkutan.
 
 \section{Analisis Ekosistem pada Masing-Masing Platform (Linux dan Windows)}
 

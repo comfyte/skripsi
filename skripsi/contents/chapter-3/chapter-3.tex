@@ -94,7 +94,7 @@ Guna menciptakan arah penelitian yang terstruktur, ditentukan alur pelaksanaan t
 
 \begin{table}
     \centering
-    
+    \caption{Agenda pelaksanaan tugas akhir per minggu (\textit{week})}
     \begin{tabular}{|c|p{4cm}|c|c|c|c|c|c|c|c|} \hline 
         \multirow{3}{*}{\textbf{No.}} & \multirow{3}{*}{\textbf{Tahap}} & \multicolumn{8}{c|}{\textbf{2023}}\\ \cline{3-10} 
         & & \multicolumn{4}{c|}{\textbf{Oktober}} & \multicolumn{4}{c|}{\textbf{November}}\\ \cline{3-10} 
@@ -107,7 +107,6 @@ Guna menciptakan arah penelitian yang terstruktur, ditentukan alur pelaksanaan t
         6 & Pengembangan perangkat lunak FancyWSL &  &  &  &  & \cellcolor{black} & \cellcolor{black} & \cellcolor{black} & \cellcolor{black}\\ \hline 
         7 & Pengintegrasian FancyWSL dengan \textit{lifecycle} WSL &  &  &  &  &  &  &  & \cellcolor{black}\\ \hline 
     \end{tabular}
-    \caption{Agenda pelaksanaan tugas akhir per minggu (\textit{week})}
     \label{tabel-agenda-pelaksanaan}
 \end{table}
 
@@ -121,7 +120,7 @@ Sesuai dengan analisis perbandingan metode yang telah dibahas di Bab II, tugas a
 
 \section{Metode Analisis Data}
 
-Proses pengimplementasian akan dilakukan berdasarkan standar dan spesifikasi teknologi-teknokogi yang digunakan dalam tugas akhir ini. Sebagai contoh, pengimplementasian mekanisme komunikasi dengan D-Bus dilakukan dengan mengacu pada spesifikasi D-Bus \cite{dbus-specification}, pengimplementasian kapabilitas penanganan notifikasi dilakukan dengan mengacu pada FreeDesktop Desktop Notifications Specification \cite{xdg-desktop-notifications-specification}, dan pengimplementasian kapabilitas kontrol media dilakukan dengan mengacu pada standar Media Player Remote Interfacing Specification (MPRIS). \cite{xdg-mpris-specification}
+Proses pengimplementasian akan dilakukan berdasarkan standar dan spesifikasi teknologi-teknokogi yang digunakan dalam tugas akhir ini. Sebagai contoh, pengimplementasian mekanisme komunikasi dengan D-Bus dilakukan dengan mengacu pada spesifikasi D-Bus \cite{dbus-specification}, pengimplementasian kapabilitas penanganan notifikasi dilakukan dengan mengacu pada FreeDesktop Desktop Notifications Specification \cite{xdg-desktop-notifications-specification}, dan pengimplementasian kapabilitas kontrol media dilakukan dengan mengacu pada standar Media Player Remote Interfacing Specification (MPRIS) \cite{xdg-mpris-specification}.
 
 Pada akhir penelitian, akan dilakukan pengujian akhir yang membandingkan kondisi penggunaan Windows Subsystem for Linux (WSL) tanpa solusi yang dikembangkan di tugas akhir ini (kondisi bawaan) dan dengan solusi yang dikembangkan di tugas akhir ini (kondisi telah dilengkapi dengan perangkat lunak FancyWSL serta konfigurasi-konfigurasi yang diperlukan). Kedua bagian pengujian ini akan dilakukan menggunakan set perangkat lunak yang sama, yakni
 \begin{itemize}

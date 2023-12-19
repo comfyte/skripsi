@@ -53,6 +53,17 @@ Pada sistem operasi Linux, dimungkinkan penampilan notifikasi yang lebih komplek
     \label{example-of-notification-with-action-buttons-on-gnome-desktop}
 \end{figure}
 
+Di balik layar, notifikasi yang tertampil tersebut disalurkan dari \verb|notify-send| ke \textit{shell} GNOME melalui bus perpesanan D-Bus yang berjalan pada sesi (\textit{session}) pengguna saat ini. Alat \verb|notify-send| terhubung dengan bus sesi sebagai klien yang memanggil metode .
+
+Dalam serangkaian peralatan yang disediakan secara bawaan oleh paket perangkat lunak D-Bus, terdapat alat bernama \verb|dbus-monitor| yang berfungsi memantau pesan-pesan yang dipertukarkan di dalam bus perpesanan D-Bus. Secara \textit{default}, penjalanan \verb|dbus-monitor| tanpa memberikan argumen apa pun akan memonitor dan mencetak (di \textit{standard output}) seluruh pesan yang dipertukarkan di bus perpesanan D-Bus yang mungkin dirasa berlebihan; penjalanan \verb|dbus-monitor| dapat diatur dengan sebuah argumen yang berupa perintah filter sehingga pesan-pesan yang dimonitor dan dicetak terbatas pada pesan-pesan yang diinginkan saja. Apabila alat \verb|dbus-monitor| dijalankan dengan perintah lengkap
+\begin{lstlisting}[language=bash]
+    dbus-monitor "path='/org/freedesktop/Notifications'"
+\end{lstlisting}
+untuk memulai proses pemantauan dan perintah pengiriman notifikasi yang menggunakan \verb|notify-send| di atas dijalankan ulang, jendela terminal tempat penjalanan \verb|dbus-monitor| akan mengeluarkan informasi berikut.
+\begin{lstlisting}
+    
+\end{lstlisting}
+
 \subsection{Analisis Sistem Kontrol Media}
 
 \section{Analisis Ekosistem pada Masing-Masing Platform (Linux dan Windows)}

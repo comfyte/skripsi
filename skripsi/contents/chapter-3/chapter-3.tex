@@ -11,7 +11,7 @@
         \item arsitektur x86\_64 (64-bit) dengan prosesor seri Intel Core generasi ke-8 atau lebih tinggi;
         \item memori (RAM) minimal 8 GB; dan
         \item ruang penyimpanan minimal 64 GB.
-    \end{itemize} Bila menggunakan \textit{virtual machine}, harap pastikan fungsionalitas "\textit{nested virtualization}" bekerja dengan baik karena Windows Subsystem for Linux versi kedua (WSL2) membutuhkan dukungan virtualisasi. Pada tugas akhir ini, digunakan perangkat komputer \textit{all-in-one} ASUS ZN270IE beridentitas "COM25" di Laboratorium Jaringan Komputer dan Aplikasi Terdistribusi, Departemen Teknik Elektro dan Teknologi Informasi, Universitas Gadjah Mada dengan detail sebagai berikut.
+    \end{itemize} Bila menggunakan \textit{virtual machine}, harap pastikan fungsionalitas "\textit{nested virtualization}" bekerja dengan baik karena Windows Subsystem for Linux versi kedua (WSL2) membutuhkan dukungan virtualisasi. Pada tugas akhir ini, digunakan perangkat komputer \textit{all-in-one} ASUS seri ZN270IE beridentitas "COM25" di Laboratorium Jaringan Komputer dan Aplikasi Terdistribusi, Departemen Teknik Elektro dan Teknologi Informasi, Universitas Gadjah Mada dengan detail sebagai berikut.
     \begin{itemize}
         \item Sistem operasi Windows 11 Pro (versi 22H2) 64-bit
         \item Prosesor Intel Core i7-7700T dengan kecepatan 2,90 GHz dan arsitektur x86\_64 (64-bit)
@@ -46,9 +46,11 @@ wsl --install\end{lstlisting}
 
 \subsection{Bahan Tugas Akhir}
 
-Dalam pengerjaan tugas akhir ini, digunakan sejumlah dokumen standar atau spesifikasi yang berkaitan dengan protokol atau perangkat lunak yang digunakan. Berikut dokumen-dokumen yang dimaksud. \textcolor{orange}{(TODO: Add more according to the relevant citations listed in the Daftar Pustaka)}
+Dalam pengerjaan tugas akhir ini, digunakan sejumlah dokumen standar atau spesifikasi yang berkaitan dengan protokol atau perangkat lunak yang digunakan. Berikut dokumen-dokumen yang dimaksud. \textcolor{orange}{(TODO: This is still incomplete!)}
 \begin{enumerate}
     \item Dokumen spesifikasi D-Bus \cite{dbus-specification}
+    \item Dokumen spesifikasi FreeDesktop (XDG) Desktop Notifications \cite{xdg-desktop-notifications-specification}
+    \item Dokumen spesifikasi FreeDesktop (XDG) Media Player Remote Interfacing Specification (MPRIS) \cite{xdg-mpris-specification}
 \end{enumerate}
 
 \section{Alur Tugas Akhir}
@@ -92,6 +94,7 @@ Guna menciptakan arah penelitian yang terstruktur, ditentukan alur pelaksanaan t
 
 \begin{table}
     \centering
+    
     \begin{tabular}{|c|p{4cm}|c|c|c|c|c|c|c|c|} \hline 
         \multirow{3}{*}{\textbf{No.}} & \multirow{3}{*}{\textbf{Tahap}} & \multicolumn{8}{c|}{\textbf{2023}}\\ \cline{3-10} 
         & & \multicolumn{4}{c|}{\textbf{Oktober}} & \multicolumn{4}{c|}{\textbf{November}}\\ \cline{3-10} 
@@ -118,11 +121,11 @@ Sesuai dengan analisis perbandingan metode yang telah dibahas di Bab II, tugas a
 
 \section{Metode Analisis Data}
 
-Proses pengimplementasian akan dilakukan berdasarkan standar dan spesifikasi teknologi-teknokogi yang digunakan dalam tugas akhir ini. Sebagai contoh, pengimplementasian mekanisme komunikasi dengan D-Bus dilakukan dengan mengacu pada spesifikasi D-Bus \cite{dbus-specification}, pengimplementasian kapabilitas penanganan notifikasi dilakukan dengan mengacu pada FreeDesktop Desktop Notifications Specification \cite{}, dan pengimplementasian kapabilitas kontrol media dilakukan dengan mengacu pada standar Media Player Remote Interfacing Specification (MPRIS). \cite{}
+Proses pengimplementasian akan dilakukan berdasarkan standar dan spesifikasi teknologi-teknokogi yang digunakan dalam tugas akhir ini. Sebagai contoh, pengimplementasian mekanisme komunikasi dengan D-Bus dilakukan dengan mengacu pada spesifikasi D-Bus \cite{dbus-specification}, pengimplementasian kapabilitas penanganan notifikasi dilakukan dengan mengacu pada FreeDesktop Desktop Notifications Specification \cite{xdg-desktop-notifications-specification}, dan pengimplementasian kapabilitas kontrol media dilakukan dengan mengacu pada standar Media Player Remote Interfacing Specification (MPRIS). \cite{xdg-mpris-specification}
 
 Pada akhir penelitian, akan dilakukan pengujian akhir yang membandingkan kondisi penggunaan Windows Subsystem for Linux (WSL) tanpa solusi yang dikembangkan di tugas akhir ini (kondisi bawaan) dan dengan solusi yang dikembangkan di tugas akhir ini (kondisi telah dilengkapi dengan perangkat lunak FancyWSL serta konfigurasi-konfigurasi yang diperlukan). Kedua bagian pengujian ini akan dilakukan menggunakan set perangkat lunak yang sama, yakni
 \begin{itemize}
     \item Spotify (pengujian kontrol media dan notifikasi),
-    \item Mozilla Thunderbird (pengujian notifikasi),
-    \item dan Google Chrome (pengujian notifikasi).
+    \item Mozilla Thunderbird (pengujian notifikasi), dan
+    \item Google Chrome (pengujian notifikasi).
 \end{itemize}

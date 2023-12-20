@@ -437,8 +437,69 @@ Pada pengembangan perangkat lunak FancyWSL, diimplementasikan sejumlah \textit{g
 
 Seluruh fungsi \textit{guard} di atas bersifat privat (\textit{private function}) dan hanya tersedia untuk diakses pada modul tersebut; hanya terdapat satu fungsi tunggal, \verb|verify_platform()|, yang menggabungkan fungsi-fungsi \textit{guard} di atas dan diekspos kepada modul-modul luar yang memanfaatkan modul ini.
 
+\section{Pengintegrasian FancyWSL dengan \textit{Lifecycle} Windows Subsystem for Linux (WSL)}
+
+Perangkat lunak FancyWSL yang telah dikembangkan dapat dijalankan secara manual setiap kali pengguna ingin merasakan tingkat integrasi WSL dengan Windows yang lebih mendalam. Namun, mengingat solusi ini berkaitan dengan integrasi yang umumnya bersifat transparan ke pengguna, akan jauh lebih baik apabila fungsionalitas integrasi yang ditingkatkan ini berjalan secara mandiri dan otomatis. Hal ini dapat dicapai salah satunya dengan menambahkan perangkat lunak FancyWSL sebagai layanan (\textit{service}) systemd.
+
+Untuk mengimplementasikan hal ini, dibuat sebuah berkas baru yang terletak di \path{/home/<nama-pengguna>/.config/systemd/user/fancywsl-windows-daemon.service} yang digunakan sebagai defisi layanan (\textit{service}) FancyWSL. Berkas tersebut berisi informasi-informasi penjalanan perangkat lunak FancyWSL sebagai layanan \textit{service} systemd. Berikut isi berkas tersebut.
+
+\begin{lstlisting}
+[Unit]
+Description=FancyWSL Windows-side daemon
+After=dbus.service
+
+[Service]
+ExecStart=/home/comfyte/.local/bin/start-fancywsl-windows-daemon.sh
+
+[Install]
+WantedBy=graphical.target
+\end{lstlisting}
+
+Berdasarkan berkas definisi tersebut, layanan (\textit{service}) systemd ini akan dijalankan setelah layanan D-Bus berjalan. Berkas ini juga menginstruksikan agar layanan ini menjalankan sebuah berkas \textit{shell script} yang terletak di \path{/home/comfyte/.local/bin/start-fancywsl-windows-daemon.sh}. Berikut isi berkas \textit{shell script} tersebut.
+
+\begin{lstlisting}[language=bash]
+#!/usr/bin/env bash
+export BUS_ADDRESS_FOR_FWSL=$(journalctl --user -b -u dbus.service | grep 'dbus-daemon' | tail -n 1 | grep -P -o 'tcp\:host=\S+,port=\d+(?:,family=(?:ipv4|ipv6))?')
+export PYTHONPATH=/mnt/c/Users/rafir/Projects/skripsi/FancyWSL
+WSLENV=$WSLENV:PYTHONPATH/wp /mnt/c/Users/rafir/AppData/Local/Microsoft/WindowsApps/python3.exe -m fwsl_daemon --bus-address="$BUS_ADDRESS_FOR_FWSL"
+\end{lstlisting}
+
+Dalam isi berkas \textit{shell script} tersebut, terdapat penjalanan berkas \textit{executable} berakhiran \verb|.exe| secara langsung di dalam lingkungan Linux (WSL). Hal ini dimungkinkan oleh kemampuan WSL dalam menjalankan berkas \textit{executable} Windows secara langsung di dalam lingkungan WSL \cite{msdocs-run-windows-tools-from-linux}.
+
 \section{Dokumentasi Pengujian Akhir FancyWSL}
 
-\section{Kelebihan dan Kelemahan Solusi pada Tugas Akhir Ini}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{archives//contents-template-pak-prapto//chapter-4/Screenshot 2023-12-20 202713.png}
+    \caption{Fungsionalitas notifikasi saat ini bekerja pada perangkat lunak yang berjalan di dalam WSL saat \textit{daemon} FancyWSL dijalankan.}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{archives//contents-template-pak-prapto//chapter-4/Screenshot 2023-12-20 153317.png}
+    \caption{Fungsionalitas kontrol media saat ini bekerja pada perangkat lunak yang berjalan di dalam WSL saat \textit{daemon} FancyWSL dijalankan.}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Kelebihan dan Kekurangan Solusi pada Tugas Akhir Ini}
+
+\subsection{Kelebihan}
+
+\begin{enumerate}
+    \item Perangkat lunak FancyWSL memungkinkan pengintegrasian, dua hal yang sebelumnya belum bisa dilakukan.
+    \item FancyWSL menggunakan kemampuan bawaan D-Bus dalam berkomunikasi menggunakan protokol TCP, sehingga proses komunikasi berlangsung cukup efisien dibandingkan dengan metode-metode lain yang telah disebutkan pada Bab II.
+    \item FancyWSL bersifat mandiri dan dapat berjalan secara otomatis pada saat suatu \textit{instance} WSL dijalankan (hasil integrasi dengan sistem init systemd) dan dapat menutup secara otomatis saat tidak ada \textit{instance} WSL lagi yang berjalan (ketiadaan koneksi dengan bus perpesanan D-Bus akan mengakhiri \textit{main loop} pada FancyWSL sehingga menutup FancyWSL secara otomatis).
+\end{enumerate}
+
+\subsection{Kekurangan}
+
+\begin{enumerate}
+    \item Fungsi penampilan notifikasi pada FancyWSL masih terbatas pada penampilan notifikasi sederhana tanpa ikon, pengaturan durasi penampilan notifikasi, dan aksi-aksi tambahan seperti tombol.
+
+    \item Fungsi pengontrolan media masih bersifat \textit{buggy} dan terkadang tidak bekerja karena berbagai alasan. Selain itu, informasi media yang ditampilkan belum memunculkan elemen-elemen tambahan seperti gambar album.
+\end{enumerate}
 
 \section{Perbandingan Hasil Penelitian dengan Hasil Terdahulu}
+
+Sejauh ini, baru terdapat satu buah penelitian dahulu yang membahas topik yang sama dengan tugas akhir ini, yakni tesis master berjudul

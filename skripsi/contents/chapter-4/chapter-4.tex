@@ -104,13 +104,111 @@ Sistem-sistem operasi modern menawarkan antarmuka pengontrolan yang mudah (umumn
 
 Serupa dengan sistem penanganan notifikasi pada sistem operasi Linux, sistem pengontrolan media pada sistem operasi Linux juga memanfaatkan bus perpesanan D-Bus yang berjalan pada sesi pengguna (\textit{user session}) yang aktif. Namun, sebagai sesama klien D-Bus, sistem pengontrolan media ini bertindak berbeda dengan sistem penanganan media yang telah dijelaskan pada bagian sebelumnya; bagian ini akan mengeksplor sistem pengontrolan media pada Linux (MPRIS) secara lebih mendetail serta perbedaan dengan sistem penanganan notifikasi tersebut.
 
-Apabila pengguna sistem operasi Linux memutar media (musik, video, atau lainnya) di suatu perangkat lunak pemutar media yang mendukung, perangkat lunak tersebut akan mengekspor informasi dan data mengenai pemutaran media tersebut ke bagian \textit{shell} sistem operasi yang bertugas menangani penampilan kontrol media. Penyaluran informasi dan data ini dilakukan melalui bus perpesanan D-Bus yang berjalan di sesi pengguna \textit{user session} yang bersangkutan.
+Apabila pengguna sistem operasi Linux memutar media (musik, video, atau lainnya) di suatu perangkat lunak pemutar media yang mendukung, perangkat lunak tersebut akan mengekspor informasi dan data mengenai pemutaran media tersebut ke bagian \textit{shell} sistem operasi yang bertugas menangani penampilan kontrol media (untuk contoh pada Ubuntu, lihat gambar \ref{ubuntu-media-controls}. Penyaluran informasi dan data ini dilakukan melalui bus perpesanan D-Bus yang berjalan di sesi pengguna \textit{user session} yang bersangkutan.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{archives//contents-template-pak-prapto//chapter-4/Screenshot from 2023-12-19 23-51-47.png}
+    \caption{Contoh kontrol media yang muncul di antarmuka pengguna (\textit{graphical user interface}) \textit{shell} Ubuntu saat pengguna mulai memutar video YouTube}
+    \label{ubuntu-media-controls}
+\end{figure}
+
+Penggunaan alat \verb|dbus-monitor| yang terfilter pada pemonitoran \textit{path} tempat pengomunikasian pemutaran media MPRIS, \path{/org/mpris/MediaPlayer2}, menunjukkan informasi dan data yang berkaitan dengan media yang sedang diputar beserta statusnya.
+\begin{lstlisting}
+signal time=1703030006.305799 sender=:1.179 -> destination=(null destination) serial=24 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+   string "org.mpris.MediaPlayer2.Player"
+   array [
+      dict entry(
+         string "Metadata"
+         variant             array [
+               dict entry(
+                  string "mpris:trackid"
+                  variant                      object path "/org/mpris/MediaPlayer2/firefox"
+               )
+               dict entry(
+                  string "xesam:title"
+                  variant                      string "Marshmello - Alone (Official Music Video)"
+               )
+               dict entry(
+                  string "xesam:album"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:artist"
+                  variant                      array [
+                        string "Marshmello"
+                     ]
+               )
+            ]
+      )
+   ]
+   array [
+   ]
+signal time=1703030006.312580 sender=:1.179 -> destination=(null destination) serial=25 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+   string "org.mpris.MediaPlayer2.Player"
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Playing"
+      )
+   ]
+   array [
+   ]
+\end{lstlisting}
+
+Berdasarkan hasil keluaran perintah \verb|dbus-monitor|, dapat terlihat bahwa tipe pesan yang disampaikan adalah sinyal (\textit{signal}) yang menandakan bahwa pengomunikasian MPRIS tidak menggunakan pemanggilan metode (\textit{method}) seperti pada sistem penanganan notifikasi. Hal ini juga didukung oleh dokumen spesifikasi resmi yang memaparkan bagaimana protokol dan antarmuka MPRIS bekerja \cite{xdg-mpris-specification}. Alih-alih menggunakan pemanggilan metode (\textit{method}), MPRIS memanfaatkan elemen properti (\textit{property}) yang dimiliki oleh objek \path{/org/mpris/MediaPlayer2} untuk menyimpan informasi dan data tentang media yang sedang diputar dan bergantung pada sinyal \verb|PropertiesChanged| pada antarmuka standar \verb|org.freedesktop.DBus.Properties| untuk mengomunikasikan perubahannya kepada klien-klien lain yang berkepentingan seperti lingkungan desktop Linux yang bertugas menampilkan pemutaran media tersebut.
+
+Hal menarik terjadi apabila pengguna memutar media pada dua atau lebih perangkat lunak pemutaran media (meskipun tidak secara bersamaan dalam satu waktu). Dalam hal ini, lingkungan \textit{desktop} Linux (GNOME pada contoh ini) menampilkan semua media yang sedang diputar tersebut (lihat gambar \ref{ubuntu-multiple-media-playbacks}. Menurut pengamatan awal penulis, terdapat dua jenis informasi di balik layar yang dapat memungkinkan hal ini:
+\begin{itemize}
+    \item Nilai \verb|mpris:trackid| pada properti "Metadata" yang terlihat mengemban informasi unik mengenai media yang sedang diputar dan/atau
+    \item Sinyal \verb|NameOwnerChanged| pada antarmuka \verb|org.freedesktop.DBus| yang mengomunikasikan apabila suatu perangkat lunak atau aplikasi dibuka atau ditutup yang mengakibatkan munculnya atau hilangnya klien yang bersangkutan pada bus perpesanan D-Bus.
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{archives//contents-template-pak-prapto//chapter-4/Screenshot from 2023-12-20 00-19-07.png}
+    \caption{Pemutaran media pada dua aplikasi, Firefox (pemutaran di situs web YouTube) dan Rhythmbox (aplikasi pemutar berkas musik lokal), di Ubuntu menyebabkan \textit{shell} GNOME pada Ubuntu menampilkan semua media yang sedang diputar tersebut.}
+    \label{ubuntu-multiple-media-playbacks}
+\end{figure}
 
 \section{Analisis Ekosistem pada Masing-Masing Platform (Linux dan Windows)}
 
+Guna memungkinkan proses \textit{bridging} lingkungan WSL dengan lingkungan \textit{host} Windows dalam aspek penanganan notifikasi dan aspek kontrol media, diperlukan analisis mendalam mengenai antarmuka teknis yang membawahi kedua aspek tersebut.
+
 \subsection{Analisis Sistem Penanganan Notifikasi}
 
+Sistem operasi Linux memiliki standar penyampaian notifikasi bernama FreeDesktop Desktop Notifications Specification \cite{xdg-desktop-notifications-specification}.
+
+
+
 \subsection{Analisis Sistem Kontrol Media}
+
+Spesifikasi ini mengatur mekanisme penyampaian notifikasi antarklien D-Bus dengan menetapkan sejumlah antarmuka standar yang harus disetujui oleh klien-klien yang akan berpartisipasi, yakni antarmuka \verb|org.mpris.MediaPlayer2| dan antarmuka \verb|org.mpris.MediaPlayer2.Player| yang kedua terletak pada objek \path{/org/mpris/MediaPlayer2}. Berikut elemen-elemen dalam antarmuka tersebut, baik properti maupun metode, yang perlu diperhatikan dalam pengerjaan tugas akhir ini.
+\begin{itemize}
+    \item Properti "PlaybackStatus" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan status pemutaran media ("Playing", "Paused", atau "Stopped").
+    \item Properti "CanGoNext" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan apakah perangkat lunak yang sedang memutar media saat ini memungkinkan pemindahan pemutaran ke media selanjutnya.
+    \item Properti "CanGoPrevious" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan apakah perangkat lunak yang sedang memutar media saat ini memungkinkan pemindahan pemutaran ke media sebelumnya.
+    \item Properti "CanPlay" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan apakah perangkat lunak pemutar media saat ini dapat memulai pemutaran media (\textit{play}).
+    \item Properti "CanPause" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikaskan apakah perangkat lunak pemutar media saat ini dapat menjeda pemutaran media saat ini (\textit{pause}).
+    \item Metode "Next()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk berpindah ke media selanjutnya apabila properti "CanGoNext" bernilai benar (\textit{true}).
+    \item Metode "Previous()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk berpindah ke media sebelumnya apabila properti "CanGoPrevious" bernilai benar (\textit{true}).
+    \item Metode "PlayPause()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk menjeda media apabila sedang memutar media (jika properti "CanPause" bernilai benar (\textit{true})) atau memulai pemutaran media apabila media sedang dijeda (jika properti "CanPlay" bernilai benar (\textit{true})).
+    \item Metode "Play()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk menjeda media yang sedang memutar diputar apabila properti "CanPlay" bernilai benar (\textit{true}).
+    \item Metode "Stop()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk menghentikan media yang sedang diputar.
+\end{itemize}
+
+Seperti yang telah dijelaskan di atas, antarmuka \verb|org.mpris.MediaPlayer2.Player| memiliki properti dan metode. Apabila klien-klien lain dalam bus perpesanan D-Bus yang sama ingin memantau perubahan pada properti-properti tersebut, klien-klien tersebut dapat menunggu sinyal \verb|PrpertiesChanged| yang dikeluarkan oleh antarmuka \verb|org.freedesktop.DBus| pada objek \path{/org/mpris/MediaPlayer2}.
+
+Di sisi Windows, sistem kontrol media pada pemutaran media oleh perangkat-perangkat lunak 
+dikomunikasikan melalui standar System Media Transport Controls (SMTC) yang mengatur sejumlah mekanisme yang wajib dipatuhi dan dilakukan oleh perangkat-perangkat lunak di Windows yang ingin berpartisipasi \cite{microsoft-docs-manual-control-of-the-smtc}. Berikut elemen-elemen yang digunakan untuk mengatur penampilan kontrol media di \textit{shell} Windows yang penting diperhatikan dalam pengerjaan tugas akhir ini.
+\begin{itemize}
+    \item Properti \verb|IsPlayEnabled| pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan nilai \textit{boolean} benar atau salah.
+    \item Properti \verb|IsPauseEnabled| pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan nilai \textit{boolean} benar atau salah.
+    \item Properti \verb|PlaybackStatus| pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan status pemutaran media saat ini (berputar, terjeda, terhenti, atau tertutup) yang terletak di objek enumerasi (\verb|enum|) MediaPlaybackStatus.
+    \item |
+
+\end{itemize}
+
 
 \section{Pengembangan Perangkat Lunak FancyWSL}
 

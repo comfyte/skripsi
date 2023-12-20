@@ -322,7 +322,8 @@ Berdasarkan kedua ekosistem pemutaran media (\textit{Linux dan Windows}) yang te
 
 \section{Pengembangan Perangkat Lunak FancyWSL}
 
-Guna mencapai tujuan utama tugas akhir ini, dikembangkan sebuah perangkat lunak bernama "FancyWSL" yang bertugas menjembatani aspek penanganan notifikasi dan aspek kontrol media pada lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows. Seluruh kode sumber yang dikembangkan dalam tugas akhir ini juga tersedia untuk diakses oleh publik di platform GitHub di alamat \href{https://github.com/comfyte/skripsi}{https://github.com/comfyte/skripsi}, tepatnya di direktori \path{FancyWSL/}. Perangkat lunak ini dikembangkan dengan menggunakan bahasa pemrograman Python dan sejumlah pustaka pemrograman (\textit{library}) pihak ketiga dengan pertimbangan yang telah dibahas pada Bab II. Secara garis besar, proyek perangkat lunak ini dikembangkan dengan struktur direktori yang mengacu sepatuh mungkin kepada konvensi penstrukturan direktori proyek Python pada umumnya. Berikut struktur direktori yang dimaksud.
+Guna mencapai tujuan utama tugas akhir ini, dikembangkan sebuah perangkat lunak bernama "FancyWSL" yang bertugas menjembatani aspek penanganan notifikasi dan aspek kontrol media pada lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows. Seluruh kode sumber yang dikembangkan dalam tugas akhir ini juga tersedia untuk diakses oleh publik di platform GitHub di alamat \href{https://github.com/comfyte/skripsi}{https://github.com/comfyte/skripsi}, tepatnya di direktori \path{FancyWSL/}. Perangkat lunak ini dikembangkan dengan menggunakan bahasa pemrograman Python dan sejumlah pustaka pemrograman (\textit{library}) pihak ketiga dengan pertimbangan yang telah dibahas pada Bab II. Secara garis besar, proyek perangkat lunak ini dikembangkan dengan struktur direktori yang mengacu sepatuh mungkin kepada konvensi penstrukturan direktori dan penamaan berkas proyek Python pada umumnya. Struktur direktori yang dimaksud berikut penjelasan singkatnya adalah sebagai berikut.
+
 \begin{verbatim}
 fwsl_daemon/
 ├── __main__.py
@@ -339,6 +340,18 @@ fwsl_daemon/
     ├── smtc.py
     └── toast_notification.py
 \end{verbatim}
+
+\begin{itemize}
+    \item Berkas \verb|__main__.py| merupakan berkas utama yang bertindak sebagai \textit{entry point} penjalanan perangkat lunak FancyWSL.
+
+    \item Direktori \verb|helpers| mengandung modul-modul kode yang bersifat umum dan dapat digunakan di berbagai berkas kode program.
+
+    \item Direktori \verb|services| mengandung modul-modul yang menangani fungsi pengantarmukaan (\textit{interfacing}) dengan bus perpesanan D-Bus di WSL yang saat ini telah dapat diakses di Windows melalui TCP.
+
+    \item Direktori \verb|shell| mengandung modul-modul yang berfungsi mengintegrasikan perangkat lunak FancyWSL dengan beragam aspek \textit{shell} Windows, yaitu aspek penampilan notifikasi dan aspek kontrol media.
+
+    \item Berkas \verb|__init__.py| pada masing-masing direktori berfungsi menandakan bahwa direktori-direktori tersebut bisa diimpor (\textit{importable}) sebagai satu kesatuan modul \cite{oliphant2007python}.
+\end{itemize}
 
 Pengembangan perangkat lunak FancyWSL melibatkan sejumlah tahap yang perlu dilakukan. Berikut tahap-tahap tersebut yang dijelaskan dalam bagian masing-masing.
 
@@ -372,6 +385,60 @@ Poin modifikasi pertama diperlukan karena berdasarkan observasi penulis pada kod
     \caption{Hasil implementasi ikon status pada FancyWSL}
 \end{figure}
 
+\subsection{Pengimplementasian Fungsi Penanganan Notifikasi}
 
+Pada pengimplementasian aspek penanganan notifikasi (\textit{notification handling}) tugas akhir ini, terdapat dua hal utama yang perlu dilakukan:
+\begin{itemize}
+    \item \textbf{Pembuatan layanan (\textit{service}) yang teregistrasi di bus perpesanan D-Bus dan bertugas menangkap notifikasi-notifikasi yang dikirim oleh perangkat-perangkat lunak Linux yang berjalan di WSL}\\
+    Hal ini diimplementasikan pada berkas kode \path{services/notifications.py}. Mekanisme kode ini adalah dengan mengekspos metode "Notify()" pada perangkat lunak FancyWSL yang dapat dipanggil oleh perangkat-perangkat lunak di WSL yang ingin mengirimkan notifikasi dengan parameter-parameter yang berisi informasi notifikasi tersebut.
+
+    \item \textbf{Penghubungan dengan API Windows yang menangani aspek penampilan notifikasi di \textit{shell} Windows}
+    Pada perangkat lunak yang dikembangkan pada tugas akhir ini (FancyWSL), digunakan pula pustaka pemrograman pihak ketiga bernama \verb|winsdk| yang bertindak sebagai \textbf{binding} API Windows agar dapat diakses melalui program yang menggunakan bahasa pemrograman Python. Hal ini diimplementasikan pada berkas kode \path{shell/toast_notification.py}.
+\end{itemize}
+
+Secara garis besar, mekanisme penanganan notifikasi ini bekerja adalah dengan membentuk templat XML ToastNotification yang akan ditampilkan di Windows dan mensubstitusikan nilai-nilai yang ada dengan parameter-parameter yang didapat dari pemanggilan metode "Notify()" layanan FancyWSL oleh perangkat-perangkat lunak di WSL yang ingin mengirimkan notifikasi. Kode yang bersangkutan terlampir pada bagian lampiran.
+
+\subsection{Pemgimplementasian Fungsi Kontrol Media}
+
+Pengimplementasian aspek pengontrolan media pada FancyWSL melibatkan dua hal utama yang perlu dilakukan:
+\begin{itemize}
+    \item \textbf{Penangkapan sinyal-sinyal yang memberitahukan penggantian informasi media yang sedang diputar di bus perpesanan D-Bus}
+    Hal ini diimplementasikan pada berkas kode \path{services/media_control.py}. Kode ini bekerja dengan cara
+    \begin{enumerate}
+        \item menambahkan aturan kecocokan (\textit{match rule}) tentang pengontrolan media (MPRIS) kepada pengelola bus perpesanan D-Bus atas nama perangkat lunak FancyWSL agar FancyWSL dapat menerima pesan-pesan yang memiliki kecocokan dengan aturan kecocokan tersebut (hal ini sesuai dengan spesifikasi D-Bus \cite{dbus-specification} dan diperlukan untuk alasan keamanan agar mengurangi kemungkinan terjadinya \textit{sniffing}),
+        
+        \item melakukan \textit{subscribe} pada bus perpesanan D-Bus yang terhubung dan menunggu pesan-pesan yang sesuai dengan aturan kecocokan di atas masuk, dan
+        
+        \item memproses pesan-pesan yang masuk tersebut dengan cara meneruskan ke modul \path{shell/smtc.py}.
+    \end{enumerate}
+
+    \item \textbf{Penghubungan dengan API Windows yang menangani aspek pengontrolan media universal}
+    Hal ini diimplementasikan pada berkas kode \path{shell/smtc.py}. Mekanisme kode ini bekerja adalah dengan
+    \begin{itemize}
+        \item meneruskan properti-properti yang didapat dari sinyal yang ditangkap dari bus perpesanan D-Bus ke pemanggilan API SystemMediaTransportControls pada Windows dan
+        
+        \item memanggil metode-metode, seperti "PlayPause()", "Next()", "Previous()", dan "Stop()", pada objek \path{/org/mpris/MediaPlayer2} di D-Bus apabila terdapat interaksi dari pengguna seperti penekanan tombol putar/jeda, penekanan tombol \textit{next}, dan penekanan tombol \textit{previous}, pada panel pengontrolan media universal yang tampil di \textit{shell} Windows.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pengimplementasian \textit{Guards} Tambahan}
+
+Pada pengembangan perangkat lunak FancyWSL, diimplementasikan sejumlah \textit{guard} atau proteksi tambahan yang memastikan FancyWSL berjalan pada platform yang semestinya, mencegah/menghalangi penjalanan FancyWSL pada platform yang tidak berhubungan sama sekali (seperti macOS), dan memastikan bahwa kapabilitas-kapabilitas pada WSL yang diperlukan untuk bekerjanya FancyWSL tersedia, aktif, dan dapat diakses. Seluruh \textit{guard} yang diimplementasikan terletak pada berkas kode \path{helpers/verify_platform.py}. Berikut \textit{guard}-\textit{guard} yang diimplementasikan pada FancyWSL.
+
+\begin{itemize}
+    \item Pemastian bahwa sistem operasi tempat FancyWSL dijalankan adalah Windows (di luar WSL), bukan platform lain atau di dalam WSL (\verb|_verify_proper_os()|)
+    
+    \item Memastikan bahwa perangkat lunak WSL telah terinstal dengan baik di \textit{host} Windows (\verb|_verify_wsl_availability()|)
+    
+    \item Pemeriksaan bahwa distribusi \textit{default} pada WSL merupakan WSL versi 2 (WSL2) yang telah mendukung sistem init systemd dan perangkat-perangkat lunak berantarmuka grafis (GUI) (\verb|_verify_wsl_availability()|)
+    
+    \item Memeriksa bahwa sistem init systemd tersedia dan telah aktif pada distribusi WSL yang akan digunakan (\verb|_verify_wsl_availability()|)
+\end{itemize}
+
+Seluruh fungsi \textit{guard} di atas bersifat privat (\textit{private function}) dan hanya tersedia untuk diakses pada modul tersebut; hanya terdapat satu fungsi tunggal, \verb|verify_platform()|, yang menggabungkan fungsi-fungsi \textit{guard} di atas dan diekspos kepada modul-modul luar yang memanfaatkan modul ini.
+
+\section{Dokumentasi Pengujian Akhir FancyWSL}
+
+\section{Kelebihan dan Kelemahan Solusi pada Tugas Akhir Ini}
 
 \section{Perbandingan Hasil Penelitian dengan Hasil Terdahulu}

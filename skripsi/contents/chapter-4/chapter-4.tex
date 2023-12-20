@@ -1,5 +1,11 @@
 \chapter{Hasil dan Pembahasan}
 
+\section{Pemeriksaan Fungsionalitas di Windows Subsystem for Linux (WSL)}
+
+Sejauh ini, WSL belum memiliki dukungan penampilan notifikasi dan pengontrolan media yang tertampil secara \textit{native} di \textit{shell} Windows. Hal ini dapat diuji dengan perangkat-perangkat lunak yang mendukung penjalanan di Linux dan memanfaatkan notifikasi dan/atau sistem kontrol media universal dalam interaksinya dengan pengguna. Pada aplikasi Spotify yang berjalan di dalam WSL, sebagai contoh, pemutaran media tidak menghasilkan sistem pengontrolan media universal yang biasanya tertampil di bilah pengaturan cepat (\textit{quick settings}) pada Windows 11. Sama halnya dengan penampilan notifikasi; pemanggilan alat \verb|notify-send| di terminal WSL menghasilkan eror yang menyebutkan bahwa belum ada layanan D-Bus yang menangani hal pernotifikasian.
+
+% TODO: Insert screenshots here
+
 \section{Analisis pada Sistem Operasi Linux Sungguhan}
 
 Dengan bantuan perangkat lunak virtualisasi UTM, analisis sistem penanganan notifikasi dan sisten kontrol media pada sistem operasi Linux sungguhan dilakukan pada sebuah \textit{virtual machine} (bertindak sebagai komputer referensi) yang menjalankan sistem operasi Ubuntu 22.04 (LTS) edisi arsitektur ARM 64-bit dan berjalan di atas perangkat komputer \textit{host} MacBook Air keluaran tahun 2020 (berprosesor M1) bersistem operasi macOS 13 "Ventura".
@@ -342,6 +348,25 @@ Untuk dapat berkomunikasi dengan perangkat-perangkat lunak yang berjalan di dala
 
 Pengembangan FancyWSL memanfaatkan pustaka pemrograman (\textit{library}) bernama "\verb|dbus-next|" yang utamanya digunakan untuk terhubung dengan bus perpesanan D-Bus. Agar suatu perangkat lunak dapat berjalan secara terus-menerus meskipun tidak sedang melakukan pemrosesan setiap saat, diperlukan adanya logika "\textit{main loop}" di dalam fungsi utama perangkat lunak tersebut; untungnya, pustaka pemrograman \verb|dbus-next| juga menyediakan fungsi yang menyebabkan program memasuki \textit{main loop} saat sedang terhubung dengan suatu alamat bus perpesanan D-Bus dan secara otomatis menghentikan \textit{main loop} tersebut begitu koneksi dengan bus perpesanan telah putus. Dengan kata lain, penulis tidak perlu lagi mengelola penghubungan dengan bus perpesanan dan manajemen \textit{main loop} secara terpisah karena fungsi penghubungan dengan bus perpesanan D-Bus pada pustaka \verb|dbus-next| telah menyediakan logika \textit{main loop} secara \textit{default}.
 
-Agar pengguna
+FancyWSL merupakan perangkat lunak yang didesain berjalan di latar belakang sehingga tidak diperlukan adanya jendela perangkat lunak utama yang muncul. Namun, tetap diperlukan adanya indikasi berjalannya program agar pengguna sadar bahwa FancyWSL sedang berjalan di komputer mereka. Hal ini dapat dicapai dengan peletakan ikon status yang berada di area status \textit{taskbar} Windows. Untuk mengimplementasikan hal ini, digunakan pustaka pemrograman lain yang bernama \verb|infi.systray|. Pustaka pemrograman ini berfungsi mengimplementasikan aspek ikon status pada suatu proyek Python secara mudah dan cepat. Penciptaan ikon status dengan menggunakan pustaka pemrograman ini lakukan dengan cara membuat \textit{instance} kelas yang disediakan oleh pustaka pemrograman ini, kelas \verb|SysTrayIcon|, dan kemudian memanggil metode \verb|start()| pada \textit{instance} kelas tersebut. Pembuatan \textit{instance} kelas \verb|SysTrayIcon| menerima sejumlah argumen:
+\begin{itemize}
+    \item \verb|icon|,
+    \item \verb|hover_text| (bertipe data \textit{string}),
+    \item \verb|menu_options|,
+    \item \verb|on_quit|,
+    \item \verb|default_menu_index|, dan
+    \item \verb|window_class_name|.
+\end{itemize}
+FancyWSL hanya memerlukan dua argumen saja dari argumen-argumen tersebut, \verb|hover_text| dan \verb|on_quit|, mengingat FancyWSL tidak memerlukan opsi menu lain yang ditampilkan dan argumen-argumen lainnya. Pada \verb|hover_text| (teks yang akan muncul saat ikon status berada di bawah kursor \textit{mouse}), akan ditampilkan nama perangkat lunak ini (FancyWSL Daemon) serta informasi alamat bus perpesanan D-Bus tujuan penghubungan FancyWSL. Seluruh implementasi ikon status ini terletak pada berkas kode \path{shell/persistent_tray_icon.py}.
+
+Bus perpesanan D-Bus yang berjalan di dalam WSL secara \textit{default} hanya melakukan \textit{listen} ke alamat soket Unix lokal (disediakan oleh aktivasi soket systemd) saja sehingga belum dapat langsung dihubungi oleh FancyWSL yang berjalan di lingkungan \textit{host} Windows. Agar FancyWSL dapat menghubungi bus perpesanan D-Bus yang berjalan di dalam WSL, perlu dilakukan konfigurasi pada sisi WSL mengenai alamat-alamat yang di-\textit{listen} oleh \textit{daemon} D-Bus. Karena penanganan notifikasi dan kontrol media berjalan di bus sesi,  dan FancyWSL hanya perlu menghubungi bus sesi saja.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{archives//contents-template-pak-prapto//chapter-4/Screenshot 2023-12-20 114455.png}
+    \caption{Hasil implementasi ikon status pada FancyWSL}
+\end{figure}
+
+
 
 \section{Perbandingan Hasil Penelitian dengan Hasil Terdahulu}

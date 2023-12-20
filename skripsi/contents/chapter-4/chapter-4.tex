@@ -179,41 +179,42 @@ Guna memungkinkan proses \textit{bridging} lingkungan WSL dengan lingkungan \tex
 
 Sistem operasi Linux memiliki standar penyampaian notifikasi bernama FreeDesktop Desktop Notifications Specification \cite{xdg-desktop-notifications-specification}. Spesifikasi ini mengatur mekanisme penyampaian notifikasi antarklien D-Bus dengan menetapkan antarmuka standar yang harus disetujui oleh klien-klien yang akan berpartisipasi, yakni \verb|org.freedesktop.Notifications| yang terletak pada objek \path{/org/freedesktop/Notifications}. Antarmuka tersebut mengandung metode "Notify()" yang bertugas mengirimkan notifikasi dan memiliki sejumlah parameter yang perlu menjadi perhatian dalam pengerjaan tugas akhir ini. Sebagian besar parameter pada antarmuka ini bersifat opsional kecuali properti \textit{body} konten yang bersifat wajib dicantumkan oleh perangkat lunak atau aplikasi pengirim notifikasi.
 \begin{itemize}
-    \item \textbf{Parameter nama aplikasi ("app\_name")}\\
+    \item \textbf{Parameter nama aplikasi (app\_name)}\\
     Parameter ini berisi informasi nama perangkat lunak atau aplikasi yang mengirimkan notifikasi.
     
-    \item \textbf{Parameter "replaces ID" ("replaces\_id")}\\
+    \item \textbf{Parameter "replaces ID" (replaces\_id)}\\
     Parameter ini berisi informasi identitas (ID) notifikasi lain yang telah tertampil untuk digantikan oleh notifikasi yang sedang dikirimkan saat ini.
 
-    \item \textbf{Parameter ikon notifikasi ("app\_icon")}\\
+    \item \textbf{Parameter ikon notifikasi (app\_icon)}\\
     Parameter ini mengatur ikon yang ikut tertampil di notifikasi yang dikirimkan. Parameter ini berisi lokasi berkas ikon di dalam \textit{file system}.
 
-    \item \textbf{Parameter ringkasan konten ("summary")}\\
+    \item \textbf{Parameter ringkasan konten (summary)}\\
     Parameter ini berisi ringkasan singkat (\textit{summary}) notifikasi yang akan ditampilkan dengan peletakan dan penampilan teks yang lebih prominen dibandingkan dengan teks konten yang lain. Parameter ini dapat dikatakan pula sebagai "judul" notifikasi tersebut.
     
-    \item \textbf{Parameter \textit{body} konten ("body")}\\
+    \item \textbf{Parameter \textit{body} konten (body)}\\
     Parameter ini berisi konten utama notifikasi dalam bentuk teks.
     
-    \item \textbf{Parameter aksi ("actions")}\\
+    \item \textbf{Parameter aksi (actions)}\\
     Parameter ini menentukan aksi-aksi (\textit{actions}) yang dapat muncul pada notifikasi yang tertampil seperti tombol.
     
-    \item \textbf{Parameter \textit{hints} ("hints")}\\
+    \item \textbf{Parameter \textit{hints} (hints)}\\
     Parameter ini digunakan oleh perangkat lunak atau aplikasi pengirim notifikasi untuk memberi informasi lebih yang bersifat lain-lain kepada \textit{notification server}.
     
     \item \textbf{Parameter durasi waktu kadaluarsa (expire\_timeout)}\\
     Parameter ini mengatur durasi lamanya suatu notifikasi (dalam milidetik) akan terhapus dengan sendirinya. Parameter ini juga dapat diatur dengan nilai \verb|-1| untuk menyerahkan pengelolaan waktu tertampil notifikasi yang bersangkutan kepada \textit{notification server} atau nilai \verb|0| agar notifikasi tidak pernah terhapus dengan sendirinya.
 \end{itemize}
 
-Properti-properti di atas diatur dalam suatu pengiriman notifikasi sebagai argumen-argumen pemanggilan metode "Notify()" pada antarmuka \path{org.freedesktop.Notifications}. Dengan kata lain, metode "Notify()" ini memiliki \textit{method signature} sebagai berikut.
+Elemen-elemen di atas diatur dalam suatu pengiriman notifikasi sebagai argumen-argumen pemanggilan metode "Notify()" pada antarmuka \path{org.freedesktop.Notifications}. Dengan kata lain, metode "Notify()" ini memiliki \textit{method signature} sebagai berikut.
 \begin{lstlisting}
-UINT32 org.freedesktop.Notifications.Notify(STRING app_name,
-                                            UINT32 replaces_id,
-                                            STRING app_icon,
-                                            STRING summary,
-                                            STRING body,
-                                            ARRAY actions,
-                                            ARRAY hints,
-                                            INT32 expire_timeout);
+/* Tipe return-nya adalah UINT32 */
+org.freedesktop.Notifications.Notify(STRING app_name,
+                                     UINT32 replaces_id,
+                                     STRING app_icon,
+                                     STRING summary,
+                                     STRING body,
+                                     ARRAY actions,
+                                     ARRAY hints,
+                                     INT32 expire_timeout);
 \end{lstlisting}
 
 Di sisi Windows, terdapat berbagai jenis solusi penampilan notifikasi yang disediakan yang bergantung pada jenis \textit{toolkit} pemrograman GUI yang digunakan (Universal Windows Platform atau Windows Runtime, Windows Presentation Foundation, Windows Forms, atau jenis \textit{toolkit} lainnya). Salah satu solusi penampilan notifikasi di Windows dan solusi yang digunakan dalam tugas akhir ini adalah ToastNotification yang disediakan oleh platform bawaan Windows Runtime (WinRT) dan umumnya digunakan oleh aplikasi-aplikasi Windows berbasis \textit{toolkit} Universal Windows Platform (UWP) \cite{microsoft-toast-notification-overview}. Notifikasi pada ToastNotification umumnya dikirimkan dalam format XML dengan \textit{schema} (struktur dokumen) yang telah ditetapkan. \textit{Schema} tersebut mengatur parameter-parameter yang dapat diatur dalam menampilkan notifikasi. Mengutip situs web dokumentasi Microsoft pada bagian pendefinisian \textit{schema} ToastNotification \cite{microsoft-toast-notification-schema}, berikut beberapa di antara elemen-elemen yang tersedia untuk diatur pada struktur XML notifikasi yang ingin ditampilkan.
@@ -231,6 +232,20 @@ Di sisi Windows, terdapat berbagai jenis solusi penampilan notifikasi yang dised
     \item \textbf{Elemen "<visual>"}\\
     Elemen ini digunakan untuk mengandung satu buah elemen \verb|<binding>| yang telah dijelaskan pada poin pertama.
 \end{itemize}
+
+Menganalisis kedua ekosistem penampilan notifikasi tersebut, ekuivalensi dan penghubungan keduanya dapat dilakukan dengan mengacu pada tabel \ref{}.
+
+\begin{table}[h]
+    \centering
+    \caption{Tabel ekuivalensi elemen-elemen notifikasi di Linux (WSL) dengan Windows}
+    \begin{tabularx}{\textwidth}{|c|p{3cm}|X|X|} \hline
+        \textbf{No.} & \textbf{Elemen} & \textbf{Mekanisme di Linux (WSL)} & \textbf{Metode penghubungan dengan Windows}\\ \hline
+        1 & Nama aplikasi pengirim notifikasi & Parameter "app\_name" & Mengatur bagian konten elemen \verb|<text>|\\ \hline
+        2 & Judul/ringkasan notifikasi & Parameter "summary" & Memasukkan ke baris pertama di konten elemen \verb|<text>| dan mengatur baris pertama tersebut agar tercetak tebal (\textit{bold})\\ \hline
+        3 & Konten utama (\textit{body}) notifikasi & Parameter "body" & Memasukkan ke baris-baris nonjudul di konten elemen \verb|<text>|\\ \hline
+    \end{tabularx}
+    \label{wsl-and-windows-notification-system-equivalence-table}
+\end{table}
 
 \subsection{Analisis Sistem Kontrol Media}
 
@@ -285,9 +300,9 @@ Berdasarkan kedua ekosistem pemutaran media (\textit{Linux dan Windows}) yang te
 
 \begin{table}[h]
     \centering
-    \caption{Tabel penghubungan elemen-elemen pengontrolan media di Linux (WSL) dengan Windows}
+    \caption{Tabel ekuivalensi elemen-elemen pengontrolan media di Linux (WSL) dengan Windows}
     \begin{tabularx}{\textwidth}{|c|p{3cm}|X|X|} \hline
-        No. & Elemen & Mekanisme di Linux (WSL) & Metode penghubungan dengan Windows\\ \hline
+        \textbf{No.} & \textbf{Elemen} & \textbf{Mekanisme di Linux (WSL)} & \textbf{Metode penghubungan dengan Windows}\\ \hline
         1 & Status pemutaran media & Properti "PlaybackStatus" & Mengatur properti \verb|PlaybackStatus|\\ \hline
         2 & Dukungan pemulaian pemutaran media (\textit{play}) & Properti "CanPlay" & Mengatur properti \verb|IsPlayEnabled|\\ \hline
         3 & Dukungan penjedaan pemutaran media (\textit{pause}) & properti "CanPause" & Mengatur properti \verb|IsPauseEnabled|\\ \hline
@@ -300,5 +315,33 @@ Berdasarkan kedua ekosistem pemutaran media (\textit{Linux dan Windows}) yang te
 \end{table}
 
 \section{Pengembangan Perangkat Lunak FancyWSL}
+
+Guna mencapai tujuan utama tugas akhir ini, dikembangkan sebuah perangkat lunak bernama "FancyWSL" yang bertugas menjembatani aspek penanganan notifikasi dan aspek kontrol media pada lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows. Perangkat lunak ini dikembangkan dengan menggunakan bahasa pemrograman Python dan sejumlah pustaka pemrograman (\textit{library}) pihak ketiga dengan pertimbangan yang telah dibahas pada Bab II. Secara garis besar, proyek perangkat lunak ini dikembangkan dengan struktur direktori yang mengacu sepatuh mungkin kepada konvensi penstrukturan direktori proyek Python pada umumnya. Berikut struktur direktori yang dimaksud.
+\begin{verbatim}
+fwsl_daemon/
+├── __main__.py
+├── helpers/
+│   ├── __init__.py
+│   └── verify_platform.py
+├── services/
+│   ├── __init__.py
+│   ├── media_control.py
+│   └── notifications.py
+└── shell/
+    ├── __init__.py
+    ├── persistent_tray_icon.py
+    ├── smtc.py
+    └── toast_notification.py
+\end{verbatim}
+
+Pengembangan perangkat lunak FancyWSL melibatkan sejumlah tahap yang perlu dilakukan. Berikut tahap-tahap tersebut yang dijelaskan dalam bagian masing-masing.
+
+\subsection{Pengembangan Tahap Awal: Penghubungan dengan D-Bus dan Pengimplementasian Aspek \textit{Persistence} (\textit{Daemon})}
+
+Untuk dapat berkomunikasi dengan perangkat-perangkat lunak yang berjalan di dalam Windows Subsystem for Linux (WSL) dan terhubung dengan bus perpesanan D-Bus, perangkat lunak FancyWSL perlu didesain sebagai salah satu klien pada bus perpesanan itu pula. FancyWSL perlu mengekspos layanan-layanan yang disediakannya melalui bus perpesanan tersebut selama FancyWSL berjalan. Untuk itu, FancyWSL perlu dapat berjalan secara kontinu di latar belakang (agar tidak mengganggu \textit{workflow} pengguna yang menggunakan komputer) dan terhubung dengan bus perpesanan D-Bus yang berjalan di dalam lingkungan WSL.
+
+Pengembangan FancyWSL memanfaatkan pustaka pemrograman (\textit{library}) bernama "\verb|dbus-next|" yang utamanya digunakan untuk terhubung dengan bus perpesanan D-Bus. Agar suatu perangkat lunak dapat berjalan secara terus-menerus meskipun tidak sedang melakukan pemrosesan setiap saat, diperlukan adanya logika "\textit{main loop}" di dalam fungsi utama perangkat lunak tersebut; untungnya, pustaka pemrograman \verb|dbus-next| juga menyediakan fungsi yang menyebabkan program memasuki \textit{main loop} saat sedang terhubung dengan suatu alamat bus perpesanan D-Bus dan secara otomatis menghentikan \textit{main loop} tersebut begitu koneksi dengan bus perpesanan telah putus. Dengan kata lain, penulis tidak perlu lagi mengelola penghubungan dengan bus perpesanan dan manajemen \textit{main loop} secara terpisah karena fungsi penghubungan dengan bus perpesanan D-Bus pada pustaka \verb|dbus-next| telah menyediakan logika \textit{main loop} secara \textit{default}.
+
+Agar pengguna
 
 \section{Perbandingan Hasil Penelitian dengan Hasil Terdahulu}

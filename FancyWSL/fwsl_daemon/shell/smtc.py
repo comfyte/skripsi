@@ -1,10 +1,14 @@
+import logging
 import winsdk.windows.media.playback as windows_media_playback
 from winsdk.windows.media import (MediaPlaybackStatus, MediaPlaybackType, SystemMediaTransportControls,
                                   SystemMediaTransportControlsButtonPressedEventArgs,
                                   SystemMediaTransportControlsButton)
 
+logger = logging.getLogger(__name__)
+
 class WindowsSMTC():
     def __init__(self, current_client_id: str, play_pause_callback) -> None:
+        logger.info()
         self.dbus_client_id = current_client_id
         self.__play_pause_callback = play_pause_callback
 
@@ -29,22 +33,12 @@ class WindowsSMTC():
 
     def update_state(self, playback_info: dict):
         if 'Metadata' in playback_info:
-            print(playback_info)
             metadata: dict = playback_info['Metadata'].value
             # FIXME: Maybe find a way to determine this from the MPRIS metadata (or does the MPRIS metadata
             # even contain this information?)
             self.__updater.type = MediaPlaybackType.MUSIC
 
-            # print('metadata is below')
-            # print(metadata)
-
-            # print('the metadata value property is below')
-            # print(metadata.value)
-
             if 'xesam:artist' in metadata:
-                print(type(metadata['xesam:artist']))
-                print(type(metadata['xesam:artist'].value))
-
                 # Apparently it's an array
                 self.__updater.music_properties.artist = metadata['xesam:artist'].value[0]
             if 'xesam:albumArtist' in metadata:

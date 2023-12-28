@@ -1,8 +1,11 @@
+import logging
 from dbus_next.service import ServiceInterface, method
-import asyncio
 from dbus_next.aio import MessageBus
 from dbus_next import Message, MessageType
 from ..shell.smtc import WindowsSMTC
+
+# Get logger for current module
+logger = logging.getLogger(__name__)
 
 class MediaControlService(ServiceInterface):
     def __init__(self, bus_instance: MessageBus):
@@ -33,10 +36,7 @@ class MediaControlService(ServiceInterface):
         assert reply.message_type == MessageType.METHOD_RETURN
 
     def __signal_handler(self, message: Message):
-        # print(message.path)
-
         if message.path == '/org/mpris/MediaPlayer2' and message.member == 'PropertiesChanged':
-            # print(message.sender)
             self.__playback_status_change_handler(message.sender, message.body[1])
         elif (message.path == '/org/freedesktop/DBus' and message.member == 'NameOwnerChanged' and
               message.body[0].startswith('org.mpris.MediaPlayer2.')):
@@ -48,19 +48,17 @@ class MediaControlService(ServiceInterface):
                 self.__destroy_playback_instance(old_owner)
     
     def __new_playback_instance(self, client_id: str):
-        print(f'add {client_id}')
+        logger.info(f'add {client_id}')
         self.mpris_clients[client_id] = WindowsSMTC(client_id, self.__play_pause_request_handler)
 
     def __destroy_playback_instance(self, client_id: str):
-        print(f'remove {client_id}')
+        logger.info(f'remove {client_id}')
         self.mpris_clients[client_id].destroy()
         self.mpris_clients.pop(client_id)
     
     def __playback_status_change_handler(self, client_id: str, playback_info):
-        # print(playback_info)
         self.mpris_clients[client_id].update_state(playback_info)
 
     async def __play_pause_request_handler(self, client_id: str):
-        reply = await self.bus.call(Message(destination=client_id, path='/org/mpris/MediaPlayer2',
-                                            interface='org.mpris.MediaPlayer2.Player', member='PlayPause'))
-        print(reply)
+        await self.bus.call(Message(destination=client_id, path='/org/mpris/MediaPlayer2',
+                                    interface='org.mpris.MediaPlayer2.Player', member='PlayPause'))

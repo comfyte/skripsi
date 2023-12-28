@@ -1,3 +1,4 @@
+import logging
 import sys
 from argparse import ArgumentParser
 import asyncio
@@ -8,7 +9,11 @@ from .shell.persistent_tray_icon import PersistentTrayIcon
 from .services.notifications import NotificationHandlerService
 from .services.media_control import MediaControlService
 
-from .shell.smtc import WindowsSMTC
+# Set logging to display all messages (to make debugging easier).
+logging.basicConfig(level=logging.INFO)
+
+# Get logger for current module
+logger = logging.getLogger(__name__)
 
 async def attach_services_to_bus(bus: MessageBus):
     # org.freedesktop.Notifications
@@ -25,20 +30,20 @@ async def fwsl_daemon(bus_address: str):
     except RuntimeError:
         sys.exit(1)
 
-    print('Starting FancyWSL Daemon...')
+    logger.info('Starting FancyWSL Daemon...')
 
     if not bus_address.startswith('tcp:'):
-        print('The supplied bus address is not a TCP address. Currently, only TCP addresses are supported '
-              'by FancyWSL. Exiting...', file=sys.stderr)
+        logger.error('The supplied bus address is not a TCP address. Currently, only TCP addresses are supported '
+                     'by FancyWSL. Exiting...')
         sys.exit(1)
 
-    print(f'Connecting to bus address "{bus_address}"...')
+    logger.info(f'Connecting to bus address "{bus_address}"...')
 
     try:
         bus = await MessageBus(bus_address, auth=AuthAnnonymous()).connect()
-        print('Connected to bus successfully.')
+        logger.info('Connected to bus successfully.')
     except:
-        print('Some error happened. Exiting FancyWSL Daemon...', file=sys.stderr)
+        logger.error('Some error happened. Exiting FancyWSL Daemon...')
         sys.exit(1)
 
     await attach_services_to_bus(bus)
@@ -49,12 +54,12 @@ async def fwsl_daemon(bus_address: str):
 
     def persistent_tray_icon_quit_handler(_):
         cleanup_before_exiting()
-        print('Killed the system tray icon.')
+        logger.info('Killed the system tray icon.')
 
     PersistentTrayIcon(bus_address, persistent_tray_icon_quit_handler)
 
     await bus.wait_for_disconnect()
-    print(f'Connection to bus "{bus_address}" disconnected.')
+    logger.info(f'Connection to bus "{bus_address}" disconnected.')
 
 if __name__ == '__main__':
     argument_parser = ArgumentParser('FancyWSL Daemon')
@@ -69,4 +74,4 @@ if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(fwsl_daemon(args.bus_address))
 
     # The main loop will end when the bus has disconnected
-    print('Exiting FancyWSL Daemon...')
+    logger.info('Exiting FancyWSL Daemon...')

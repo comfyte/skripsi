@@ -1,4 +1,8 @@
+import logging
 from infi.systray import SysTrayIcon
+
+# Get logger for current module
+logger = logging.getLogger(__name__)
 
 class PersistentTrayIcon():
     def __init__(self, bus_address: str, exit_callback) -> None:
@@ -10,4 +14,4 @@ class PersistentTrayIcon():
         self.instance = SysTrayIcon(None, f'FancyWSL Daemon (Connected to "{bus_address}")',
                                     on_quit=exit_callback)
         self.instance.start()
-        print('Summoned the system tray icon')
+        logger.info('Summoned the system tray icon')

@@ -25,13 +25,7 @@ class WindowsToastNotification():
         self.toast_notification.add_activated(self.__activation_handler)
 
     def display(self) -> None:
-        print(self.toast_notification)
         self.notifier.show(self.toast_notification)
 
     def __activation_handler(self, sender, args):
-        print(sender.content)
-        print(sender.data)
-        print(sender.tag)
-        print(sender.suppress_popup)
-
-        print(dir(args))
+        pass

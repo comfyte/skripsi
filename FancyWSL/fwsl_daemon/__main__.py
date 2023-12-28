@@ -15,8 +15,8 @@ async def attach_services_to_bus(bus: MessageBus):
     bus.export('/org/freedesktop/Notifications', NotificationHandlerService())
     await bus.request_name('org.freedesktop.Notifications')
 
-    mcs_test = MediaControlService(bus)
-    await mcs_test.percobaan()
+    media_control_service = MediaControlService(bus)
+    await media_control_service.init_async()
 
 async def fwsl_daemon(bus_address: str):
     # Do checks first

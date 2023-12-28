@@ -20,7 +20,7 @@ class NotificationHandlerService(ServiceInterface):
     @method()
     def Notify(self, app_name: 's', replaces_id: 'u', app_icon: 's',
                summary: 's', body: 's', actions: 'as', hints: 'a{sv}', expire_timeout: 'i') -> 'u':
-        wtn = WindowsToastNotification()
+        wtn = WindowsToastNotification(app_name, summary, body)
         wtn.display()
 
         if replaces_id == 0:

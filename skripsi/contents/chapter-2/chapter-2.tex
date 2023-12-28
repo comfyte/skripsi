@@ -22,7 +22,14 @@ Meskipun Wormhole merupakan satu kesatuan perangkat lunak, Wormhole terdiri dari
     \item perlunya pengembangan perangkat lunak pengelola sesi (\textit{session manager}) D-Bus (systemd telah didukung oleh WSL sejak September 2022 \cite{systemd-support-is-now-available-in-wsl} dan telah menjadi \textit{default} pada instalasi distribusi Ubuntu di WSL sejak perilisan Ubuntu 23.04 pada April 2023 \cite{ubuntu-2304-release-roundup-systemd-now-becomes-default-for-ubuntu-on-wsl} sehingga pengelolaan sesi bus perpesanan D-Bus saat ini telah berada di bawah kontrol systemd seperti halnya pada sistem operasi Linux asli; ketiadaan pembahasan systemd dalam tesis ini mengindikasikan bahwa waktu penulisan tesis ini terjadi sebelum hadirnya dukungan systemd tersebut sehingga diperlukan pengembangan perangkat lunak \textit{session manager} tersendiri pada saat itu).
 \end{itemize}
 
-Karya tulis kedua yang dibahas adalah sebuah tesis master berjudul \textit{Notifications in a Multi-Device Environment} yang ditulis oleh Dominik Weber dan dipublikasikan pada tahun 2015 \cite{weber2015notifications}. Secara garis besar, tesis ini membahas
+Karya tulis kedua yang dibahas adalah sebuah tesis master berjudul \textit{Notifications in a Multi-Device Environment} yang ditulis oleh Dominik Weber dan dipublikasikan pada tahun 2015 \cite{weber2015notifications}. Secara garis besar, tesis ini membahas penanganan notifikasi antarperangkat yang memfokuskan pada aspek pengumpulan data dari pengguna. Dalam sisi teknis, tesis ini membahas pengimplementasian notifikasi multiperangkat dalam bentuk ekstensi \textit{browser} Google Chrome. Karya tulis ini memiliki sejumlah perbedaan dengan tugas akhir penulis:
+\begin{itemize}
+    \item Tesis ini mengimplementasikan sistem notifikasi menggunakan ekstensi \textit{browser} Google Chrome, sedangkan tugas akhir penulis mengimplementasikan sistem notifikasi dalam bentuk yang lebih \textit{native}, yakni perangkat lunak berbasis bahasa pemrograman Python.
+
+    \item Tesis ini lebih berfokus ke aspek pengguna (dibuktikan dengan banyaknya survei yang dilakukan) dibandingkan dengan aspek teknis pengimplementasian; tugas akhir penulis lebih berfokus pada aspek pengimplementasian dan pengujian dilakukan secara mandiri oleh diri penulis sendiri.
+\end{itemize}
+
+Karya tulis ketiga yang dibahas adalah sebuah prosiding berjudul \textit{Memory forensics and the Windows Subsystem for Linux} yang dipublikasikan pada tahun 2018 \cite{lewis2018memory}. Karya tulis ini utamanya membahas pembawaan dukungan berkas-berkas \textit{executable} jenis baru, \textit{executable and linkable format} (ELF), yang umumnya berada di sistem operasi Linux ke sistem operasi Windows melalui Windows Subsystem for Linux (WSL); bersamaan dengan dukungan baru ini, terdapat peningkatan \textit{attack surface} yang, misalnya, dapat diretas oleh peretas. Karya tulis ini membahas tentang mekanisme internal WSL, berkas-berkas \textit{executable} PE (\textit{portable executable}) dan ELF (\textit{executable and linkable format}), dan forensik memori yang dilakukan terhadap aspek-aspek tersebut sehingga cukup berbeda dengan tugas akhir penulis yang membahas WSL beserta aspek-aspek integrasinya.
 
 \section{Dasar Teori}
 
@@ -54,7 +61,7 @@ D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communicatio
     \textit{Server} D-Bus bertindak sebagai penyedia bus sentral tempat klien-klien D-Bus terhubung. \textit{Server} D-Bus bertugas mengelola klien-klien yang terhubung dan menyalurkan data dari sumbernya ke tujuannya dengan benar \cite{qt-introduction-to-dbus}. \textit{Server} D-Bus umumnya dijalankan oleh sebuah proses yang bernama \textit{daemon} D-Bus yang umumnya memiliki nama berkas \textit{executable} "\path{dbus-daemon}".
 
     \item \textbf{Klien D-Bus}\\
-    Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai aplikasi reguler yang mengonsumsi layanan (\textit{consumer}) \textcolor{orange}{(TODO: Find the correct terminologies for those)}.
+    Klien D-Bus merupakan istilah untuk tiap-tiap perangkat lunak yang terhubung ke bus utama D-Bus. Klien D-Bus dapat bertindak sebagai penyedia layanan (\textit{provider}) ataupun sebagai aplikasi reguler yang mengonsumsi layanan (\textit{consumer}).
 \end{itemize}
 
 \begin{figure}
@@ -96,100 +103,69 @@ Agar dapat dihubungi oleh para klien, tiap-tiap bus perpesanan D-Bus memiliki al
 
 Seperti yang telah disebutkan pada tiap-tiap deskripsi metode transportasi di atas, metode transportasi ditentukan secara otomatis sesuai dengan format penulisan alamat bus perpesanan D-Bus yang telah diatur. Alamat bus perpesanan D-Bus dapat diatur melalui dua tempat: argumen penjalanan \textit{daemon} D-Bus dan berkas konfigurasi. Metode pengaturan alamat bus perpesanan D-Bus melalui argumen penjalanan \textit{daemon} D-Bus dilakukan dengan menambahkan argumen berbentuk \lstinline[language=bash,columns=fixed]{--address="<tuliskan alamat yang diinginkan di sini>"}. Metode pengaturan alamat melalui argumen akan menimpa (\textit{override}) pengaturan apa pun yang dilakukan di berkas konfigurasi. Di sisi lain, metode pengaturan alamat bus perpesanan D-Bus melalui berkas konfigurasi dilakukan dengan cara memodifikasi berkas konfigurasi \textit{default} yang telah ada (berkas konfigurasi \textit{default} bus sistem berada di \path{/usr/share/dbus-1/system.conf} dan berkas konfigurasi \textit{default} bus sesi berada di \path{/usr/share/dbus-1/session.conf}) atau membuat berkas konfigurasi baru berekstensi berkas "\verb|.conf|" dan memuatnya pada saat penjalanan \textit{daemon} D-Bus melalui argumen \lstinline[language=bash,columns=fixed]{--config-file=<lokasi berkas konfigurasi>}.
 
-Klien-klien yang terhubung dengan D-Bus mempertukarkan informasi dalam bentuk "pesan" (\textit{messages}). Tiap-tiap pesan yang dikirimkan pada D-Bus mengandung data yang dipertukarkan serta informasi pengirim dan penerima agar bisa tersampaikan ke tujuan dengan baik.
-
-Proses interaksi di dalam D-Bus didesain agar memiliki konsep yang serupa dengan pemrograman berorientasi objek; tiap-tiap klien D-Bus dapat direpresentasikan sebagai "objek" di dalam bus perpesanan D-Bus. Meskipun demikian, klien D-Bus juga memiliki konsep-konsep yang spesifik terhadap D-Bus yang umumnya tidak ada di pemrograman berbasis objek. Berikut elemen-elemen yang dimiliki oleh klien D-Bus dalam mempertukarkan pesan.
+Dalam mengidentifikasi dirinya sendiri dan berkomunikasi dengan klien lain, tiap-tiap klien yang terhubung dengan bus perpesanan D-Bus mengemban sejumlah elemen yang didesain agar memiliki kemiripan dengan konsep-konsep pemrograman berorientasi objek yang telah familier bagi banyak orang. Berikut elemen-elemen yang dimaksud.
 \begin{itemize}
-    \item \textbf{Sinyal (\textit{signal})}\\
+    \item \textbf{Nama bus (\textit{bus name})}\\
+    Tiap-tiap klien D-Bus memiliki identitas berupa "nama bus" yang digunakan untuk mengidentifikasi klien tersebut dalam suatu bus perpesanan D-Bus. Nama bus terdiri dari dua jenis, nama bus unik (\textit{unique name}) dan nama bus yang dikenal (\textit{well-known name}), dan tiap-tiap klien dapat memiliki lebih dari satu nama bus. Secara \textit{default}, tiap-tiap klien baru yang terhubung ke suatu bus perpesanan D-Bus akan mendapatkan nama bus unik (diberikan secara otomatis oleh \textit{daemon} D-Bus) yang tersusun atas sejumlah angka yang dimulai oleh tanda titik dua (misalnya "\verb|:34-907|"). Perlu diingat bahwa istilah "nama bus" di sini berarti nama masing-masing klien yang terhubung dalam suatu bus perpesanan, bukan nama bus perpesanan itu sendiri \cite{official-introduction-to-dbus}.
+    \item \textbf{Objek (\textit{object})}\\
+    Objek dalam konteks komunikasi D-Bus merupakan ujung-ujung komunikasi (\textit{endpoint}) yang dimiliki oleh klien di dalam suatu bus perpesanan D-Bus. Tiap-tiap klien D-Bus dapat memiliki lebih dari satu objek.
+    \item \textbf{Antarmuka (\textit{interface})}\\
+    Antarmuka dalam konteks komunikasi D-Bus merupakan suatu "kontrak" yang disetujui oleh berbagai klien yang digunakan untuk memfasilitasi komunikasi antarklien. Antarmuka diperlukan agar dua klien dapat berkomunikasi dengan bentuk dan struktur data yang sama yang telah disetujui oleh masing-masing pihak.
+\end{itemize}
 
+Secara garis besar, proses komunikasi di dalam suatu bus perpesanan D-Bus dilakukan dalam bentuk "pesan" (\textit{message}). Pesan-pesan dalam D-Bus dapat dikategorikan menjadi dua jenis di bawah ini yang juga memiliki kemiripan dengan konsep pemrograman berorientasi objek.
+\begin{itemize}
     \item \textbf{Metode (\textit{method})}\\
-
-    \item \textbf{Properti (\textit{property})}\\
+    Metode merupakan pesan yang dikirimkan secara spesifik dan terarah dari klien pengirim (\textit{sender}) ke tujuan (\textit{destination}) yang jelas. Pesan jenis metode dikirimkan dengan cara memanggil metode yang bersangkutan pada objek D-Bus yang diinginkan.
+    \item \textbf{Sinyal (\textit{signal})}\\
+    Sinyal merupakan pesan yang dikirimkan secara tidak terarah (tidak memiliki tujuan spesifik). Pesan berjenis sinyal disebarluaskan (\textit{advertise}) di dalam bus perpesanan untuk didengarkan oleh klien-klien lain yang berkepentingan.
 \end{itemize}
 
-Proses pertukaran informasi antarklien D-Bus dilakukan melalui elemen-elemen yang dimiliki oleh klien
+Selain dua jenis pesan di atas, objek-objek pada klien D-Bus juga memiliki elemen bernama "properti" (\textit{property}) yang juga berkonsep serupa dengan pemrograman berorientasi objek. Properti pada suatu objek D-Bus umumnya berisi informasi-informasi yang berkaitan dengan objek tersebut dan/atau klien yang memiliki objek tersebut. Pada umumnya, setiap pergantian nilai properti akan menyebabkan sinyal bernama "\path{PropertiesChanged}" pada antarmuka "\path{org.freedesktop.DBus.Properties}" tersebar sehingga pergantian nilai properti tersebut dapat diketahui oleh klien-klien lain yang berkepentingan.
 
-Tiap-tiap klien dalam D-Bus mengemban sejumlah elemen yang berguna dalam pertukaran pesan. Berikut elemen-elemen tersebut.
-\begin{itemize}
-    \item Interface
-\end{itemize}
+Dalam menginspeksi bus perpesanan D-Bus, terdapat berbagai macam perangkat lunak atau peralatan (\textit{tools}) yang dapat membantu. Secara \textit{default}, perangkat lunak D-Bus yang terinstal juga memiliki peralatan-peralatan bawaan seperti \verb|dbus-monitor| dan \verb|dbus-send| yang dapat bermanfaat untuk memeriksa serta berinteraksi langsung dengan bus perpesanan D-Bus dalam antarmuka baris perintah (\textit{command-line interface}). Selain itu, tersedia pula solusi-solusi pihak ketiga seperti perangkat lunak D-Feet yang dapat memeriksa bus perpesanan D-Bus dalam antarmuka grafis (\textit{graphical user interface}).
 
-Dalam pengoperasian D-Bus, terdapat sejumlah konsep perpesanan:
-\begin{itemize}
-    \item 
-\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{archives//contents-template-pak-prapto//chapter-2/dfeet-window-screenshot.png}
+    \caption{Tangkapan layar perangkat lunak "D-Feet" yang berjalan di Windows Subsystem for Linux (WSL)}
+    \label{fig:enter-label}
+\end{figure}
 
-\subsection{Sistem Init systemd}
+% \subsection{Sistem Init systemd}
 
-systemd merupakan salah satu sistem init yang tersedia untuk digunakan di sistem operasi Linux di samping sistem-sistem init lain seperti SysV Init, .
-
-\subsection{Dukungan Kompatibilitas Linux atau Mirip Unix di Windows Pra-WSL}
-
-Teknologi yang digunakan dalam skripsi ini, Windows Subsystem for Linux, bukan merupakan satu-satunya usaha yang digunakan untuk membawa kompatibilitas Linux atau Unix-like ke dalam lingkungan sistem operasi Windows. Microsoft memiliki sejarah panjang dalam membawa dukungan Linux atau mirip Unix ke dalam lingkungan Windows.
-
-Sebelum mengembangkan WSL, Microsoft memiliki sejumlah usaha terdahulu yang bertujuan membawa dukungan Linux/Unix-like ke dalam sistem operasi Windows. Dalam proses pengembangan Windows NT yang saat ini mendasari versi-versi Windows modern (Windows 2000 dan setelahnya), Microsoft mendesain sistem operasi tersebut sedemikian rupa agar bersifat modular dan mendukung berbagai macam "subsistem". Pada awal pengembangannya, Windows NT direncanakan memiliki tiga buah subsistem, yakni subsistem Win32, subsistem OS/2 (untuk mendukung interoperabilitas dengan sistem operasi OS/2 milik IBM), dan subsistem POSIX (untuk mendukung interoperabilitas dengan sistem-sistem berbasis Linux, UNIX, atau Unix-like yang sedang populer di kalangan bisnis pada masa itu). Seiring waktu, Microsoft memutus dukungan dan pengembangan lebih lanjut terhadap subsistem OS/2 karena adanya permasalahan bisnis dengan IBM.
-
-Berbeda dengan subsistem OS/2 yang telah mati, dukungan dan pengembangan terhadap subsistem POSIX masih terus berjalan. Secara umum, terdapat tiga iterasi teknologi subsistem POSIX/UNIX yang dikembangkan oleh Microsoft:
-
-\begin{enumerate}
-    \item \textbf{Microsoft POSIX Subsystem.} Teknologi ini merupakan teknologi asli kembangan Microsoft yang ada sejak awal pengembangan Windows NT. Teknologi ini tersedia untuk sistem operasi Windows NT 3.1 hingga Windows 2000.
-    \item \textbf{Windows Services for Unix (SFU).} Produk ini sesungguhnya adalah teknologi milik perusahaan bernama PTS yang dilisensikan kepada Microsoft. Produk ini menggantikan Microsoft POSIX Subsystem sejak sistem operasi Windows XP dan Windows Server 2003.
-    %Teknologi yang membawahi (...) ini sejatinya merupakan hasil pengembangan
-    \item \textbf{Subsystem for Unix-based Applications (SUA).}
-    % Teknologi ini sejatinya merupakan pengembangan lebih lanjut dari SFU.
-    % Teknologi ini pada awalnya bernama subsistem Interix dan berganti nama setelah Microsoft mengakuisisi perusahaan pengembangnya. Setelah akuisisi, produk ini tidak lagi berdiri sebagai produk terpisah, tetapi menjadi salah satu komponen dari Windows Services for Unix (SFU). Komponen ini tersedia sejak 
-\end{enumerate}
-
-% Reason against elaborationg further: The lack of new sources due to the nature of this topic that is "historical information".
-
-% https://link.springer.com/chapter/10.1007/978-1-4842-6038-8_1
-
-Di samping solusi-solusi yang [telah] ditawarkan oleh Microsoft tersebut, terdapat pula beragam solusi-solusi pihak ketiga yang meraih tujuan yang sama. Solusi-solusi pihak ketiga ini ada baik guna mengisi kekosongan dukungan oleh Microsoft secara langsung maupun sebagai substitusi (\textit{substitute}) yang menggantikan solusi bawaan milik/buatan Microsoft karena [mungkin] solusi tersebut dirasa kurang atau masih belum sempurna.
-
-\begin{enumerate}
-    \item \textbf{Colinux.}
-
-    \item \textbf{Cygwin.}
-\end{enumerate}
+% systemd merupakan salah satu sistem init yang tersedia untuk digunakan di sistem operasi Linux di samping sistem-sistem init lain seperti SysV Init, .
 
 \subsection{Windows Subsystem for Linux (WSL)}
 
-Windows Subsystem for Linux merupakan usaha terbaru Microsoft dalam membawa kompatibilitas Unix/Linux ke dalam lingkungan Windows.
+Windows Subsystem for Linux merupakan usaha Microsoft dalam membawa kompatibilitas Unix/Linux ke dalam lingkungan Windows. Secara garis besar, terdapat dua versi WSL yang telah dirilis dengan konsep dan arsitektur yang berbeda.
+\begin{itemize}
+    \item \textbf{Windows Subsystem for Linux versi 1 (WSL1)}
+    WSL1 memanfaatkan sebuah lapisan penerjemah panggilan-panggilan sistem (\textit{syscalls}) yang dipanggil oleh perangkat-perangkat lunak Linux agar diterjemahkan menjadi panggilan-pangiglan sistem (\textit{syscalls}) ekuivalen yang terdapat di Windows. WSL1 adalah varian WSL yang diluncurkan pada pengenalan WSL pertama kali di Windows 10 pada tahun 2016.
 
-\subsection{Dukungan Kompatibilitas Linux atau \textit{Unix-like} di Windows oleh Pihak Ketiga}
+    \item \textbf{Windows Subsystem for Linux versi 2 (WSL2)}
+    WSL2 memanfaatkan sebuah \textit{virtual machine} Hyper-V dengan sejumlah integrasi lebih lanjut agar tidak terasa seperti penjalanan \textit{virtual machine} tradisional. WSL2 menjalankan \textit{kernel} Linux asli yang tervirtualisasi sehingga meningkatkan cakupan dukungan perangkat lunak Linux dibandingkan dengan WSL1.
+\end{itemize}
 
-Microsoft tidak sendirian dalam mengembangkan dukungan lingkungan Linux atau \textit{Unix-like} ke dalam sistem operasi Windows; terdapat beragam pilihan pihak ketiga yang dapat membawa dukungan lingkungan Linux atau \textit{Unix-like} ke Windows.
+% Pada perheletan pengembang tahunan Microsoft Build 2021, Microsoft menyatakan bahwa mereka akan mendukung 
 
-\subsection{Teknologi Sistem Perjendelaan (\textit{Windowing System}) Linux: X11/Xorg dan Wayland}
-
-\subsection{Windows Subsystem for Linux GUI (WSLg)}
-
-Microsoft pertama kali menyatakan dukungan penjalanan perangkat lunak berantarmuka grafis (GUI) di Windows Subsystem for Linux versi 2 (WSL2) secara bawaan (\textit{built-in}) pada perhelatan pengembang tahunan Microsoft Build 2021.
-
-Dalam pengembangan fungsionalitas antarmuka grafis pada Windows Subsystem for Linux, Microsoft berkomitmen untuk mengikuti standar yang telah ada pada lingkungan Linux.
+Pada tahun 2021, Microsoft merilis sistem operasi Windows 11 yang membawa sejumlah perkembangan; salah satu perkembangan tersebut terdapat pada WSL. Windows 11 mendukung penjalanan perangkat lunak Linux berantarmuka grafis (GUI) secara langsung. Microsoft menamakan fitur baru ini "Windows Subsystem for Linux GUI (WSLg)".
 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{wslg-architecture.png}
-    \caption{Arsitektur Windows Subsystem for Linux GUI (WSLg)}
-    \label{fig:enter-label}
+    \caption{Arsitektur Windows Subsystem for Linux GUI (WSLg \cite{wslg-architecture})}
 \end{figure}
 
 % https://link.springer.com/chapter/10.1007/978-1-4842-6873-5_1
-% https://devblogs.microsoft.com/commandline/wslg-architecture/
-
-
-\subsection{\textit{Media Player Remote Interfacing Specification} (MPRIS)}
-
-\subsection{Windows API: System Media Transport Controls (SMTC)}
-
-\subsection{\textit{Standard Stream}, Mekanisme \textit{Piping}, dan Soket}
 
 \section{Analisis Perbandingan Metode}
 
-Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (\textit{bridging}) lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows, dapat ditempuh melalui berbagai macam metode. Setelah meninjau berbagai macam pustaka yang telah ada serta melakukan riset tentang teknologi terkait, penulis merumuskan enam macam pendekatan yang mungkin dilakukan:
+Dalam penyusunan tugas akhir ini, penulis mengkaji serta membandingkan metode-metode yang mungkin dilakukan untuk sejumlah aspek pengerjaan. Aspek-aspek yang dimaksud yaitu penghubungan (\textit{bridging}) lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows dan penentuan bahasa dan platform pemrograman yang paling praktis dan cocok digunakan dalam pengembangan perangkat lunak yang terlibat.
+
+Dalam aspek penghubungan lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows, metode yang dipilih menentukan jumlah dan cakupan perangkat lunak yang perlu dikembangkan, tingkat kesulitan pengembangan perangkat lunak tersebut, serta efisiensi penjalanan perangkat lunak yang telah jadi. Berikut pemaparan empat metode yang mungkin dilakukan.
 \begin{enumerate}
-    \item Lingkungan WSL dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix. Hal ini dimungkinkan dengan diperkenalkannya dukungan \textit{socket} Unix (AF\_UNIX) pada sistem operasi Windows 10 ke atas pada tahun 2017 \cite{bringing-afunix-to-windows}. Penelusuran lebih lanjut mengindikasikan bahwa kemampuan ini rupanya hanya mendukung Windows Subsystem for Linux versi 1 (WSL1) dan belum mendukung Windows Subsystem for Linux versi 2 (WSL2) \cite{github-issues-afunix-not-supported-in-wsl2}. Oleh karena itu, mengingat kemampuan grafis (\textit{graphical user interface}) pada Windows Subsystem for Linux hanya tersedia pada Windows Subsytem for Linux versi 2 (WSL2), metode ini tidak relevan dengan tujuan skripsi ini.
+    \item Lingkungan WSL dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix. Hal ini dimungkinkan dengan diperkenalkannya dukungan \textit{socket} Unix (AF\_UNIX) pada sistem operasi Windows 10 ke atas pada tahun 2017 \cite{bringing-afunix-to-windows}. Namun, penelusuran lebih lanjut mengindikasikan bahwa kemampuan ini rupanya hanya mendukung Windows Subsystem for Linux versi 1 (WSL1) dan belum mendukung Windows Subsystem for Linux versi 2 (WSL2) \cite{github-issues-afunix-not-supported-in-wsl2}. Oleh karena itu, mengingat kemampuan grafis (\textit{graphical user interface}) pada Windows Subsystem for Linux hanya tersedia pada Windows Subsytem for Linux versi 2 (WSL2), metode ini tidak relevan dengan tujuan skripsi ini.
     
     \item Lingkungan WSL dihubungkan dengan lingkungan \textit{host} Windows dengan memanfaatkan \textit{server} HTTP. Metode ini ikut dipertimbangkan mengingat pengalaman penulis yang cukup banyak berhubungan dengan bidang pengembangan web (\textit{web development}). Metode ini dapat dibagi kembali menjadi dua submetode:
     
@@ -210,7 +186,7 @@ Pengerjaan serta pencapaian tujuan skripsi ini, terutama mengenai penghubungan (
 # Di shell PowerShell atau cmd.exe
 wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"\end{lstlisting}
 
-        \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), submetode ini memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data \textcolor{orange}{(TODO: Elaborate more about the programs)}. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL).
+        \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), submetode ini memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL).
         \begin{verbatim}
  ________________               ________________
 |                |             |                |
@@ -236,15 +212,28 @@ signal time=1702386858.242218 sender=:1.19 -> destination=(null destination) ser
    ]\end{lstlisting}
         dan apabila pemutaran media tersebut ingin dijeda (\textit{pause}), dapat dijalankan perintah berikut
         \begin{lstlisting}[language=bash]
-            dbus-send (TODO: FIND THE EXACT COMMAND)\end{lstlisting}
-        Meskipun demikian, proses integrasi dalam skripsi ini melibatkan lebih dari sekadar perintah-perintah D-Bus dan dapat dipastikan membutuhkan perangkat lunak tambahan, sehingga akan lebih baik apabila seluruh fungsionalitas dan logika dalam pengerjaan skripsi ini disatukan ke dalam perangkat lunak tambahan tersebut. Selain itu, keluaran (\textit{output}) perintah \verb|dbus-monitor| tidak selalu lengkap (pada contoh keluaran perintah \verb|dbus-monitor| di atas, tidak ada informasi bahwa perangkat lunak Spotify adalah perangkat lunak yang memulai memainkan media), sehingga submetode ini kurang bisa diandalkan.
+dbus-send --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause\end{lstlisting}
+        Meskipun demikian, proses integrasi dalam skripsi ini melibatkan lebih dari sekadar perintah-perintah D-Bus dan dapat dipastikan membutuhkan perangkat lunak tambahan. Sebagai contoh, sejumlah fungsi yang dilayani melalui D-Bus seperti penanganan notifikasi memerlukan layanan (\textit{service}) yang diregistrasikan secara eksplisit di bus perpesanan D-Bus yang bersangkutan; submetode ini hanya mengandalkan metode yang serupa dengan "\textit{sniffing}" dan tidak benar-benar memiliki identitas dan keberadaan yang teregistrasi sehingga fungsi penanganan notifikasi tetap tidak akan bisa bekerja. Oleh karena itu, akan lebih baik apabila seluruh fungsionalitas dan logika dalam pengerjaan skripsi ini disatukan ke dalam perangkat lunak tambahan tersebut. Selain itu, keluaran (\textit{output}) perintah \verb|dbus-monitor| tidak selalu lengkap (pada contoh keluaran perintah \verb|dbus-monitor| di atas, tidak ada informasi bahwa perangkat lunak Spotify adalah perangkat lunak yang memulai memainkan media), sehingga submetode ini kurang bisa diandalkan.
     \end{enumerate}
     
-    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan meng-\textit{extend} jangkauan bus perpesanan D-Bus hingga dapat diakses secara langsung di dalam lingkungan Windows. Hal ini dicapai dengan cara mengatur konfigurasi \verb|dbus-daemon| di WSL agar dapat diakses melalui TCP (di samping konfigurasi soket Unix \textit{default} yang telah ada) dan mengonsumsi alamat TCP yang ditentukan di perangkat lunak \textit{bridge} yang berjalan di Windows. Metode ini memiliki keuntungan tersendiri: mengingat koneksi bus perpesanan D-Bus saat ini tersedia secara langsung di lingkungan Windows, penyediaan \textit{notification server} dan \textit{MPRIS server} dapat dilakukan secara langsung oleh perangkat lunak \textit{bridge} di sisi Windows, sehingga menghilangkan kebutuhan penjalanan perangkat lunak \textit{bridge} kedua di lingkungan WSL.
-        
+    \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan meng-\textit{extend} jangkauan bus perpesanan D-Bus hingga dapat diakses secara langsung di dalam lingkungan Windows, sehingga perangkat lunak di Windows dapat langsung menghubungi bus perpesanan D-Bus yang berjalan di WSL. Hal ini dicapai dengan cara mengatur konfigurasi \verb|dbus-daemon| di WSL agar dapat diakses melalui TCP (di samping konfigurasi soket Unix \textit{default} yang telah ada) dan mengonsumsi alamat TCP yang ditentukan di perangkat lunak \textit{bridge} yang berjalan di Windows. Metode ini memiliki keuntungan tersendiri: mengingat koneksi bus perpesanan D-Bus saat ini tersedia secara langsung di lingkungan Windows, penyediaan \textit{notification server} dan \textit{MPRIS server} dapat dilakukan secara langsung oleh perangkat lunak \textit{bridge} di sisi Windows, sehingga menghilangkan kebutuhan penjalanan perangkat lunak \textit{bridge} kedua di lingkungan WSL.
 \end{enumerate}
 
-Setelah melalui berbagai pertimbangan di atas, metode keenam dirasa paling cocok diterapkan dalam pengerjaan skripsi ini.
+Berdasarkan penjabaran dan analisis perbandingan metode penghubungan lingkungan WSL dengan lingkungan \textit{host} Windows, dipilih metode keempat mengingat metode penghubungannya yang cukup \textit{straightforward} dan penggunaan protokol TCP yang relatif lebih efisien dibandingkan dengan metode-metode lainnya.
+
+Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal seperti kelengkapan integrasi dengan \textit{application programming interface} (API) \textit{shell} Windows dan kemampuan berkomunikasi dengan D-Bus (baik dengan solusi bawaan atau pihak pertama, apabila tersedia, maupun dengan bantuan pustaka pihak ketiga yang tersedia pada bahasa pemrograman tersebut). Berikut perbandingan platform dan bahasa pemrograman yang dapat digunakan yang disajikan dalam bentuk tabel.
+
+\begin{table}[h]
+    \centering
+    \caption{Perbandingan platform dan bahasa pemrograman}
+    \begin{tabularx}{\textwidth}{|l|X|X|} \hline
+        \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline
+        C\# & Tersedia (mengingat C\# adalah salah satu platform \textit{native} di Windows & Terbatas dan kurang terdokumentasi (\textit{undocumented})\\ \hline
+        Python & Tersedia melalui \textit{binding} pihak ketiga & Tersedia pustaka-pustaka (\textit{library}) yang beraneka ragam\\ \hline
+    \end{tabularx}
+\end{table}
+
+Meskipun bahasa pemrograman C\# didukung secara lebih baik oleh sistem operasi Windows, ketiadaan dukungan integrasi dengan D-Bus yang memungkinkan menghalangi penggunaan bahasa pemrograman C\# sebagai opsi yang \textit{viable}. Oleh karena itu, dipilih bahasa penggunaan Python yang memiliki dukungan lebih baik dalam penghubungan dengan D-Bus meskipun harus menggunakan \textit{binding} tambahan untuk mengakses beragam API yang terdapat di Windows.
 
 \section{Pertanyaan Tugas Akhir}
 
@@ -253,5 +242,5 @@ Dalam serangkaian pengerjaan tugas akhir ini, penulis menemukan beberapa pertany
 \begin{enumerate}
     \item Perangkat lunak \verb|dbus-daemon| dapat melakukan \textit{listening} ke lebih dari satu alamat apabila telah diatur pada berkas konfigurasi (misalnya pada berkas \path{/usr/share/dbus-1/session.conf} untuk bus \textit{session}). Namun, \verb|dbus-daemon| juga memiliki seperangkat argumen eksekusi \cite{dbus-daemon-man-page} yang beberapa di antaranya dapat menimpa (\textit{override}) konfigurasi yang telah dilakukan pada berkas konfigurasi; salah satu argumen yang menarik perhatian yaitu argumen \verb|--address|. Apakah argumen ini mendukung pemberian lebih dari satu alamat? Apabila argumen ini hanya mendukung satu alamat, apa yang terjadi jika argumen ini digunakan dalam pemanggilan \verb|dbus-daemon| saat konfigurasi yang tertimpa (\textit{override}) pada berkas konfigurasi memuat lebih dari satu alamat? Apakah penggunaan argumen ini hanya menimpa (\textit{override}) satu buah alamat pada berkas konfigurasi saja atau menimpa (\textit{override}) semua alamat yang telah diatur pada berkas konfigurasi?
 
-    \item Selain berkomunikasi secara lokal melalui \textit{socket} Unix, D-Bus juga memiliki kemampuan melalui protokol TCP, sehingga memungkinkan komunikasi dengan klien-klien yang berjalan di lingkungan di luar sistem operasi saat ini, baik di perangkat komputer lain (penghubungan secara \textit{remote}) maupun di sebuah \textit{virtual machine} pada perangkat komputer fisik yang sama. Apakah komputer lain tersebut memerlukan penjalanan \verb|dbus-daemon| milik komputer itu sendiri atau perangkat lunak \textit{client} di komputer tersebut dapat langsung terhubung ke D-Bus pusat tanpa memerlukan adanya \verb|dbus-daemon| tambahan yang berjalan pada komputer tersebut? (TODO: Rephrase this one.)
+    % \item Selain berkomunikasi secara lokal melalui \textit{socket} Unix, D-Bus juga memiliki kemampuan melalui protokol TCP, sehingga memungkinkan komunikasi dengan klien-klien yang berjalan di lingkungan di luar sistem operasi saat ini, baik di perangkat komputer lain (penghubungan secara \textit{remote}) maupun di sebuah \textit{virtual machine} pada perangkat komputer fisik yang sama. Apakah komputer lain tersebut memerlukan penjalanan \verb|dbus-daemon| milik komputer itu sendiri atau perangkat lunak \textit{client} di komputer tersebut dapat langsung terhubung ke D-Bus pusat tanpa memerlukan adanya \verb|dbus-daemon| tambahan yang berjalan pada komputer tersebut? (TODO: Rephrase this one.)
 \end{enumerate}

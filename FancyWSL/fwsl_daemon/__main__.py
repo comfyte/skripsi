@@ -10,7 +10,7 @@ from .services.notifications import NotificationHandlerService
 from .services.media_control import MediaControlService
 
 # Set logging to display all messages (to make debugging easier).
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='FWSL LOG | %(asctime)s | (%(name)s) %(levelname)s: %(message)s', level=logging.INFO)
 
 # Get logger for current module
 logger = logging.getLogger(__name__)

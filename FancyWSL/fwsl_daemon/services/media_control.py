@@ -1,9 +1,6 @@
 import logging
 from functools import wraps
-# import asyncio
-# from asgiref.sync import async_to_sync
 import subprocess
-# from dbus_next.service import ServiceInterface, method
 from dbus_next.aio import MessageBus
 from dbus_next import Message, MessageType
 from ..shell.smtc import WindowsSMTC
@@ -37,7 +34,6 @@ class MediaControlService:
         
         await self.__add_dbus_match('path=/org/mpris/MediaPlayer2, '
                                     'interface=org.freedesktop.DBus.Properties, member=PropertiesChanged')
-        # self.bus.add_message_handler(self.playback_status_change_handler)
 
         self.bus.add_message_handler(self.__signal_handler)
 
@@ -80,33 +76,21 @@ class MediaControlService:
         self.mpris_clients[client_id].update_state(playback_info)
 
     def __play_pause_request_handler(self, client_id: str):
-        # def future_done_callback(a):
-        #     logger.info(f'Called PlayPause method to client "{client_id}".')
-        #     logger.info(a)
-
-        # FIXME: This only works because the underlying dbus-next library hasn't migrated this function to
-        # a coroutine function yet; this would probably break when it eventually happens.
-        # self.bus.send(Message(destination=client_id,
-        #                       path='/org/mpris/MediaPlayer2',
-        #                       interface='org.mpris.MediaPlayer2.Player',
-        #                       member='PlayPause')).add_done_callback(future_done_callback)
-        # async_to_sync(self.bus.call)(Message(destination=client_id,
-        #                                      path='/org/mpris/MediaPlayer2',
-        #                                      interface='org.mpris.MediaPlayer2.Player',
-        #                                      member='PlayPause'))
-        
-        # logger.info(f'Called PlayPause method to client "{client_id}".')
-
         # HACK and FIXME
         _temporary_dbus_direct_method_call(wsl_distro_name=self.wsl_distro_name,
                                            destination=client_id,
                                            method_name='PlayPause')
         
-    def __go_previous_request_handler(self):
-        pass
+    def __go_previous_request_handler(self, client_id: str):
+        # HACK and FIXME
+        _temporary_dbus_direct_method_call(wsl_distro_name=self.wsl_distro_name,
+                                           destination=client_id,
+                                           method_name='Previous')
 
-    def __go_next_request_handler(self):
-        pass
+    def __go_next_request_handler(self, client_id: str):
+        _temporary_dbus_direct_method_call(wsl_distro_name=self.wsl_distro_name,
+                                           destination=client_id,
+                                           method_name='Next')
 
 # HACK: This is currently calling `dbus-send` directly because I couldn't make the asynchronous stuff work
 # yet. Please revert to the native Python handling soon after it's worked out!

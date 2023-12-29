@@ -5,7 +5,6 @@ from winsdk.windows.media import (MediaPlaybackStatus, MediaPlaybackType, System
                                   SystemMediaTransportControlsButton)
 from winsdk.windows.storage.streams import RandomAccessStreamReference
 import winsdk.windows.foundation as windows_foundation
-# from winsdk.windows.storage import StorageFile
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +37,15 @@ class WindowsSMTC():
 
         self.__controls.add_button_pressed(self.__handle_button_press)
 
-        # self.updater.update()
-
-    def __handle_button_press(self, sender: SystemMediaTransportControls,
+    def __handle_button_press(self, _: SystemMediaTransportControls,
                               args: SystemMediaTransportControlsButtonPressedEventArgs):
         if (args.button == SystemMediaTransportControlsButton.PLAY or
             args.button == SystemMediaTransportControlsButton.PAUSE):
             self.__play_pause_callback(self.dbus_client_id)
+        elif args.button == SystemMediaTransportControlsButton.PREVIOUS:
+            self.__go_previous_callback(self.dbus_client_id)
+        elif args.button == SystemMediaTransportControlsButton.NEXT:
+            self.__go_next_callback(self.dbus_client_id)
 
     def update_state(self, playback_info: dict):
         if 'Metadata' in playback_info:
@@ -85,29 +86,9 @@ class WindowsSMTC():
                         windows_foundation.Uri(art_url_value)
                     )
 
-                    # logger.info(f'WindowsSMTC "{self.dbus_client_id}" thumbnail URI is '
-                    #             f'now "{self.__updater.thumbnail}".')
-                    # logger.info(f'Thumbnail for player "{self.dbus_client_id}" is available and has '
-                    #             'been set accordingly in the respective WindowsSMTC instance.')
                     log_thumbnail_value(f'the URL "{art_url_value}"')
 
-                # TODO: Reimplement the retrieval of the thumbnail from file (previous attempts were either
-                # directly accessing the thumbnail image file within the WSL directory structure or making
-                # it into a base64 image first).
-                    
-                # elif art_url_value.startswith('file://'):
-                    # thumbnail_path = (f'\\\\wsl.localhost\\{self.wsl_distro_name}' +
-                    #                   art_url_value.removeprefix('file://').replace('/', '\\'))
-                    
-                    # self.__updater.thumbnail = RandomAccessStreamReference.create_from_file(
-                    #     StorageFile.get_file_from_path_async
-                    # )
-                    
-                    # log_thumbnail_value(f'the path "{thumbnail_path}"')
-                    
                 elif art_url_value != '':
-                    # logger.warn(f'("{self.dbus_client_id}") FancyWSL only supports HTTPS artUrl (at the '
-                    #             f'moment), but the supplied artUrl value is "{art_url_value}".')
                     logger.warn(f'("{self.dbus_client_id}") The artUrl value "{art_url_value}" is '
                                 '(currently) unsupported.')
 

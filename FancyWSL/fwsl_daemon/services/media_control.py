@@ -1,5 +1,9 @@
 import logging
-from dbus_next.service import ServiceInterface, method
+from functools import wraps
+# import asyncio
+# from asgiref.sync import async_to_sync
+import subprocess
+# from dbus_next.service import ServiceInterface, method
 from dbus_next.aio import MessageBus
 from dbus_next import Message, MessageType
 from ..shell.smtc import WindowsSMTC
@@ -7,11 +11,20 @@ from ..shell.smtc import WindowsSMTC
 # Get logger for current module
 logger = logging.getLogger(__name__)
 
-class MediaControlService(ServiceInterface):
-    def __init__(self, bus_instance: MessageBus):
-        super().__init__('dev.farrel.FancyWSL')
+def disregard_unregistered_client(original_function):
+    @wraps(original_function)
+    def wrapper_function(*args, **kwargs):
+        try:
+            return original_function(*args, **kwargs)
+        except KeyError as e:
+            logger.warning(f'Unknown client ("{e.args[0]}") disregarded.')
+    return wrapper_function
 
+class MediaControlService:
+    def __init__(self, bus_instance: MessageBus, wsl_distro_name: str):
         self.bus = bus_instance
+        self.wsl_distro_name = wsl_distro_name
+
         self.mpris_clients: dict[str, WindowsSMTC] = {}
 
         # FIXME: This overall logic assumes that FancyWSL has run before any potential media-playing apps
@@ -47,18 +60,64 @@ class MediaControlService(ServiceInterface):
             elif old_owner != '' and new_owner == '':
                 self.__destroy_playback_instance(old_owner)
     
+    @disregard_unregistered_client
     def __new_playback_instance(self, client_id: str):
         logger.info(f'add {client_id}')
-        self.mpris_clients[client_id] = WindowsSMTC(client_id, self.__play_pause_request_handler)
+        self.mpris_clients[client_id] = WindowsSMTC(client_id,
+                                                    self.wsl_distro_name,
+                                                    play_pause_callback=self.__play_pause_request_handler,
+                                                    go_previous_callback=self.__go_previous_request_handler,
+                                                    go_next_callback=self.__go_next_request_handler)
 
+    @disregard_unregistered_client
     def __destroy_playback_instance(self, client_id: str):
         logger.info(f'remove {client_id}')
         self.mpris_clients[client_id].destroy()
         self.mpris_clients.pop(client_id)
     
+    @disregard_unregistered_client
     def __playback_status_change_handler(self, client_id: str, playback_info):
         self.mpris_clients[client_id].update_state(playback_info)
 
-    async def __play_pause_request_handler(self, client_id: str):
-        await self.bus.call(Message(destination=client_id, path='/org/mpris/MediaPlayer2',
-                                    interface='org.mpris.MediaPlayer2.Player', member='PlayPause'))
+    def __play_pause_request_handler(self, client_id: str):
+        # def future_done_callback(a):
+        #     logger.info(f'Called PlayPause method to client "{client_id}".')
+        #     logger.info(a)
+
+        # FIXME: This only works because the underlying dbus-next library hasn't migrated this function to
+        # a coroutine function yet; this would probably break when it eventually happens.
+        # self.bus.send(Message(destination=client_id,
+        #                       path='/org/mpris/MediaPlayer2',
+        #                       interface='org.mpris.MediaPlayer2.Player',
+        #                       member='PlayPause')).add_done_callback(future_done_callback)
+        # async_to_sync(self.bus.call)(Message(destination=client_id,
+        #                                      path='/org/mpris/MediaPlayer2',
+        #                                      interface='org.mpris.MediaPlayer2.Player',
+        #                                      member='PlayPause'))
+        
+        # logger.info(f'Called PlayPause method to client "{client_id}".')
+
+        # HACK and FIXME
+        _temporary_dbus_direct_method_call(wsl_distro_name=self.wsl_distro_name,
+                                           destination=client_id,
+                                           method_name='PlayPause')
+        
+    def __go_previous_request_handler(self):
+        pass
+
+    def __go_next_request_handler(self):
+        pass
+
+# HACK: This is currently calling `dbus-send` directly because I couldn't make the asynchronous stuff work
+# yet. Please revert to the native Python handling soon after it's worked out!
+def _temporary_dbus_direct_method_call(*, wsl_distro_name: str, destination: str, method_name: str):
+    logger.warn(f'Using a temporary hack for calling D-Bus method "{method_name}" on '
+                f'destination "{destination}".')
+    
+    dbus_send_command = ['dbus-send',
+                         '--session',
+                         '--type=method_call',
+                         f'--dest={destination}',
+                         '/org/mpris/MediaPlayer2',
+                         f'org.mpris.MediaPlayer2.Player.{method_name}']
+    subprocess.run(['wsl.exe', '-d', f'{wsl_distro_name}'] + dbus_send_command, check=True)

@@ -10,31 +10,33 @@ from .services.notifications import NotificationHandlerService
 from .services.media_control import MediaControlService
 
 # Set logging to display all messages (to make debugging easier).
-logging.basicConfig(format='FWSL LOG | %(asctime)s | (%(name)s) %(levelname)s: %(message)s', level=logging.INFO)
+logging.basicConfig(format='FWSL LOG | %(asctime)s | (%(name)s) %(levelname)s: %(message)s',
+                    level=logging.INFO)
 
 # Get logger for current module
 logger = logging.getLogger(__name__)
 
-async def attach_services_to_bus(bus: MessageBus):
+async def attach_services_to_bus(bus: MessageBus, *, wsl_distro_name):
     # org.freedesktop.Notifications
     bus.export('/org/freedesktop/Notifications', NotificationHandlerService())
     await bus.request_name('org.freedesktop.Notifications')
 
-    media_control_service = MediaControlService(bus)
+    media_control_service = MediaControlService(bus, wsl_distro_name)
     await media_control_service.init_async()
 
 async def fwsl_daemon(bus_address: str):
     # Do checks first
     try:
-        verify_platform()
-    except RuntimeError:
+        platform_info = verify_platform()
+    except RuntimeError as e:
+        logger.error(e.args[0])
         sys.exit(1)
 
     logger.info('Starting FancyWSL Daemon...')
 
     if not bus_address.startswith('tcp:'):
-        logger.error('The supplied bus address is not a TCP address. Currently, only TCP addresses are supported '
-                     'by FancyWSL. Exiting...')
+        logger.error('The supplied bus address is not a TCP address. Currently, only TCP addresses are '
+                     'supported by FancyWSL. Exiting...')
         sys.exit(1)
 
     logger.info(f'Connecting to bus address "{bus_address}"...')
@@ -46,7 +48,7 @@ async def fwsl_daemon(bus_address: str):
         logger.error('Some error happened. Exiting FancyWSL Daemon...')
         sys.exit(1)
 
-    await attach_services_to_bus(bus)
+    await attach_services_to_bus(bus, wsl_distro_name=platform_info['wsl_distro_name'])
 
     # Define clean-up function before exiting the program
     def cleanup_before_exiting():
@@ -63,8 +65,11 @@ async def fwsl_daemon(bus_address: str):
 
 if __name__ == '__main__':
     argument_parser = ArgumentParser('FancyWSL Daemon')
-    argument_parser.add_argument('--bus-address', help='Specify the bus address (currently only TCP address '
-                                 'is supported) to be used by FancyWSL.', type=str, required=True)
+    argument_parser.add_argument('--bus-address',
+                                 help=('Specify the bus address (currently only TCP addresses are '
+                                       'supported) to be used by FancyWSL.'),
+                                 type=str,
+                                 required=True)
     args = argument_parser.parse_args()
 
     # Workaround because we're running on Windows (instead of Unix-like/Linux)

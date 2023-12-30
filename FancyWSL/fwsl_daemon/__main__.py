@@ -4,10 +4,12 @@ from argparse import ArgumentParser
 import asyncio
 from dbus_next.aio import MessageBus
 from dbus_next.auth import AuthAnnonymous
+from winsdk.windows.ui.notifications import ToastNotificationHistory
 from .helpers.verify_platform import verify_platform
 from .shell.persistent_tray_icon import PersistentTrayIcon
 from .services.notifications import NotificationHandlerService
 from .services.media_control import MediaControlService
+from .helpers.constants import NOTIFICATION_GROUP_NAME
 
 # Set logging to display all messages (to make debugging easier).
 logging.basicConfig(format='FWSL LOG | %(asctime)s | (%(name)s) %(levelname)s: %(message)s',
@@ -18,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 async def attach_services_to_bus(bus: MessageBus, *, wsl_distro_name):
     # org.freedesktop.Notifications
-    bus.export('/org/freedesktop/Notifications', NotificationHandlerService())
+    bus.export('/org/freedesktop/Notifications', NotificationHandlerService(wsl_distro_name))
     await bus.request_name('org.freedesktop.Notifications')
 
     media_control_service = MediaControlService(bus, wsl_distro_name)
@@ -52,6 +54,10 @@ async def fwsl_daemon(bus_address: str):
 
     # Define clean-up function before exiting the program
     def cleanup_before_exiting():
+        # TODO and/or FIXME
+        # ToastNotificationHistory.remove_group(NOTIFICATION_GROUP_NAME)
+        # logger.info(f'Cleared all Windows ToastNotification with group name "{NOTIFICATION_GROUP_NAME}".')
+
         bus.disconnect()
 
     def persistent_tray_icon_quit_handler(_):

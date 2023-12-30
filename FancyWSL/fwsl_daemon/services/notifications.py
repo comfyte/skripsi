@@ -6,27 +6,33 @@ from dbus_next import Variant, DBusError
 from ..shell.toast_notification import WindowsToastNotification
 
 class NotificationHandlerService(ServiceInterface):
-    def __init__(self):
+    def __init__(self, wsl_distro_name: str):
         super().__init__('org.freedesktop.Notifications')
-        # self.notification_manager = win_ui_notifications.ToastNotificationManager()
+
+        self.wsl_distro_name = wsl_distro_name
     
     @method()
     def GetCapabilities(self):
-        # return [
-        #     'body'
-        # ]
+        # Turns out that this isn't really needed, but still FIXME.
         pass
     
     @method()
-    def Notify(self, app_name: 's', replaces_id: 'u', app_icon: 's',
-               summary: 's', body: 's', actions: 'as', hints: 'a{sv}', expire_timeout: 'i') -> 'u':
-        wtn = WindowsToastNotification(app_name, summary, body)
-        wtn.display()
-
-        if replaces_id == 0:
-            return 3925
-        else:
-            return replaces_id
+    def Notify(self,
+               app_name: 's',
+               replaces_id: 'u',
+               app_icon: 's',
+               summary: 's',
+               body: 's',
+               actions: 'as',
+               hints: 'a{sv}',
+               expire_timeout: 'i') -> 'u':
+        windows_toast_notification = WindowsToastNotification(self.wsl_distro_name,
+                                                              app_name=app_name,
+                                                              id=replaces_id,
+                                                              title=summary,
+                                                              body_content=body,
+                                                              expire_timeout=expire_timeout)
+        windows_toast_notification.display()
 
     @method()
     def GetServerInformation(self) -> 'ssss':

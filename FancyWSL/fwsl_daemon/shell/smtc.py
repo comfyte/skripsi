@@ -1,12 +1,35 @@
 import logging
+from typing import TypedDict, Literal
 import winsdk.windows.media.playback as windows_media_playback
-from winsdk.windows.media import (MediaPlaybackStatus, MediaPlaybackType, SystemMediaTransportControls,
+from winsdk.windows.media import (MediaPlaybackStatus,
+                                  MediaPlaybackType,
+                                  SystemMediaTransportControls,
                                   SystemMediaTransportControlsButtonPressedEventArgs,
                                   SystemMediaTransportControlsButton)
 from winsdk.windows.storage.streams import RandomAccessStreamReference
 import winsdk.windows.foundation as windows_foundation
 
 logger = logging.getLogger(__name__)
+
+class MediaInfo(TypedDict):
+    artist: str
+    album_artist: str
+    title: str
+    album_art_url: str
+
+class MediaAbilities(TypedDict):
+    can_play: bool
+    can_pause: bool
+    can_go_previous: bool
+    can_go_next: bool
+
+
+class MediaState(TypedDict):
+    media_type: MediaPlaybackType
+    media_info: MediaInfo
+    # playback_status: Literal['Playing', 'Paused', 'Stopped']
+    playback_status: MediaPlaybackStatus
+    abilities: MediaAbilities
 
 class WindowsSMTC():
     def __init__(self,
@@ -37,7 +60,8 @@ class WindowsSMTC():
 
         self.__controls.add_button_pressed(self.__handle_button_press)
 
-    def __handle_button_press(self, _: SystemMediaTransportControls,
+    def __handle_button_press(self,
+                              _: SystemMediaTransportControls,
                               args: SystemMediaTransportControlsButtonPressedEventArgs):
         if (args.button == SystemMediaTransportControlsButton.PLAY or
             args.button == SystemMediaTransportControlsButton.PAUSE):
@@ -47,79 +71,51 @@ class WindowsSMTC():
         elif args.button == SystemMediaTransportControlsButton.NEXT:
             self.__go_next_callback(self.dbus_client_id)
 
-    def update_state(self, playback_info: dict):
-        if 'Metadata' in playback_info:
-            metadata: dict = playback_info['Metadata'].value
-            # FIXME: Maybe find a way to determine this from the MPRIS metadata (or does the MPRIS metadata
-            # even contain this information?)
-            self.__updater.type = MediaPlaybackType.MUSIC
+    def update_state(self, current_playback_state: MediaState):
+        if 'media_type' in current_playback_state:
+            self.__updater.type = current_playback_state['media_type']
+        
+        if 'media_info' in current_playback_state:
+            current_media_info = current_playback_state['media_info']
 
-            if 'xesam:artist' in metadata:
-                # Apparently it's an array
-                self.__updater.music_properties.artist = metadata['xesam:artist'].value[0]
+            if 'artist' in current_media_info:
+                self.__updater.music_properties.artist = current_media_info['artist']
 
-                logger.info(f'WindowsSMTC "{self.dbus_client_id}" artist is '
-                            f'now "{self.__updater.music_properties.artist}".')
+            if 'album_artist' in current_media_info:
+                self.__updater.music_properties.album_artist = current_media_info['album_artist']
 
-            if 'xesam:albumArtist' in metadata:
-                # Also an array
-                self.__updater.music_properties.album_artist = metadata['xesam:albumArtist'].value[0]
+            if 'title' in current_media_info:
+                self.__updater.music_properties.title = current_media_info['title']
 
-                logger.info(f'WindowsSMTC "{self.dbus_client_id}" album artist is '
-                            f'now "{self.__updater.music_properties.album_artist}".')
-
-            if 'xesam:title' in metadata:
-                self.__updater.music_properties.title = metadata['xesam:title'].value
-
-                logger.info(f'WindowsSMTC "{self.dbus_client_id}" title is '
-                            f'now "{self.__updater.music_properties.title}".')
-                
-            if 'mpris:artUrl' in metadata:
-                def log_thumbnail_value(value: str):
-                    logger.info(f'Thumbnail for player "{self.dbus_client_id}" is set to {value}.')
-
-                art_url_value: str = metadata['mpris:artUrl'].value
-
+            if 'album_art_url' in current_media_info:
                 # Omit non-secure HTTP support, just in case.
-                if art_url_value.startswith('https://'):
+                if current_media_info['album_art_url'].startswith('https://'):
                     self.__updater.thumbnail = RandomAccessStreamReference.create_from_uri(
-                        windows_foundation.Uri(art_url_value)
+                        windows_foundation.Uri(current_media_info['album_art_url'])
                     )
 
-                    log_thumbnail_value(f'the URL "{art_url_value}"')
-
-                elif art_url_value != '':
-                    logger.warn(f'("{self.dbus_client_id}") The artUrl value "{art_url_value}" is '
+                elif current_media_info['album_art_url'] != '':
+                    logger.warn(f'("{self.dbus_client_id}") The album art URL value "{current_media_info["album_art_url"]}" is '
                                 '(currently) unsupported.')
 
             self.__updater.update()
 
-        if 'PlaybackStatus' in playback_info:
-            playback_status = playback_info['PlaybackStatus'].value
+        if 'playback_status' in current_playback_state:
+            self.__controls.playback_status = current_playback_state['playback_status']
 
-            logger.info(f'WindowsSMTC "{self.dbus_client_id}" playback status is set to {playback_status}.')
-
-            if playback_status == 'Playing':
-                self.__controls.playback_status = MediaPlaybackStatus.PLAYING
-            elif playback_status == 'Paused':
-                self.__controls.playback_status = MediaPlaybackStatus.PAUSED
-            elif playback_status == 'Stopped':
-                self.__controls.playback_status = MediaPlaybackStatus.STOPPED
-
-        # Extra comparisons of the booleans here to ensure that the returned (pythonized) types are correct.
-        if 'CanPlay' in playback_info:
-            self.__controls.is_play_enabled = True if playback_info['CanPlay'].value == True else False
-            logger.info(f'"{self.dbus_client_id}" CanPlay is {playback_info["CanPlay"].value}.')
-        if 'CanPause' in playback_info:
-            self.__controls.is_pause_enabled = True if playback_info['CanPause'].value == True else False
-            logger.info(f'"{self.dbus_client_id}" CanPause is {playback_info["CanPause"].value}.')
-        if 'CanGoNext' in playback_info:
-            self.__controls.is_next_enabled = True if playback_info['CanGoNext'].value == True else False
-            logger.info(f'"{self.dbus_client_id}" CanGoNext is {playback_info["CanGoNext"].value}.')
-        if 'CanGoPrevious' in playback_info:
-            self.__controls.is_previous_enabled = True if playback_info['CanGoPrevious'].value == True else False
-            logger.info(f'"{self.dbus_client_id}" CanGoPrevious is {playback_info["CanGoPrevious"].value}.')
-
+        if 'abilities' in current_playback_state:
+            abilities = current_playback_state['abilities']
+            if 'can_play' in abilities:
+                self.__controls.is_play_enabled = abilities['can_play']
+            if 'can_pause' in abilities:
+                self.__controls.is_pause_enabled = abilities['can_pause']
+            if 'can_go_previous' in abilities:
+                self.__controls.is_previous_enabled = abilities['can_go_previous']
+            if 'can_go_next' in abilities:
+                self.__controls.is_next_enabled = abilities['can_go_next']
+        
+        logger.info(f'Media state for client "{self.dbus_client_id}" has been updated (details below).')
+        logger.info(current_media_info)
 
     def destroy(self):
         self.__controls.is_enabled = False

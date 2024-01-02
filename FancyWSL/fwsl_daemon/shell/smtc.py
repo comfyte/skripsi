@@ -1,5 +1,6 @@
 import logging
-from typing import TypedDict, Literal
+from typing import TypedDict
+from pprint import pformat
 import winsdk.windows.media.playback as windows_media_playback
 from winsdk.windows.media import (MediaPlaybackStatus,
                                   MediaPlaybackType,
@@ -72,6 +73,9 @@ class WindowsSMTC():
             self.__go_next_callback(self.dbus_client_id)
 
     def update_state(self, current_playback_state: MediaState):
+        logger.info('Received below details for updating SMTC state for MPRIS client '
+                    f'"{self.dbus_client_id}".\n' + pformat(current_playback_state))
+
         if 'media_type' in current_playback_state:
             self.__updater.type = current_playback_state['media_type']
         
@@ -113,10 +117,9 @@ class WindowsSMTC():
                 self.__controls.is_previous_enabled = abilities['can_go_previous']
             if 'can_go_next' in abilities:
                 self.__controls.is_next_enabled = abilities['can_go_next']
-        
-        logger.info(f'Media state for client "{self.dbus_client_id}" has been updated (details below).')
-        logger.info(current_media_info)
 
+        logger.info(f'SMTC state for MPRIS client "{self.dbus_client_id}" has successfully been updated.')
+        
     def destroy(self):
         self.__controls.is_enabled = False
         logger.info(f'WindowsSMTC instance for client "{self.dbus_client_id}" is destroyed.')

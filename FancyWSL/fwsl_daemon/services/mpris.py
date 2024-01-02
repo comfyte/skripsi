@@ -1,6 +1,7 @@
 import logging
 from functools import wraps
 import subprocess
+from typing import Literal
 from dbus_next.aio import MessageBus
 from dbus_next import Message, MessageType
 from ..shell.smtc import WindowsSMTC, MediaState, MediaPlaybackType, MediaPlaybackStatus
@@ -14,7 +15,12 @@ def disregard_unregistered_client(original_function):
         try:
             return original_function(*args, **kwargs)
         except KeyError as e:
-            logger.warning(f'Unknown client ("{e.args[0]}") disregarded.')
+            key_name: str = e.args[0]
+            if key_name.startswith(':'):
+                # It means that the current key_name is a client unique name.
+                logger.warning(f'Unknown client ("{key_name}") disregarded.')
+            else:
+                raise e
     return wrapper_function
 
 class MediaControlService:
@@ -63,18 +69,33 @@ class MediaControlService:
                 self.__destroy_playback_instance(unique_name)
 
             client_count = len(self.mpris_clients)
-            is_plural = client_count == 1
-            logger.info(f'There {"is" if is_plural else "are"} now {client_count} MPRIS '
+            is_plural = client_count != 1
+            logger.info(f'There {"are" if is_plural else "is"} now {client_count} MPRIS '
                         f'client{"s" if is_plural else ""} handled by FancyWSL '
                         f'({", ".join(self.mpris_clients.keys())}).')
     
     @disregard_unregistered_client
     def __new_playback_instance(self, client_id: str):
-        self.mpris_clients[client_id] = WindowsSMTC(client_id,
-                                                    self.wsl_distro_name,
-                                                    play_pause_callback=self.__play_pause_request_handler,
-                                                    go_previous_callback=self.__go_previous_request_handler,
-                                                    go_next_callback=self.__go_next_request_handler)
+        smtc_instance = WindowsSMTC(client_id,
+                                    self.wsl_distro_name,
+                                    play_pause_callback=self.__play_pause_request_handler,
+                                    go_previous_callback=self.__go_previous_request_handler,
+                                    go_next_callback=self.__go_next_request_handler)
+        
+        # Some clients like chromium don't broadcast some necessary properties right away, so we need to
+        # proactively get the property values.
+        smtc_instance.update_state({
+            'abilities': {
+                'can_play': _temporary_get_mpris_player_property(wsl_distro_name=self.wsl_distro_name,
+                                                                 destination=client_id,
+                                                                 property_name='CanPlay'),
+                'can_pause': _temporary_get_mpris_player_property(wsl_distro_name=self.wsl_distro_name,
+                                                                  destination=client_id,
+                                                                  property_name='CanPause')
+            }
+        })
+
+        self.mpris_clients[client_id] = smtc_instance
 
     @disregard_unregistered_client
     def __destroy_playback_instance(self, client_id: str):
@@ -91,6 +112,9 @@ class MediaControlService:
 
         if 'Metadata' in playback_info:
             metadata: dict = playback_info['Metadata'].value
+
+            # Initialize the parent dict first.
+            current_playback_state['media_info'] = {}
 
             if 'xesam:artist' in metadata:
                 current_playback_state['media_info']['artist'] = metadata['xesam:artist'].value[0]
@@ -109,39 +133,47 @@ class MediaControlService:
             }
             current_playback_state['playback_status'] = matches[playback_info['PlaybackStatus'].value]
 
-        # Extra comparisons of the booleans here to ensure that the returned (pythonized) types are correct.
-        if 'CanPlay' in playback_info:
-            current_playback_state['abilities']['can_play'] = True if playback_info['CanPlay'].value == True else False
-        if 'CanPause' in playback_info:
-            current_playback_state['abilities']['can_pause'] = True if playback_info['CanPause'].value == True else False
-        if 'CanGoPrevious' in playback_info:
-            current_playback_state['abilities']['can_go_previous'] = True if playback_info['CanGoPrevious'].value == True else False
-        if 'CanGoNext' in playback_info:
-            current_playback_state['abilities']['can_go_next'] = True if playback_info['CanGoNext'].value == True else False
+        if any(key_name in playback_info for key_name in ['CanPlay',
+                                                          'CanPause',
+                                                          'CanGoPrevious',
+                                                          'CanGoNext']):
+            # Initialize the parent dict first.
+            current_playback_state['abilities'] = {}
+
+            # Extra comparisons of the booleans here to ensure that the returned (pythonized) types are correct.
+            if 'CanPlay' in playback_info:
+                current_playback_state['abilities']['can_play'] = True if playback_info['CanPlay'].value == True else False
+            if 'CanPause' in playback_info:
+                current_playback_state['abilities']['can_pause'] = True if playback_info['CanPause'].value == True else False
+            if 'CanGoPrevious' in playback_info:
+                current_playback_state['abilities']['can_go_previous'] = True if playback_info['CanGoPrevious'].value == True else False
+            if 'CanGoNext' in playback_info:
+                current_playback_state['abilities']['can_go_next'] = True if playback_info['CanGoNext'].value == True else False
 
         self.mpris_clients[client_id].update_state(current_playback_state)
 
     def __play_pause_request_handler(self, client_id: str):
         # HACK and FIXME
-        _temporary_dbus_direct_method_call(wsl_distro_name=self.wsl_distro_name,
+        _temporary_call_mpris_method(wsl_distro_name=self.wsl_distro_name,
                                            destination=client_id,
                                            method_name='PlayPause')
         
     def __go_previous_request_handler(self, client_id: str):
         # HACK and FIXME
-        _temporary_dbus_direct_method_call(wsl_distro_name=self.wsl_distro_name,
+        _temporary_call_mpris_method(wsl_distro_name=self.wsl_distro_name,
                                            destination=client_id,
                                            method_name='Previous')
 
     def __go_next_request_handler(self, client_id: str):
         # HACK and FIXME
-        _temporary_dbus_direct_method_call(wsl_distro_name=self.wsl_distro_name,
+        _temporary_call_mpris_method(wsl_distro_name=self.wsl_distro_name,
                                            destination=client_id,
                                            method_name='Next')
 
-# HACK: This is currently calling `dbus-send` directly because I couldn't make the asynchronous stuff work
-# yet. Please revert to the native Python handling soon after it's worked out!
-def _temporary_dbus_direct_method_call(*, wsl_distro_name: str, destination: str, method_name: str):
+# HACK: These functions below are currently calling `dbus-send` directly because I couldn't make the
+# asynchronous stuff work yet. Please revert to the native Python handling soon after it's worked out!
+
+def _temporary_call_mpris_method(*, wsl_distro_name: str, destination: str, method_name: str) -> None:
     logger.warn(f'Using a temporary hack for calling D-Bus method "{method_name}" on '
                 f'destination "{destination}".')
     
@@ -151,4 +183,42 @@ def _temporary_dbus_direct_method_call(*, wsl_distro_name: str, destination: str
                          f'--dest={destination}',
                          '/org/mpris/MediaPlayer2',
                          f'org.mpris.MediaPlayer2.Player.{method_name}']
-    subprocess.run(['wsl.exe', '-d', f'{wsl_distro_name}'] + dbus_send_command, check=True)
+    subprocess.run(['wsl.exe', '-d', wsl_distro_name] + dbus_send_command, check=True)
+
+def _temporary_get_mpris_player_property(*,
+                                         wsl_distro_name: str,
+                                         destination: str,
+                                         property_name: Literal['CanPlay',
+                                                                'CanPause',
+                                                                'CanGoPrevious',
+                                                                'CanGoNext']) -> bool:
+    logger.warn(f'Using a temporary hack for getting the "{property_name}" property '
+                f'of MPRIS client "{destination}".')
+    
+    dbus_send_command = ['dbus-send',
+                         '--session',
+                         '--type=method_call',
+                         '--print-reply',
+                         f'--dest={destination}',
+                         '/org/mpris/MediaPlayer2',
+                         'org.freedesktop.DBus.Properties.Get',
+                         'string:org.mpris.MediaPlayer2.Player',
+                         f'string:{property_name}']
+    
+    result = subprocess.run(['wsl.exe', '-d', wsl_distro_name] + dbus_send_command,
+                            check=True,
+                            capture_output=True,
+                            encoding='utf-8')
+    
+    # HACK and FIXME: This parsing logic is likely very hacky.
+    parsed_result = result.stdout.split()
+    print(parsed_result)
+    value_string = parsed_result[parsed_result.index('boolean') + 1]
+    if value_string == 'true':
+        return True
+    elif value_string == 'false':
+        return False
+    else:
+        raise ValueError(f'An error occured in getting the "{property_name}" property '
+                         f'of the MPRIS client "{destination}".')
+    

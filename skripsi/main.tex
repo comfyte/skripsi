@@ -19,8 +19,16 @@
 \usepackage{tabularx}
 \usepackage{colortbl}
 \usepackage{pmboxdraw}
-\usepackage{hyperref}
 \usepackage{float}
+
+% For hyperlinking
+% (This package apparently needs to be loaded last)
+\usepackage{hyperref}
+\hypersetup{
+    hidelinks=true,
+    colorlinks=true,
+    allcolors=blue
+}
 
 %======================================
 % Information Input
@@ -28,7 +36,7 @@
 % Input author's name and ID number
 \author{Muhammad Farrel Rafirizqy}{19/444062/TK/49258}
 % Input the thesis' title
-\title{FancyWSL: Perluasan Komunikasi D-Bus pada Windows Subsystem for Linux (WSL) guna Meningkatkan Integrasi Antarmuka Pengguna Grafis (GUI) dengan \textit{Host} Windows dalam Aspek Notifikasi dan Kontrol Media}
+\title{FancyWSL: Peluasan Komunikasi D-Bus pada Windows Subsystem for Linux (WSL) guna Meningkatkan Integrasi Antarmuka Pengguna Grafis (GUI) dengan \textit{Host} Windows dalam Aspek Notifikasi dan Kontrol Media}
 % Program and the head of the program
 \program{Teknologi Informasi}{<<Program coordinator>>}{<<NIP>>}
 % Name of department head and NIP
@@ -77,13 +85,12 @@
 % 	\printendorsementjpg. Otherwise, use \printendorsement.
 % 	Choose one only. Comment out unused command(s).
 %
-% \printendorsement
+\printendorsement
 %\printendorsementpdf
-\printendorsementjpg{IMG_9041.JPEG}
+% \printendorsementjpg{}
 
-%---- DEDICATION PAGE ----
-\chapterstatement{contents/statement/statement}
-%\chapterstatementjpg{sample/scanned-statement.jpg}
+% \chapterstatement{contents/statement/statement}
+\chapterstatementjpg{IMG_9041.JPEG}
 
 \chapterdedication{contents/dedication/dedication}
 

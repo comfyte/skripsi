@@ -60,7 +60,6 @@
 %======================================
 \LoadClass[12pt]{report}  % this class is based on the report class
 \usepackage{geometry}% easy layouting
-%\usepackage{hyperref}% hyperlink
 \usepackage{subcaption} % subfigure
 \usepackage{tocloft}% edit font toc
 \usepackage{fancyhdr}% page number
@@ -626,6 +625,7 @@
 %======================================
 \newcommand{\chapterstatementjpg}[1]{
 	\newpage
+        \thispagestyle{empty}
 	\fancyhf{}
 	\fancyfoot[C]{\thepage}
 	\begin{center}

@@ -51,12 +51,10 @@ class NotificationHandlerService(ServiceInterface):
 
     @method()
     def GetServerInformation(self) -> 'ssss':
-        return [
-            'FancyWSL Notification Server',
-            'Independent',
-            '0.0.1',
-            '1.2'
-        ]
+        return ['FancyWSL Notification Server',
+                'Independent',
+                '0.0.1',
+                '1.2']
     
     @signal()
     def ActionInvoked(self, notification_id: int, action_key: str) -> 'us':

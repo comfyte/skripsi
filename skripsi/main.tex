@@ -45,7 +45,7 @@
 \examdate{<<Exam date>>}
 % Name of thesis supervisors/promotors
 \addsupervisor{Warsun Najib, S.T., M.Sc.}{<<NIP 197311251998031003>>}
-\addsupervisor{Muhammad Nur Rizal, S.T., M.Eng.}{<<NIP 197506192002121004>>}
+\addsupervisor{Muhammad Nur Rizal, S.T., M.Eng., Ph.D.}{<<NIP 197506192002121004>>}
 %\addsupervisor{<<Supervisor 3>>}{<<NIP>>}
 % Name of examiners
 %\addexaminer{<<Examiner 1>>}{<<NIP 1>>}
@@ -74,9 +74,7 @@
 %======================================
 
 %---- COVER ----
-%\printcover{sample/logougm.png}{Pendadaran/Tesis/Ringkasan Tesis*}
-\printcover{sample/logougm.png}{Bachelor}
-% *Choose one
+\printcover{assets/logougm.png}{Bachelor}
 
 %---- ENDORSEMENT PAGE ----
 % Select endorsement page type. If you want to use your own PDF file,  
@@ -89,9 +87,9 @@
 % \printendorsementjpg{}
 
 % \chapterstatement{contents/statement/statement}
-\chapterstatementjpg{IMG_9041.JPEG}
+\chapterstatementjpg{assets/IMG_9041.JPEG}
 
-\chapterdedication{contents/dedication/dedication}
+\chapterdedication{contents/dedication}
 
 %---- STATEMENT PAGE ----
 % Select statement page type. If you want to use your own JPG file,  
@@ -102,7 +100,7 @@
 
 
 %---- PREFACE PAGE ----
-\chapterpreface{contents/preface/preface}
+\chapterpreface{contents/preface}
 
 %======================================
 % Create Table of Contents, List of Figures, List of Tables
@@ -120,13 +118,13 @@
 %======================================
 
 %---- NOMENCLATURE PAGE ----
-\chapternomenclature{contents/nomenclature/nomenclature}
+\chapternomenclature{contents/nomenclature}
 
 %---- INTISARI PAGE----
-\chapterintisari{contents/abstract/intisari}
+\chapterintisari{contents/abstracts/id-intisari}
 
 %---- ABSTRACT PAGE----
-\chapterabstract{contents/abstract/abstract}
+\chapterabstract{contents/abstracts/en-abstract}
 
 
 %======================================
@@ -139,11 +137,11 @@
 \startmain
 % You can change 
 %    the filename and location of the files inputted
-\include{contents/chapter-1/chapter-1}
-\include{contents/chapter-2/chapter-2}
-\include{contents/chapter-3/chapter-3}
-\include{contents/chapter-4/chapter-4}
-\include{contents/chapter-5/chapter-5}
+\include{contents/chapter-1}
+\include{contents/chapter-2}
+\include{contents/chapter-3}
+\include{contents/chapter-4}
+\include{contents/chapter-5}
 
 %======================================
 
@@ -153,7 +151,7 @@
 \thereferences
 % You can change 
 %    the filename and location of the files inputted
-\bibliography{references}
+\bibliography{contents/references}
 
 %======================================
 
@@ -168,7 +166,7 @@
 \appendix
 
 
-\chapterappendix{contents/appendix/appendix-isi-lampiran}
+\chapterappendix{contents/appendices/appendix-isi-lampiran}
 
 %======================================
 

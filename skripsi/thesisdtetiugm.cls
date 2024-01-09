@@ -743,7 +743,7 @@
 	keywordstyle=\color{magenta},
 	numberstyle=\tiny\color{codegray},
 	stringstyle=\color{codepurple},
-	basicstyle=\small,
+	basicstyle=\ttfamily,
 	breakatwhitespace=false,         
 	breaklines=true,                 
 	captionpos=b,                    

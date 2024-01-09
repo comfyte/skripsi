@@ -22,11 +22,12 @@ Pada perilisan sistem operasi Windows 11, pengembangan Windows Subsystem for Lin
 
 Saat ini, Windows Subsystem for Linux telah terintegrasi dengan cukup baik di dalam lingkungan antarmuka Windows secara keseluruhan berkat peningkatan-peningkatan yang telah dilakukan. Pengguna dapat dengan mudah meluncurkan aplikasi atau perangkat lunak berbasis Linux secara langsung di Windows dan perangkat lunak tersebut akan tampil secara harmonis di samping perangkat-perangkat lunak Windows \textit{native} lainnya dan bertindak layaknya perangkat-perangkat lunak \textit{native} tersebut. Sistem perjendelaan (\textit{windowing}) sederhana seperti operasi \textit{maximize}, \textit{restore}, dan \textit{minimize} pada perangkat-perangkat lunak berbasis Linux tersebut bertindak layaknya perangkat lunak Windows \textit{native} pada umumnya sesuai ekspektasi pengguna; dalam sebagian besar kasus penggunaan (\textit{use case}), tingkat integrasi ini sudah cukup dalam membuat perangkat-perangkat lunak berbasis Linux tersebut terasa harmonis. Namun, begitu pengguna mencoba melakukan operasi-operasi yang lebih dari itu, seperti penerimaan notifikasi, \textit{window snapping}, dan kontrol media pada aplikasi-aplikasi musik, pengguna akan mendapati bahwa beberapa operasi tersebut tidak bisa dilakukan karena belum didukung. Dengan kata lain, masih terdapat disparitas pada fungsionalitas sistem perjendelaan antara perangkat-perangkat lunak berbasis Linux yang berjalan di WSL dan perangkat-perangkat lunak berbasis Windows yang berjalan secara \textit{native} dikarenakan belum sempurnanya integrasi Windows Subsystem for Linux GUI ke dalam lingkungan Windows secara keseluruhan.
 
-Melalui skripsi ini, penulis mengeksplor potensial-potensial penyempurnaan yang dapat dilakukan untuk meningkatkan situasi yang ada. Penulis berfokus pada peningkatan dalam dua aspek, yaitu aspek penampilan notifikasi dan aspek kontrol media. Namun, dapat dipahami bahwa implementasi sistem Linux di WSL bukan merupakan implementasi yang sempurna dan terdapat celah-celah fungsionalitas yang umumnya ada pada distribusi Linux normal, mengingat WSL tidak didesain sebagai sebuah distribusi Linux utuh, yang dapat menghambat pengimplementasian kedua aspek awal tersebut, sehingga diperlukan pula pengimplementasian hal-hal penunjang yang mungkin diperlukan. Penulis berharap bahwa penyempurnaan yang penulis lakukan dapat bermanfaat bagi pengguna-pengguna sistem operasi Windows yang bergantung pada Windows Subsystem for Linux. Penulis percaya bahwa usaha yang dilakukan dalam penelitian ini memiliki efek jangka panjang meningkatkan pengalaman pengguna (\textit{user experience)} secara keseluruhan. Di samping itu, tidak menutup kemungkinan bahwa penyempurnaan yang penulis lakukan dapat bermanfaat pula bagi tim pengembang \textit{upstream} yang bekerja mengembangkan fitur Windows Subsystem for Linux ini. % Potential TODO: Mention more about D-Bus (e.g. skripsi ini [hanya] membahas pengembangan protokol D-Bus atau hal-hal yang berhubungan dengan D-Bus)?
+Melalui tugas akhir ini, penulis mengeksplor potensial-potensial penyempurnaan yang dapat dilakukan untuk meningkatkan situasi yang ada. Penulis berfokus pada peningkatan dalam dua aspek, yaitu aspek penampilan notifikasi dan aspek kontrol media. Namun, dapat dipahami bahwa implementasi sistem Linux di WSL bukan merupakan implementasi yang sempurna dan terdapat celah-celah fungsionalitas yang umumnya ada pada distribusi Linux normal, mengingat WSL tidak didesain sebagai sebuah distribusi Linux utuh, yang dapat menghambat pengimplementasian kedua aspek awal tersebut, sehingga diperlukan pula pengimplementasian hal-hal penunjang yang mungkin diperlukan. Penulis berharap bahwa penyempurnaan yang penulis lakukan dapat bermanfaat bagi pengguna-pengguna sistem operasi Windows yang bergantung pada Windows Subsystem for Linux. Penulis percaya bahwa usaha yang dilakukan dalam penelitian ini memiliki efek jangka panjang meningkatkan pengalaman pengguna (\textit{user experience)} secara keseluruhan. Di samping itu, tidak menutup kemungkinan bahwa penyempurnaan yang penulis lakukan dapat bermanfaat pula bagi tim pengembang \textit{upstream} yang bekerja mengembangkan fitur Windows Subsystem for Linux ini.
+
 
 \section{Rumusan Masalah}
 
-"Bagaimana menciptakan lingkup integrasi yang lebih menyeluruh dan lebih komprehensif dibandingkan dengan lingkup integrasi yang telah ada, terutama dalam aspek penampilan notifikasi dan pengontrolan media, guna memaksimalkan kepuasan pengguna dalam menggunakan perangkat-perangkat lunak berbasis Linux dan berantarmuka grafis (GUI) di Windows Subsystem for Linux (WSL)?"
+"Bagaimana menciptakan lingkup integrasi yang lebih menyeluruh dan lebih komprehensif dibandingkan dengan lingkup integrasi yang telah ada, terutama dalam aspek penampilan notifikasi dan pengontrolan media, guna memaksimalkan kepuasan pengguna dalam menggunakan perangkat-perangkat lunak berbasis Linux dan berantarmuka grafis (GUI) di Windows Subsystem for Linux (WSL)?" \textcolor{orange}{(FIXME)}
 
 
 \section{Tujuan Penelitian}
@@ -39,7 +40,6 @@ Melalui skripsi ini, penulis mengeksplor potensial-potensial penyempurnaan yang 
     \item Mengimplementasikan fungsi penanganan notifikasi dan kontrol media pada Windows Subsystem for Linux (WSL) hingga terintegrasi dengan baik dengan \textit{shell} Windows melalui perangkat lunak FancyWSL yang dikembangkan.
 \end{enumerate}
 
-%-------------------------------------------------	
 
 \section{Batasan Penelitian}
 
@@ -59,6 +59,7 @@ Melalui skripsi ini, penulis mengeksplor potensial-potensial penyempurnaan yang 
     \item \textbf{Keterbatasan penelitian:} Pengembangan fungsionalitas Windows Subsystem for Linux (WSL) hanya dibatasi pada fungsionalitas-fungsionalitas yang memanfaatkan D-Bus. Lebih spesifiknya, pengembangan fungsionalitas Windows Subsystem for Linux dalam tugas akhir ini hanya terbatas pada sistem penanganan notifikasi dan sistem kontrol media (MPRIS).
 \end{enumerate}
 
+
 \section{Manfaat Penelitian}
 
 \begin{enumerate}
@@ -68,6 +69,7 @@ Melalui skripsi ini, penulis mengeksplor potensial-potensial penyempurnaan yang 
 
     \item Membuat hasil pengerjaan dalam tugas akhir ini tersedia secara publik di \textit{platform} GitHub agar orang-orang lain dapat ikut memahami, meneliti, dan bahkan melakukan peningkatan pada perangkat lunak yang bersangkutan.
 \end{enumerate}
+
 
 \section{Sistematika Penulisan}
 
@@ -79,6 +81,4 @@ Melalui skripsi ini, penulis mengeksplor potensial-potensial penyempurnaan yang 
 
 \noindent Bab IV berisi hasil dan pembahasan inti tugas akhir ini.
 
-\noindent Bab V berisi pengujian produk yang dihasilkan pada tugas akhir ini.
-
-\noindent Bab VI membahas kesimpulan seluruh pengerjaan tugas akhir ini serta saran dan masukan yang dapat meningkatkan tugas akhir ini lebih lanjut.
+\noindent Bab V membahas kesimpulan seluruh pengerjaan tugas akhir ini serta saran dan masukan yang dapat meningkatkan tugas akhir ini lebih lanjut.

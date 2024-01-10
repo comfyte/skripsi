@@ -7,7 +7,6 @@ from winsdk.windows.ui.notifications import (ToastNotificationManager,
                                              ToastDismissalReason)
 from winsdk.windows.data.xml import dom
 from xml.sax.saxutils import escape as xml_escape
-from ..helpers.unbox_winrt_object import unbox_winrt_object, WinRTObject
 from ..helpers.constants import NOTIFICATION_GROUP_NAME
 
 # Get logger for current module

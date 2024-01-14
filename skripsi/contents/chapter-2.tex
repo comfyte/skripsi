@@ -249,10 +249,11 @@ Bila disimpulkan kembali, perbandingan keempat metode di atas dapat dilihat pada
 
 \begin{table}
     \centering
-    \caption{Perbandingan platform dan bahasa pemrograman.}
-    \label{}
-    \begin{tabularx}{\textwidth}{|l|X|X|} \hline
-        \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline
+    \caption{Perbandingan metode penghubungan dengan bus perpesanan D-Bus di WSL}
+    \label{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}
+    \begin{tabularx}{\textwidth}{|l|X|X|X|X|} \hline
+        \textbf{No.} & \textbf{Metode} & \textbf{Kebutuhan} & \textbf{Kelebihan} & \textbf{Kekurangan}\\ \hline
+        1 & Soket Unix & & Sangat efisien karena hanya melibatkan soket lokal tanpa beban \textit{overhead} tambahan & Tidak tersedia untuk WSL2 yang merupakan syarat utama WSLg\\ \hline
     \end{tabularx}
 \end{table}
 

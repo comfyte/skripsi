@@ -6,7 +6,7 @@ Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian 
 
 \subsection{Implementasi Serupa}
 
-Terdapat satu buah karya tulis yang membahas penelitian yang serupa dengan tugas akhir ini, yaitu sebuah tesis master berjudul \textit{Through the Wormhole: Cross-OS Desktop Integration for Linux Applications} yang ditulis oleh John Ingve Olsen dan dipublikasikan pada tahun 2022 \cite{olsen-2022-through-the-wormhole}. Tesis ini merupakan karya tulis yang paling signifikan dalam penyusunan tugas akhir penulis karena memiliki topik dan tujuan yang serupa dengan tugas akhir penulis dan menjadi inspirasi terbesar dalam perancangan tugas akhir penulis.
+Terdapat satu buah karya tulis yang membahas penelitian yang serupa dengan tugas akhir ini, yaitu sebuah tesis master berjudul "Through the Wormhole: Cross-OS Desktop Integration for Linux Applications" yang ditulis oleh John Ingve Olsen dan dipublikasikan pada tahun 2022 \cite{olsen-2022-through-the-wormhole}. Tesis ini merupakan karya tulis yang paling signifikan dalam penyusunan tugas akhir penulis karena memiliki topik dan tujuan yang serupa dengan tugas akhir penulis dan menjadi inspirasi terbesar dalam perancangan tugas akhir penulis.
 
 Pada tesis ini, Olsen membahas pengintegrasian sejumlah aspek antarmuka grafis Windows Subsystem for Linux (WSL) dengan \textit{host} Windows yang dicapai melalui pengembangan sejumlah perangkat lunak pembantu:
 \begin{enumerate}
@@ -20,13 +20,20 @@ Kedua perangkat lunak tersebut dikembangkan oleh Olsen menggunakan bahasa pemrog
     \item jendela dialog pemilih berkas (\textit{file chooser}).
 \end{itemize}
 
-Meskipun Wormhole merupakan satu kesatuan perangkat lunak, Wormhole terdiri dari dua buah proses yang masing-masing berjalan di sisi \textit{host} Windows (dinamakan "\textit{backend}") dan di sisi WSL (dinamakan "\textit{bridge}"). Dalam bab kelima, Olsen menyebutkan bahwa untuk menghubungkan proses \textit{backend} Wormhole dengan proses \textit{bridge} Wormhole, terdapat tiga pilihan metode yang mungkin dilakukan:
+Meskipun Wormhole merupakan satu kesatuan perangkat lunak, Wormhole terdiri dari dua buah proses yang masing-masing berjalan di sisi \textit{host} Windows (dinamakan "\textit{backend}") dan di sisi WSL (dinamakan "\textit{bridge}") seperti yang terlihat pada \autoref{olsen-wormhole-processes-basic-structure}. Dalam bab kelima, Olsen menyebutkan bahwa untuk menghubungkan proses \textit{backend} Wormhole dengan proses \textit{bridge} Wormhole, terdapat tiga pilihan metode yang mungkin dilakukan:
 \begin{itemize}
     \item menghubungkan dengan soket TCP/IP,
     \item berkomunikasi melalui \textit{stream} standar (\textit{standard input} dan \textit{standard output}), dan
     \item menghubungkan dengan soket Hyper-V;
 \end{itemize}
 Olsen memilih metode ketiga karena ia merasa metode tersebut tidak memiliki kelemahan bila dibandingkan dengan kedua metode lainnya meskipun pengimplementasian metode ketiga tersebut memberikan tantangan tersendiri. Satu hal lain yang penulis soroti dalam pembahasan oleh Olsen ini yakni mekanisme penghubungan dengan bus perpesanan D-Bus; Olsen mendesain proses \textit{bridge} agar bertindak sebagai \textit{proxy} bus perpesanan D-Bus sehingga proses \textit{backend} yang terhubung dengan proses \textit{bridge} dapat mengakses bus perpesanan D-Bus tersebut layaknya secara langsung.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{assets/Screenshot 2024-01-14 at 13.31.38.png}
+    \caption{Gambaran besar struktur perangkat lunak Wormhole \cite{olsen-2022-through-the-wormhole}}
+    \label{olsen-wormhole-processes-basic-structure}
+\end{figure}
 
 Secara garis besar, pengimplementasian oleh Olsen (Wormhole) memiliki perbedaan dengan tugas akhir ini (FancyWSL) dalam tiga aspek:
 \begin{itemize}
@@ -35,14 +42,18 @@ Secara garis besar, pengimplementasian oleh Olsen (Wormhole) memiliki perbedaan 
     \item perlunya pengembangan perangkat lunak pengelola sesi (\textit{session manager}) D-Bus (systemd telah didukung oleh WSL sejak September 2022 \cite{systemd-support-is-now-available-in-wsl} dan telah menjadi \textit{default} pada instalasi distribusi Ubuntu di WSL sejak perilisan Ubuntu 23.04 pada April 2023 \cite{ubuntu-2304-release-roundup-systemd-now-becomes-default-for-ubuntu-on-wsl} sehingga pengelolaan sesi bus perpesanan D-Bus saat ini telah berada di bawah kontrol systemd seperti halnya pada sistem operasi Linux asli; ketiadaan pembahasan systemd oleh Olsen mengindikasikan bahwa waktu pengembangan Wormhole terjadi sebelum hadirnya dukungan systemd tersebut sehingga diperlukan pengembangan perangkat lunak \textit{session manager} tersendiri pada saat itu).
 \end{itemize}
 
-Karya tulis kedua yang dibahas adalah sebuah tesis master berjudul \textit{Notifications in a Multi-Device Environment} yang ditulis oleh Dominik Weber dan dipublikasikan pada tahun 2015 \cite{weber2015notifications}. Secara garis besar, Weber membahas penanganan notifikasi antarperangkat yang memfokuskan pada aspek pengumpulan data dari pengguna. Dalam sisi teknis, Weber membahas pengimplementasian notifikasi multiperangkat dalam bentuk ekstensi \textit{browser} Google Chrome. Karya tulis oleh Weber ini memiliki sejumlah perbedaan dengan tugas akhir ini:
+\subsection{Antarmuka Notifikasi}
+
+Karya tulis kedua yang dibahas adalah sebuah tesis master berjudul "Notifications in a Multi-Device Environment" yang ditulis oleh Dominik Weber dan dipublikasikan pada tahun 2015 \cite{weber2015notifications}. Secara garis besar, Weber membahas penanganan notifikasi antarperangkat yang memfokuskan pada aspek pengumpulan data dari pengguna. Dalam sisi teknis, Weber membahas pengimplementasian notifikasi multiperangkat dalam bentuk ekstensi \textit{browser} Google Chrome. Karya tulis oleh Weber ini memiliki sejumlah perbedaan dengan tugas akhir ini:
 \begin{itemize}
     \item Weber mengimplementasikan sistem notifikasi menggunakan ekstensi \textit{browser} Google Chrome, sedangkan tugas akhir ini mengimplementasikan sistem notifikasi dalam bentuk yang lebih \textit{native}, yakni perangkat lunak berbasis bahasa pemrograman Python.
 
     \item Penelitian Weber lebih berfokus ke aspek pengguna (dibuktikan dengan banyaknya survei yang dilakukan) dibandingkan dengan aspek teknis pengimplementasian; tugas akhir ini lebih berfokus pada aspek pengimplementasian dan pengujian dilakukan secara mandiri oleh diri penulis sendiri.
 \end{itemize}
 
-Karya tulis ketiga yang dibahas adalah sebuah prosiding berjudul \textit{Memory forensics and the Windows Subsystem for Linux} oleh Nathan Lewis, Andrew Case, Aisha Ali-Gombe, dan Golden G. Richard III yang dipublikasikan pada tahun 2018 \cite{lewis2018memory}. Lewis et al. utamanya membahas pembawaan dukungan berkas-berkas \textit{executable} jenis baru, \textit{executable and linkable format} (ELF), yang umumnya berada di sistem operasi Linux ke sistem operasi Windows melalui Windows Subsystem for Linux (WSL); bersamaan dengan dukungan baru ini, terdapat peningkatan \textit{attack surface} yang, misalnya, dapat diretas oleh peretas. Pada karya tulis ini, Lewis et al. membahas tentang mekanisme internal WSL, berkas-berkas \textit{executable} PE (\textit{portable executable}) dan ELF (\textit{executable and linkable format}), dan forensik memori yang dilakukan terhadap aspek-aspek tersebut sehingga cukup berbeda dengan tugas akhir ini yang membahas WSL beserta aspek-aspek integrasinya.
+\subsection{Arsitektur Penjalanan Sistem}
+
+Karya tulis ketiga yang dibahas adalah sebuah prosiding berjudul "Memory forensics and the Windows Subsystem for Linux" oleh Nathan Lewis, Andrew Case, Aisha Ali-Gombe, dan Golden G. Richard III yang dipublikasikan pada tahun 2018 \cite{lewis2018memory}. Lewis et al. utamanya membahas pembawaan dukungan berkas-berkas \textit{executable} jenis baru, \textit{executable and linkable format} (ELF), yang umumnya berada di sistem operasi Linux ke sistem operasi Windows melalui Windows Subsystem for Linux (WSL); bersamaan dengan dukungan baru ini, terdapat peningkatan \textit{attack surface} yang, misalnya, dapat diretas oleh peretas. Pada karya tulis ini, Lewis et al. membahas tentang mekanisme internal WSL, berkas-berkas \textit{executable} PE (\textit{portable executable}) dan ELF (\textit{executable and linkable format}), dan forensik memori yang dilakukan terhadap aspek-aspek tersebut sehingga cukup berbeda dengan tugas akhir ini yang membahas WSL beserta aspek-aspek integrasinya.
 
 \section{Dasar Teori}
 
@@ -176,6 +187,8 @@ Pada tahun 2021, Microsoft merilis sistem operasi Windows 11 yang membawa sejuml
 
 Dalam penyusunan tugas akhir ini, penulis mengkaji serta membandingkan metode-metode yang mungkin dilakukan untuk sejumlah aspek pengerjaan. Aspek-aspek yang dimaksud yaitu penghubungan (\textit{bridging}) lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows dan penentuan bahasa dan platform pemrograman yang paling praktis dan cocok digunakan dalam pengembangan perangkat lunak yang terlibat.
 
+\subsection{Penghubungan Lingkungan Windows Subsystem for Linux (WSL) dengan Lingkungan \textit{Host} Windows}
+
 Dalam aspek penghubungan lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows, metode yang dipilih menentukan jumlah dan cakupan perangkat lunak yang perlu dikembangkan, tingkat kesulitan pengembangan perangkat lunak tersebut, serta efisiensi penjalanan perangkat lunak yang telah jadi. Berikut pemaparan empat metode yang mungkin dilakukan.
 \begin{enumerate}
     \item Lingkungan WSL dihubungkan dengan lingkungan \textit{host} Windows melalui \textit{socket} Unix. Hal ini dimungkinkan dengan diperkenalkannya dukungan \textit{socket} Unix (AF\_UNIX) pada sistem operasi Windows 10 ke atas pada tahun 2017 \cite{bringing-afunix-to-windows}. Namun, penelusuran lebih lanjut mengindikasikan bahwa kemampuan ini rupanya hanya mendukung Windows Subsystem for Linux versi 1 (WSL1) dan belum mendukung Windows Subsystem for Linux versi 2 (WSL2) \cite{github-issues-afunix-not-supported-in-wsl2}. Oleh karena itu, mengingat kemampuan grafis (\textit{graphical user interface}) pada Windows Subsystem for Linux hanya tersedia pada Windows Subsytem for Linux versi 2 (WSL2), metode ini tidak relevan dengan tujuan skripsi ini.
@@ -232,7 +245,21 @@ dbus-send --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpri
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan meng-\textit{extend} jangkauan bus perpesanan D-Bus hingga dapat diakses secara langsung di dalam lingkungan Windows, sehingga perangkat lunak di Windows dapat langsung menghubungi bus perpesanan D-Bus yang berjalan di WSL. Hal ini dicapai dengan cara mengatur konfigurasi \verb|dbus-daemon| di WSL agar dapat diakses melalui TCP (di samping konfigurasi soket Unix \textit{default} yang telah ada) dan mengonsumsi alamat TCP yang ditentukan di perangkat lunak \textit{bridge} yang berjalan di Windows. Metode ini memiliki keuntungan tersendiri: mengingat koneksi bus perpesanan D-Bus saat ini tersedia secara langsung di lingkungan Windows, penyediaan \textit{notification server} dan \textit{MPRIS server} dapat dilakukan secara langsung oleh perangkat lunak \textit{bridge} di sisi Windows, sehingga menghilangkan kebutuhan penjalanan perangkat lunak \textit{bridge} kedua di lingkungan WSL.
 \end{enumerate}
 
+Bila disimpulkan kembali, perbandingan keempat metode di atas dapat dilihat pada \autoref{} berikut.
+
+\begin{table}
+    \centering
+    \caption{Perbandingan platform dan bahasa pemrograman.}
+    \label{}
+    \begin{tabularx}{\textwidth}{|l|X|X|} \hline
+        \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline
+    \end{tabularx}
+\end{table}
+
+
 Berdasarkan penjabaran dan analisis perbandingan metode penghubungan lingkungan WSL dengan lingkungan \textit{host} Windows, dipilih metode keempat mengingat metode penghubungannya yang cukup \textit{straightforward} dan penggunaan protokol TCP yang relatif lebih efisien dibandingkan dengan metode-metode lainnya.
+
+\subsection{Bahasa dan Platform Pemrograman yang Digunakan}
 
 Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal seperti kelengkapan integrasi dengan \textit{application programming interface} (API) \textit{shell} Windows dan kemampuan berkomunikasi dengan D-Bus (baik dengan solusi bawaan atau pihak pertama, apabila tersedia, maupun dengan bantuan pustaka pihak ketiga yang tersedia pada bahasa pemrograman tersebut). Berikut perbandingan platform dan bahasa pemrograman yang dapat digunakan yang disajikan dalam bentuk tabel.
 
@@ -250,10 +277,8 @@ Meskipun bahasa pemrograman C\# didukung secara lebih baik oleh sistem operasi W
 
 \section{Pertanyaan Tugas Akhir}
 
-Dalam serangkaian pengerjaan tugas akhir ini, penulis menemukan beberapa pertanyaan yang berkaitan dengan metode yang telah dipilih. Pertanyaan-pertanyaan ini perlu dijawab sebelum dapat melanjutkan ke langkah selanjutnya dalam pengerjaan.
+Dalam serangkaian pengerjaan tugas akhir ini, penulis menemukan satu buah pertanyaan krusial yang berkaitan dengan metode yang telah dipilih. Pertanyaan-pertanyaan ini perlu dipelajari dan dijawab terlebih dahulu sebelum dapat melanjutkan ke langkah selanjutnya dalam pengerjaan.
 
 \begin{enumerate}
     \item Perangkat lunak \verb|dbus-daemon| dapat melakukan \textit{listening} ke lebih dari satu alamat apabila telah diatur pada berkas konfigurasi (misalnya pada berkas \path{/usr/share/dbus-1/session.conf} untuk bus \textit{session}). Namun, \verb|dbus-daemon| juga memiliki seperangkat argumen eksekusi \cite{dbus-daemon-man-page} yang beberapa di antaranya dapat menimpa (\textit{override}) konfigurasi yang telah dilakukan pada berkas konfigurasi; salah satu argumen yang menarik perhatian yaitu argumen \verb|--address|. Apakah argumen ini mendukung pemberian lebih dari satu alamat? Apabila argumen ini hanya mendukung satu alamat, apa yang terjadi jika argumen ini digunakan dalam pemanggilan \verb|dbus-daemon| saat konfigurasi yang tertimpa (\textit{override}) pada berkas konfigurasi memuat lebih dari satu alamat? Apakah penggunaan argumen ini hanya menimpa (\textit{override}) satu buah alamat pada berkas konfigurasi saja atau menimpa (\textit{override}) semua alamat yang telah diatur pada berkas konfigurasi?
-
-    % \item Selain berkomunikasi secara lokal melalui \textit{socket} Unix, D-Bus juga memiliki kemampuan melalui protokol TCP, sehingga memungkinkan komunikasi dengan klien-klien yang berjalan di lingkungan di luar sistem operasi saat ini, baik di perangkat komputer lain (penghubungan secara \textit{remote}) maupun di sebuah \textit{virtual machine} pada perangkat komputer fisik yang sama. Apakah komputer lain tersebut memerlukan penjalanan \verb|dbus-daemon| milik komputer itu sendiri atau perangkat lunak \textit{client} di komputer tersebut dapat langsung terhubung ke D-Bus pusat tanpa memerlukan adanya \verb|dbus-daemon| tambahan yang berjalan pada komputer tersebut? (TODO: Rephrase this one.)
 \end{enumerate}

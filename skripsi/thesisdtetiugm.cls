@@ -78,7 +78,7 @@
 \usepackage{forloop}
 \usepackage{longtable}
 \usepackage{enumitem}
-\usepackage[labelsep=space,justification=centering]{caption}
+\usepackage[labelsep=quad,justification=centering]{caption}
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{pgf-pie}

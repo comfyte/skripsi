@@ -2,22 +2,33 @@
 
 \section{Tinjauan Pustaka}
 
-Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian terdahulu yang menjadi basis, penuntun, ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian. Mengingat tugas akhir ini melibatkan berbagai jenis teknologi, peninjauan-peninjauan yang dilakukan didasarkan pada berbagai segi: implementasi serupa (1 buah karya tulis), arsitektur penjalanan sistem (2 buah karya tulis), dan antarmuka notifikasi (2 buah karya tulis). 
+Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian terdahulu yang menjadi basis, penuntun, ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian; subbab ini membahas karya-karya tulis tersebut. Mengingat tugas akhir ini melibatkan lingkup teknologi yang cukup luas, pustaka-pustaka yang diangkat dalam pembahasan ini ditinjau dari berbagai aspek yang berbeda, yaitu implementasi serupa (1 buah karya tulis), arsitektur penjalanan sistem (2 buah karya tulis), dan antarmuka notifikasi (2 buah karya tulis). Penjabaran tiap-tiap aspek diakhiri oleh sebuah tabel yang menyimpulkan perbandingan karya-karya tulis yang telah dibahas dengan tugas akhir ini.
 
-\subsection{}
+\subsection{Implementasi Serupa}
 
-Karya tulis pertama yang dibahas adalah sebuah tesis master berjudul \textit{Through the Wormhole: Cross-OS Desktop Integration for Linux Applications} yang ditulis oleh John Ingve Olsen dan dipublikasikan pada tahun 2022 \cite{olsen-2022-through-the-wormhole}. Tesis ini merupakan karya tulis yang paling signifikan dalam penyusunan tugas akhir penulis karena memiliki topik dan tujuan yang serupa dengan tugas akhir penulis dan menjadi inspirasi terbesar dalam perancangan tugas akhir penulis. Pada tesis ini, Olsen membahas pengintegrasian sejumlah aspek antarmuka grafis Windows Subsystem for Linux (WSL) dengan \textit{host} Windows yang dicapai melalui pengembangan sejumlah perangkat lunak pembantu:
+Terdapat satu buah karya tulis yang membahas penelitian yang serupa dengan tugas akhir ini, yaitu sebuah tesis master berjudul \textit{Through the Wormhole: Cross-OS Desktop Integration for Linux Applications} yang ditulis oleh John Ingve Olsen dan dipublikasikan pada tahun 2022 \cite{olsen-2022-through-the-wormhole}. Tesis ini merupakan karya tulis yang paling signifikan dalam penyusunan tugas akhir penulis karena memiliki topik dan tujuan yang serupa dengan tugas akhir penulis dan menjadi inspirasi terbesar dalam perancangan tugas akhir penulis.
+
+Pada tesis ini, Olsen membahas pengintegrasian sejumlah aspek antarmuka grafis Windows Subsystem for Linux (WSL) dengan \textit{host} Windows yang dicapai melalui pengembangan sejumlah perangkat lunak pembantu:
 \begin{enumerate}
     \item perangkat lunak pengelola bus sesi D-Bus (\textit{session manager}) yang menyeragamkan bus perpesanan D-Bus yang dipakai oleh sesi-sesi WSL yang berbeda dan
     \item perangkat lunak "Wormhole" itu sendiri yang mengintegrasikan aspek-aspek antarmuka grafis WSL dengan \textit{desktop} Windows.
 \end{enumerate}
-Olsen menggunakan bahasa pemrograman Rust dalam mengembangkan kedua perangkat lunak tersebut. Aspek-aspek yang diintegrasikan oleh Olsen yakni
+Kedua perangkat lunak tersebut dikembangkan oleh Olsen menggunakan bahasa pemrograman Rust. Aspek-aspek yang diintegrasikan oleh Olsen yakni
 \begin{itemize}
     \item ikon status (\textit{status icons}) yang umumnya muncul di sisi kanan \textit{taskbar} pada Windows,
     \item notifikasi, dan
     \item jendela dialog pemilih berkas (\textit{file chooser}).
 \end{itemize}
-Meskipun Wormhole merupakan satu kesatuan perangkat lunak, Wormhole terdiri dari dua buah proses yang masing-masing berjalan di sisi \textit{host} Windows (dinamakan "\textit{backend}") dan di sisi WSL (dinamakan "\textit{bridge}"). Dalam bab kelima, Olsen menyebutkan bahwa untuk menghubungkan proses \textit{backend} Wormhole dengan proses \textit{bridge} Wormhole, terdapat tiga pilihan metode yang mungkin dilakukan: menghubungkan dengan soket TCP/IP, berkomunikasi melalui \textit{stream} standar (\textit{standard input} dan \textit{standard output}), dan menghubungkan dengan soket Hyper-V; Olsen memilih metode ketiga karena ia merasa metode tersebut tidak memiliki kelemahan bila dibandingkan dengan kedua metode lainnya meskipun pengimplementasian metode ketiga tersebut memberikan tantangan tersendiri. Satu hal yang penulis soroti dalam pembahasan oleh Olsen ini yakni mekanisme penghubungan dengan bus perpesanan D-Bus; Olsen mendesain proses \textit{bridge} agar bertindak sebagai \textit{proxy} bus perpesanan D-Bus sehingga proses \textit{backend} yang terhubung dengan proses \textit{bridge} dapat mengakses bus perpesanan D-Bus tersebut layaknya secara langsung. Secara garis besar, pengimplementasian oleh Olsen (Wormhole) memiliki perbedaan dengan tugas akhir ini (FancyWSL) dalam tiga aspek:
+
+Meskipun Wormhole merupakan satu kesatuan perangkat lunak, Wormhole terdiri dari dua buah proses yang masing-masing berjalan di sisi \textit{host} Windows (dinamakan "\textit{backend}") dan di sisi WSL (dinamakan "\textit{bridge}"). Dalam bab kelima, Olsen menyebutkan bahwa untuk menghubungkan proses \textit{backend} Wormhole dengan proses \textit{bridge} Wormhole, terdapat tiga pilihan metode yang mungkin dilakukan:
+\begin{itemize}
+    \item menghubungkan dengan soket TCP/IP,
+    \item berkomunikasi melalui \textit{stream} standar (\textit{standard input} dan \textit{standard output}), dan
+    \item menghubungkan dengan soket Hyper-V;
+\end{itemize}
+Olsen memilih metode ketiga karena ia merasa metode tersebut tidak memiliki kelemahan bila dibandingkan dengan kedua metode lainnya meskipun pengimplementasian metode ketiga tersebut memberikan tantangan tersendiri. Satu hal lain yang penulis soroti dalam pembahasan oleh Olsen ini yakni mekanisme penghubungan dengan bus perpesanan D-Bus; Olsen mendesain proses \textit{bridge} agar bertindak sebagai \textit{proxy} bus perpesanan D-Bus sehingga proses \textit{backend} yang terhubung dengan proses \textit{bridge} dapat mengakses bus perpesanan D-Bus tersebut layaknya secara langsung.
+
+Secara garis besar, pengimplementasian oleh Olsen (Wormhole) memiliki perbedaan dengan tugas akhir ini (FancyWSL) dalam tiga aspek:
 \begin{itemize}
     \item cakupan fungsionalitas yang diintegrasikan (FancyWSL juga mengimplementasikan sistem notifikasi, serupa dengan Wormhole, tetapi dengan tambahan fungsionalitas kontrol media),
     \item metode penghubungan (\textit{bridging}) kedua lingkungan yang digunakan (FancyWSL memanfaatkan metode transportasi TCP yang tersedia pada D-Bus dengan mekanisme yang cukup berbeda dengan mekanisme yang Olsen lakukan di Wormhole), dan

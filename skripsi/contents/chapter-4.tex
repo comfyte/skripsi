@@ -484,7 +484,7 @@ Dalam isi berkas \textit{shell script} tersebut, terdapat penjalanan berkas \tex
 
 \section{Kelebihan, Kekurangan, dan Saran Peningkatan}
 
-Produk akhir berupa perangkat lunak FancyWSL yang dikembangkan dalam tugas akhir ini memiliki sejumlah keunggulan, terutama dibandingkan dengan penelitian terdahulu yang membahas topik yang sama. Namun, produk ini tentunya masih belum sempurna dan tidak lepas dari kekurangan-kekurangan. Di samping itu, selama masa pengembangan perangkat lunak FancyWSL ini, penulis menemukan sejumlah aspek yang dapat ditingkatkan untuk pengembangan/penelitian selanjutnya.
+Produk akhir berupa perangkat lunak FancyWSL yang dikembangkan dalam tugas akhir ini memiliki sejumlah keunggulan, terutama dibandingkan dengan penelitian terdahulu yang membahas topik yang sama. Namun, produk ini tentunya masih belum sempurna dan tidak lepas dari kekurangan-kekurangan seperti hal-hal yang berpotensi menghambat penggunaan perangkat lunak ini. Di samping itu, selama masa pengembangan perangkat lunak FancyWSL, penulis menemukan sejumlah aspek yang dapat ditingkatkan untuk pengembangan selanjutnya.
 
 \subsection{Kelebihan}
 
@@ -500,6 +500,12 @@ Produk akhir berupa perangkat lunak FancyWSL yang dikembangkan dalam tugas akhir
     \item Fungsi penampilan notifikasi pada FancyWSL masih terbatas pada penampilan notifikasi sederhana tanpa ikon, pengaturan durasi penampilan notifikasi, dan aksi-aksi tambahan seperti tombol.
 
     \item Fungsi pengontrolan media masih bersifat \textit{buggy} dan terkadang tidak bekerja karena berbagai alasan. Selain itu, informasi media yang ditampilkan belum memunculkan elemen-elemen tambahan seperti gambar album.
+\end{enumerate}
+
+\subsection{Potensi Peningkatan}
+
+\begin{enumerate}
+    \item Meskipun pengembangan FancyWSL memilih menggunakan metode penghubungan dengan bus perpesanan D-Bus melalui TCP (metode nomor 4 pada \autoref{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}), metode penghubungan melalui soket Unix (metode nomor 1 pada \autoref{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}) sesungguhnya jauh lebih efisien mengingat TCP masih membawa sejumlah beban \textit{overhead} yang sejatinya dapat dihindari; metode soket Unix tidak dipilih dalam pengembangan perangkat lunak FancyWSL hanya karena dukungan soket Unix di Windows masih belum mendukung penggunaan dengan WSL2, komponen yang cukup krusial dalam topik utama tugas akhir ini. Apabila dukungan WSL2 dalam penggunaan soket Unix di lingkungan Windows telah tersedia, logika penghubungan dengan bus perpesanan D-Bus di perangkat lunak FancyWSL lebih baik dialihkan ke menggunakan soket Unix alih-alih menggunakan TCP seperti saat ini.
 \end{enumerate}
 
 % \section{Perbandingan Hasil Penelitian dengan Hasil Terdahulu}

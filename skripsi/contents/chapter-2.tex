@@ -245,15 +245,18 @@ dbus-send --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpri
     \item Lingkungan Windows Subsystem for Linux (WSL) dihubungkan dengan lingkungan \textit{host} Windows dengan meng-\textit{extend} jangkauan bus perpesanan D-Bus hingga dapat diakses secara langsung di dalam lingkungan Windows, sehingga perangkat lunak di Windows dapat langsung menghubungi bus perpesanan D-Bus yang berjalan di WSL. Hal ini dicapai dengan cara mengatur konfigurasi \verb|dbus-daemon| di WSL agar dapat diakses melalui TCP (di samping konfigurasi soket Unix \textit{default} yang telah ada) dan mengonsumsi alamat TCP yang ditentukan di perangkat lunak \textit{bridge} yang berjalan di Windows. Metode ini memiliki keuntungan tersendiri: mengingat koneksi bus perpesanan D-Bus saat ini tersedia secara langsung di lingkungan Windows, penyediaan \textit{notification server} dan \textit{MPRIS server} dapat dilakukan secara langsung oleh perangkat lunak \textit{bridge} di sisi Windows, sehingga menghilangkan kebutuhan penjalanan perangkat lunak \textit{bridge} kedua di lingkungan WSL.
 \end{enumerate}
 
-Bila disimpulkan kembali, perbandingan keempat metode di atas dapat dilihat pada \autoref{} berikut.
+Bila disimpulkan kembali, perbandingan keempat metode di atas dapat dilihat pada \autoref{perbandingan-metode-penghubungan-dengan-dbus-di-wsl} berikut.
 
 \begin{table}
     \centering
     \caption{Perbandingan metode penghubungan dengan bus perpesanan D-Bus di WSL}
     \label{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}
-    \begin{tabularx}{\textwidth}{|l|X|X|X|X|} \hline
+    \begin{tabularx}{\textwidth}{|l|p{2.5cm}|X|X|X|} \hline
         \textbf{No.} & \textbf{Metode} & \textbf{Kebutuhan} & \textbf{Kelebihan} & \textbf{Kekurangan}\\ \hline
-        1 & Soket Unix & & Sangat efisien karena hanya melibatkan soket lokal tanpa beban \textit{overhead} tambahan & Tidak tersedia untuk WSL2 yang merupakan syarat utama WSLg\\ \hline
+        1 & Soket Unix & Satu buah perangkat lunak di sisi Windows yang langsung mengakses berkas soket inti yang digunakan oleh bus sesi (\textit{session bus}) D-Bus di WSL & Sangat efisien karena hanya melibatkan soket lokal tanpa beban \textit{overhead} tambahan & Tidak tersedia untuk WSL2 yang merupakan syarat utama WSLg\\ \hline
+        2 & \textit{Server} HTTP & Dua buah perangkat lunak yang masing-masing berjalan di lingkungan WSL dan lingkungan \textit{host} Windows & Lebih familiar mengingat penulis sering bekerja dalam pengembangan web & Sangat tidak efisien karena membawa beban \textit{overhead} berlebih (\textit{server} HTTP utuh) yang sesungguhnya tidak diperlukan\\ \hline
+        3 & Pertukaran informasi secara tekstual & Satu buah atau dua buah perangkat lunak, tergantung submetode yang dipilih & Cukup simpel dan efisien & Penggunaan antarmuka sebatas tekstual cukup terbatas, tidak fleksibel, dan tidak menyediakan informasi yang lengkap/utuh\\ \hline
+        4 & TCP & Satu buah perangkat lunak di sisi Windows yang langsung mengonsumsi alamat TCP yang di-\textit{broadcast} oleh \textit{daemon} D-Bus di dalam WSL & Cukup efisien dan dapat mengakses fungsionalitas bus perpesanan D-Bus secara utuh karena terhubung langsung & Perlu dilakukan sedikit konfigurasi tambahan pada sisi WSL agar memiliki alamat bertipe TCP (di samping alamat bertipe soket Unix \textit{default} yang telah dimiliki)\\ \hline
     \end{tabularx}
 \end{table}
 

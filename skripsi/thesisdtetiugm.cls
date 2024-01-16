@@ -402,7 +402,7 @@
 					{Telah disetujui dan disahkan}
 					{Has been approved and endorsed}\\
 				\vspace{0.5cm}
-				\iftoggle{lang}{Pada tanggal $\ldots\ldots$}{on $\ldots\ldots$}\\
+				\iftoggle{lang}{Pada tanggal \@examdate}{on \@examdate}\\
 				\vfill
 				\begin{center}
 					\begin{tabular}{ccc}

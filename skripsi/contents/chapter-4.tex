@@ -2,11 +2,21 @@
 
 \section{Pemeriksaan Fungsionalitas di Windows Subsystem for Linux (WSL)}
 
-Sebelum melakukan pengerjaan lebih lanjut, perlu dilakukan verifikasi fungsionalitas pada instalasi WSL yang masih murni (\textit{stock}) dan belum tercampuri produk tugas akhir ini. Proses verifikasi dapat dilakukan dengan perangkat lunak berbasis Linux apa pun yang mengirimkan notifikasi dan/atau memanfaatkan fitur kontrol media universal pada sistem operasi. Pada pengujian tahap awal ini, 
+Sebelum melakukan pengerjaan lebih lanjut, perlu dilakukan verifikasi fungsionalitas pada instalasi WSL yang masih murni (\textit{stock}) dan belum tercampuri produk tugas akhir ini. Proses verifikasi dapat dilakukan dengan perangkat lunak berbasis Linux apa pun yang mengirimkan notifikasi dan/atau memanfaatkan fitur kontrol media universal pada sistem operasi. Pada pengujian tahap awal ini, dilakukan pemilihan perangkat lunak yang bersifat \textit{arbitrary} yang mencakup
+\begin{itemize}
+    \item \verb|notify-send|,
+    \item Spotify, dan
+    \item Google Chrome.
+\end{itemize}
 
-Sejauh ini, WSL belum memiliki dukungan penampilan notifikasi dan pengontrolan media yang tertampil secara \textit{native} di \textit{shell} Windows. Hal ini dapat diuji dengan perangkat-perangkat lunak yang mendukung penjalanan di Linux dan memanfaatkan notifikasi dan/atau sistem kontrol media universal dalam interaksinya dengan pengguna. Pada aplikasi Spotify yang berjalan di dalam WSL, sebagai contoh, pemutaran media tidak menghasilkan sistem pengontrolan media universal yang biasanya tertampil di bilah pengaturan cepat (\textit{quick settings}) pada Windows 11. Sama halnya dengan penampilan notifikasi; pemanggilan alat \verb|notify-send| di terminal WSL menghasilkan eror yang menyebutkan bahwa belum ada layanan D-Bus yang menangani hal pernotifikasian (lihat \ref{}).
+Setelah mencoba menjalankan sejumlah perangkat lunak tersebut, ditemukan bahwa sejauh ini, WSL belum memiliki dukungan penampilan notifikasi dan pengontrolan media yang tertampil secara \textit{native} di \textit{shell} Windows. Hal ini dapat diuji dengan perangkat-perangkat lunak yang mendukung penjalanan di Linux dan memanfaatkan notifikasi dan/atau sistem kontrol media universal dalam interaksinya dengan pengguna. Pada aplikasi Spotify yang berjalan di dalam WSL, sebagai contoh, pemutaran media tidak menghasilkan sistem pengontrolan media universal yang biasanya tertampil di bilah pengaturan cepat (\textit{quick settings}) pada Windows 11. Sama halnya dengan penampilan notifikasi; pemanggilan alat \verb|notify-send| di terminal WSL menghasilkan eror yang menyebutkan bahwa belum ada layanan D-Bus yang menangani hal pernotifikasian (lihat \ref{}).
 
-
+Pada perangkat lunak Google Chrome, terdapat dua jenis implementasi penyampaian notifikasi:
+\begin{itemize}
+    \item penampilan notifikasi secara \textit{native} yang memanfaatkan fungsionalitas notifikasi sistem operasi dan
+    \item penampilan notifikasi secara mandiri oleh Google Chrome itu sendiri untuk lingkungan-lingkungan yang tidak mendukung penampilan notifikasi secara \textit{native}.
+\end{itemize}
+Pada penjalanan Google Chrome di dalam WSL, pembedaan ini terlihat jelas; notifikasi yang tertampil memiliki \textit{user interface} yang terlihat \textit{out of place} dan lebih menyerupai desain \textit{user interface} Google Chrome (lihat \ref{}) yang menandakan bahwa belum terdapat dukungan penanganan notifikasi di lingkungan WSL sehingga Google Chrome melakukan \textit{fallback} ke implementasi penampilan notifikasi secara mandiri.
 
 \section{Analisis pada Sistem Operasi Linux Sungguhan}
 

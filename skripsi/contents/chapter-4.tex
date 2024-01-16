@@ -2,9 +2,11 @@
 
 \section{Pemeriksaan Fungsionalitas di Windows Subsystem for Linux (WSL)}
 
-Sejauh ini, WSL belum memiliki dukungan penampilan notifikasi dan pengontrolan media yang tertampil secara \textit{native} di \textit{shell} Windows. Hal ini dapat diuji dengan perangkat-perangkat lunak yang mendukung penjalanan di Linux dan memanfaatkan notifikasi dan/atau sistem kontrol media universal dalam interaksinya dengan pengguna. Pada aplikasi Spotify yang berjalan di dalam WSL, sebagai contoh, pemutaran media tidak menghasilkan sistem pengontrolan media universal yang biasanya tertampil di bilah pengaturan cepat (\textit{quick settings}) pada Windows 11. Sama halnya dengan penampilan notifikasi; pemanggilan alat \verb|notify-send| di terminal WSL menghasilkan eror yang menyebutkan bahwa belum ada layanan D-Bus yang menangani hal pernotifikasian.
+Sebelum melakukan pengerjaan lebih lanjut, perlu dilakukan verifikasi fungsionalitas pada instalasi WSL yang masih murni (\textit{stock}) dan belum tercampuri produk tugas akhir ini. Proses verifikasi dapat dilakukan dengan perangkat lunak berbasis Linux apa pun yang mengirimkan notifikasi dan/atau memanfaatkan fitur kontrol media universal pada sistem operasi. Pada pengujian tahap awal ini, 
 
-% TODO: Insert screenshots here
+Sejauh ini, WSL belum memiliki dukungan penampilan notifikasi dan pengontrolan media yang tertampil secara \textit{native} di \textit{shell} Windows. Hal ini dapat diuji dengan perangkat-perangkat lunak yang mendukung penjalanan di Linux dan memanfaatkan notifikasi dan/atau sistem kontrol media universal dalam interaksinya dengan pengguna. Pada aplikasi Spotify yang berjalan di dalam WSL, sebagai contoh, pemutaran media tidak menghasilkan sistem pengontrolan media universal yang biasanya tertampil di bilah pengaturan cepat (\textit{quick settings}) pada Windows 11. Sama halnya dengan penampilan notifikasi; pemanggilan alat \verb|notify-send| di terminal WSL menghasilkan eror yang menyebutkan bahwa belum ada layanan D-Bus yang menangani hal pernotifikasian (lihat \ref{}).
+
+
 
 \section{Analisis pada Sistem Operasi Linux Sungguhan}
 
@@ -502,10 +504,12 @@ Produk akhir berupa perangkat lunak FancyWSL yang dikembangkan dalam tugas akhir
     \item Fungsi pengontrolan media masih bersifat \textit{buggy} dan terkadang tidak bekerja karena berbagai alasan. Selain itu, informasi media yang ditampilkan belum memunculkan elemen-elemen tambahan seperti gambar album.
 \end{enumerate}
 
-\subsection{Potensi Peningkatan}
+\subsection{Potensi Peningkatan dan Catatan Penting}
 
 \begin{enumerate}
     \item Meskipun pengembangan FancyWSL memilih menggunakan metode penghubungan dengan bus perpesanan D-Bus melalui TCP (metode nomor 4 pada \autoref{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}), metode penghubungan melalui soket Unix (metode nomor 1 pada \autoref{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}) sesungguhnya jauh lebih efisien mengingat TCP masih membawa sejumlah beban \textit{overhead} yang sejatinya dapat dihindari; metode soket Unix tidak dipilih dalam pengembangan perangkat lunak FancyWSL hanya karena dukungan soket Unix di Windows masih belum mendukung penggunaan dengan WSL2, komponen yang cukup krusial dalam topik utama tugas akhir ini. Apabila dukungan WSL2 dalam penggunaan soket Unix di lingkungan Windows telah tersedia, logika penghubungan dengan bus perpesanan D-Bus di perangkat lunak FancyWSL lebih baik dialihkan ke menggunakan soket Unix alih-alih menggunakan TCP seperti saat ini.
+
+    \item Perangkat lunak FancyWSL telah didesain mendukung semua jenis distribusi Linux yang dapat diinstal di WSL dan memiliki kemampuan berpindah distribusi dalam penjalanan FancyWSL. Namun, perangkat komputer tempat penulis melaksanakan percobaan dan pengerjaan memiliki masalah penginstalan distribusi Linux WSL lebih dari satu sehingga fungsionalitas FancyWSL ini belum teruji. Akan lebih baik apabila FancyWSL diuji pada perangkat komputer yang tidak memiliki masalah ini.
 \end{enumerate}
 
 % \section{Perbandingan Hasil Penelitian dengan Hasil Terdahulu}

@@ -2,7 +2,7 @@
 
 \section{Tinjauan Pustaka}
 
-Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian terdahulu yang menjadi basis, penuntun, ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian; subbab ini membahas karya-karya tulis tersebut. Mengingat tugas akhir ini melibatkan lingkup teknologi yang cukup luas, pustaka-pustaka yang diangkat dalam pembahasan ini ditinjau dari berbagai aspek yang berbeda berdasarkan hal-hal utama yang dibahas pada masing-masing pustaka, yaitu penelitian yang membahas implementasi serupa (1 buah karya tulis), penelitian yang berkaitan dengan teknologi penanganan notifikasi (2 buah karya tulis), dan penelitian yang berkaitan dengan teknologi virtualisasi (2 buah karya tulis).
+Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian terdahulu yang menjadi basis, penuntun, ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian; subbab ini membahas karya-karya tulis tersebut. Mengingat tugas akhir ini melibatkan lingkup teknologi yang cukup luas, pustaka-pustaka yang diangkat dalam pembahasan ini ditinjau dari berbagai aspek yang berbeda berdasarkan hal-hal utama yang dibahas pada masing-masing pustaka, yaitu penelitian yang membahas implementasi serupa (1 buah karya tulis), penelitian yang berkaitan dengan teknologi penanganan notifikasi (2 buah karya tulis), dan penelitian yang berkaitan dengan teknologi virtualisasi (2 buah karya tulis). Seluruh perbandingan yang dilakukan akan diringkas kembali dalam sebuah tabel yang terletak di akhir subbab ini.
 
 \subsection{Penelitian yang Membahas Implementasi Serupa}
 
@@ -51,9 +51,16 @@ Karya tulis pertama yang dibahas pada bagian ini adalah sebuah tesis master berj
     \item Weber mengimplementasikan sistem notifikasi menggunakan ekstensi \textit{browser} Google Chrome, sedangkan tugas akhir ini mengimplementasikan sistem notifikasi dalam bentuk yang lebih \textit{native}, yakni perangkat lunak berbasis bahasa pemrograman Python.
 
     \item Penelitian Weber lebih berfokus ke aspek pengguna (dibuktikan dengan banyaknya survei yang dilakukan) dibandingkan dengan aspek teknis pengimplementasian; tugas akhir ini lebih berfokus pada aspek pengimplementasian dan pengujian dilakukan secara mandiri oleh diri penulis sendiri.
-
-Karya tulis kedua yang dibahas pada bagian ini adalah sebuah tesis master berjudul "Unified Push Messaging for Web Applications" yang ditulis oleh Paul Emathinger dan dipublikasikan pada tahun 2015 \cite{emathinger2015unified}. 
 \end{itemize}
+
+Karya tulis kedua yang dibahas pada bagian ini adalah sebuah tesis master berjudul "Unified Push Messaging for Web Applications" yang ditulis oleh Paul Emathinger dan dipublikasikan pada tahun 2015 \cite{emathinger2015unified}. Tesis ini utamanya membahas penyampaian notifikasi yang dikirimkan oleh \textit{server} hingga tersampaikan di perangkat \textit{mobile} pengguna (diilustrasikan pada \autoref{graph-of-push-messaging-flow}. Pada interaksi pengguna dengan aplikasi atau perangkat lunak di perangkat \textit{mobile} mereka, umumnya alur pertukaran informasi berawal dari perangkat \textit{mobile} tersebut yang membuat permintaan (\textit{request}) ke \textit{server} untuk meminta data yang diperlukan. Namun, terkadang, \textit{server} juga memiliki informasi yang sifatnya perlu disampaikan kepada pengguna secara langsung tanpa perlu menunggu pengguna berinteraksi kembali dengan aplikasi yang bersangkutan. Hal ini dapat dicapai dengan teknologi \textit{push messaging} yang dibahas pada tesis ini. Tesis ini memiliki perbedaan utama bila dibandingkan dengan tugas akhir ini (FancyWSL), yaitu tesis ini membahas penanganan notifikasi yang melibatkan perangkat-perangkat fisik yang berbeda secara \textit{remote} alih-alih penyampaian notifikasi secara lokal seperti pada FancyWSL.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{assets/Emathinger15-extracted-images-006.png}
+    \caption{Alur pertukaran informasi pada teknologi \textit{push messaging} dengan permintaan (\textit{request}) awal yang berasal dari \textit{server} alih-alih klien pengguna \cite{emathinger2015unified}}
+    \label{graph-of-push-messaging-flow}
+\end{figure}
 
 \subsection{Penelitian yang Berkaitan dengan Virtualisasi}
 
@@ -67,6 +74,12 @@ Karya tulis pertama yang dibahas pada bagian ini adalah sebuah prosiding berjudu
 Prosiding oleh Agarwal et al. ini memiliki perbedaan yang cukup jelas bila dibandingkan dengan tugas akhir ini (FancyWSL), yaitu penggunaan Docker sebagai teknologi \textit{back-end} alih-alih WSL. Di samping itu, penampilan perangkat lunak berantarmuka grafis (GUI) oleh Agarwal et al. dicapai dengan memanfaatkan protokol X11 alih-alih protokol Wayland yang digunakan oleh WSLg.
 
 Karya tulis kedua yang dibahas pada bagian ini adalah sebuah prosiding berjudul "Memory forensics and the Windows Subsystem for Linux" oleh Nathan Lewis, Andrew Case, Aisha Ali-Gombe, dan Golden G. Richard III yang dipublikasikan pada tahun 2018 \cite{lewis2018memory}. Lewis et al. utamanya membahas pembawaan dukungan berkas-berkas \textit{executable} jenis baru, \textit{executable and linkable format} (ELF), yang umumnya berada di sistem operasi Linux ke sistem operasi Windows melalui Windows Subsystem for Linux (WSL); bersamaan dengan dukungan baru ini, terdapat peningkatan \textit{attack surface} yang, misalnya, dapat diretas oleh peretas. Pada karya tulis ini, Lewis et al. membahas tentang mekanisme internal WSL, berkas-berkas \textit{executable} PE (\textit{portable executable}) dan ELF (\textit{executable and linkable format}), dan forensik memori yang dilakukan terhadap aspek-aspek tersebut sehingga cukup berbeda dengan tugas akhir ini yang membahas WSL beserta aspek-aspek integrasinya.
+
+\subsection{Ringkasan Perbandingan}
+
+\autoref{} berikut menyajikan ulang seluruh perbandingan yang telah dilakukan di atas secara ringkas.
+
+
 
 \section{Dasar Teori}
 

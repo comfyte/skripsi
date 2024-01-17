@@ -2,108 +2,160 @@ import logging
 import sys
 from argparse import ArgumentParser
 import asyncio
+from typing import Callable
+import os
+
 from dbus_next.aio import MessageBus
 from dbus_next.auth import AuthAnnonymous
 from winsdk.windows.ui.notifications import ToastNotificationManager
-from .helpers.verify_platform import verify_platform
+
+from .helpers.platform_verifications import preliminary_checks
+from .helpers.spawn_win32_alert_window import spawn_win32_alert_window
+from .helpers.wsl_manager import wsl_get_distro_list
+from .helpers.obtain_bus_address import obtain_bus_address
 from .shell.persistent_tray_icon import PersistentTrayIcon
 from .services.notifications import NotificationHandlerService
 from .services.mpris import MediaControlService
 from .helpers.constants import NOTIFICATION_GROUP_NAME
 
-async def attach_services_to_bus(bus: MessageBus, *, wsl_distro_name):
-    # org.freedesktop.Notifications
-    bus.export('/org/freedesktop/Notifications', NotificationHandlerService(wsl_distro_name))
+_logger: logging.Logger = None
+
+bus: MessageBus = None
+distro_name: str = None
+
+_is_already_attached = False
+async def attach_services_to_bus():
+    global _is_already_attached
+
+    if _is_already_attached:
+        raise RuntimeError('Services are already attached to the bus.')
+    
+    # Notification handling
+    bus.export('/org/freedesktop/Notifications', NotificationHandlerService(distro_name))
     await bus.request_name('org.freedesktop.Notifications')
 
-    media_control_service = MediaControlService(bus, wsl_distro_name)
+    # Media control
+    media_control_service = MediaControlService(bus, distro_name)
     await media_control_service.init_async()
 
+    _is_already_attached = True
+
 # Define clean-up function before exiting the program.
-def cleanup_before_exiting(*, bus_instance: MessageBus, logger: logging.Logger):
-    logger.info('Beginning clean-up...')
+def cleanup_before_exiting():
+    _logger.info('Beginning clean-up...')
 
     ToastNotificationManager.history.remove_group(NOTIFICATION_GROUP_NAME)
-    logger.info(f'Cleared all Windows ToastNotification with group name "{NOTIFICATION_GROUP_NAME}".')
+    _logger.info(f'Cleared all Windows ToastNotification with group name "{NOTIFICATION_GROUP_NAME}".')
 
-    bus_instance.disconnect()
+    bus.disconnect()
 
-    logger.info('Clean-up complete.')
+    _logger.info('Clean-up complete.')
 
-# Program entry point
-async def fwsl_daemon(bus_address: str, logger: logging.Logger):
-    # Wrap everything in a try-except so that we have a global exception handler (assuming that the rest of
-    # the code outside this main function will always work flawlessly).
+def switch_distro(target_distro_name: str, exit_function: Callable[[], None]):
+    executable_name = sys.executable
+
+    # FIXME: This is just duplicating the logic that is already done at another part of the codebase.
+    is_verbose = '-v' in sys.argv or '--verbose' in sys.argv
+
+    verbose_argv = ['--verbose'] if is_verbose else []
+
+    _logger.info(f'Re-executing FancyWSL with distribution set to "{target_distro_name}"...')
+    _logger.info(f'Executable name was/is "{executable_name}". Using it for re-execution.')
+
+    # Potential race-condition?
+    exit_function()
+    os.execv(executable_name, [executable_name] + verbose_argv + ['-d', target_distro_name])
+
+async def fwsl_daemon():
+    # Do checks first
     try:
-        # Do checks first
-        try:
-            platform_info = verify_platform()
-        except RuntimeError as e:
-            logger.error(e.args[0])
-            sys.exit(1)
+        preliminary_checks()
+    except RuntimeError as e:
+        _logger.error(e.args[0])
+        spawn_win32_alert_window('An error occurred', e.args[0])
+        sys.exit(1)
 
-        logger.info('Starting FancyWSL Daemon...')
+    _logger.info('Starting FancyWSL Daemon...')
 
-        if not bus_address.startswith('tcp:'):
-            logger.error('The supplied bus address is not a TCP address. Currently, only TCP addresses are '
-                         'supported by FancyWSL. Exiting...')
-            sys.exit(1)
+    _distro_list = wsl_get_distro_list()
+    distro_list = [item['name'] for item in _distro_list]
+    default_distro_name = [item for item in _distro_list if item['is_default']][0]['name']
 
-        logger.info(f'Connecting to bus address "{bus_address}"...')
+    global distro_name
 
-        try:
-            bus = await MessageBus(bus_address, auth=AuthAnnonymous()).connect()
-            logger.info('Connected to bus successfully.')
-        except:
-            logger.error('Some error happened. Exiting FancyWSL Daemon...')
-            sys.exit(1)
+    # Use the default distro if the distro argument is not provided.
+    if distro_name is None:
+        _logger.info('No specific WSL distribution is supplied in the execution argument. '
+                     f'Using the default WSL distribution ({default_distro_name}).')
+        distro_name = default_distro_name
 
-        await attach_services_to_bus(bus, wsl_distro_name=platform_info['wsl_distro_name'])
+    PersistentTrayIcon((distro_list, distro_list.index(default_distro_name), distro_list.index(distro_name)),
+                       switch_distro_callback=switch_distro,
+                       exit_callback=lambda _: cleanup_before_exiting())
+    
+    # Obtain the bus address for the specified distro.
+    try:
+        bus_address = obtain_bus_address(distro_name)
+    except RuntimeError as e:
+        spawn_win32_alert_window(f'Error connecting to "{distro_name}" distribution', e.args[0])
 
+    _logger.info(f'Connecting to distribution "{distro_name}" with bus address "{bus_address}"...')
 
-        def persistent_tray_icon_quit_handler(_):
-            logger.info('Received quit request.')
-            cleanup_before_exiting(bus_instance=bus, logger=logger)
-            logger.info('Killed the system tray icon.')
+    try:
+        global bus
+        bus = await MessageBus(bus_address, auth=AuthAnnonymous()).connect()
+        _logger.info('Connected to bus successfully.')
+    except:
+        _logger.error('Some error happened. Exiting FancyWSL Daemon...')
+        sys.exit(1)
 
-        PersistentTrayIcon(bus_address, persistent_tray_icon_quit_handler)
+    await attach_services_to_bus()
 
-        await bus.wait_for_disconnect()
-        logger.info(f'Connection to bus "{bus_address}" disconnected.')
-    except Exception as e:
-        logger.error(f'An error happened to FancyWSL (details are below).')
-        logger.error(e)
+    await bus.wait_for_disconnect()
+    _logger.info('Connection to '
+                 f'distribution "{distro_name}" with '
+                 f'bus address "{bus_address}" '
+                 'is disconnected.')
 
-        # TODO: Attempt to show a visible error message to the user (probably by reusing
-        # the toast notification thing).
-    finally:
-        # TODO: Find out what the "Unbound" type found within this block (or the `except` block) means.
-        cleanup_before_exiting(bus_instance=bus, logger=logger)
-
-if __name__ == '__main__':
+def setup_and_get_arguments():
     argument_parser = ArgumentParser('FancyWSL Daemon')
 
-    argument_parser.add_argument('--bus-address',
-                                 help=('Specify the bus address (currently only TCP addresses are '
-                                       'supported) to be used by FancyWSL.'),
-                                 type=str,
-                                 required=True)
-    argument_parser.add_argument('--verbose', help='Print more logs verbosely.', action='store_true')
+    argument_parser.add_argument('-d', '--wsl-distribution',
+                                 help='Specify the WSL distribution to be used by FancyWSL.', type=str)
+    argument_parser.add_argument('-v', '--verbose', help='Print more logs verbosely.', action='store_true')
     
-    args = argument_parser.parse_args()
+    return argument_parser.parse_args()
 
-    # Set up logging.
-    log_level = logging.WARNING if args.verbose is None else logging.INFO
+def setup_global_logger(is_verbose: bool) -> None:
+    global _logger
+
+    if _logger is not None:
+        # return
+        raise RuntimeError('Logger is already set up!')
+
     logging.basicConfig(format='FWSL LOG | %(asctime)s | (%(name)s) %(levelname)s: %(message)s',
-                        level=log_level)
-    logger = logging.getLogger(__name__)
+                        level=logging.INFO if is_verbose else logging.WARNING)
+    
+    _logger = logging.getLogger(__name__)
 
+def main():
+    args = setup_and_get_arguments()
+
+    setup_global_logger(args.verbose)
+
+    distro_name_arg = args.wsl_distribution
+    if distro_name_arg is not None:
+        global distro_name
+        distro_name = distro_name_arg
 
     # Workaround because we're running on Windows (instead of Unix-like/Linux).
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     # Run main loop
-    asyncio.get_event_loop().run_until_complete(fwsl_daemon(args.bus_address, logger))
+    asyncio.get_event_loop().run_until_complete(fwsl_daemon())
 
     # The main loop will end when the bus has disconnected
-    logger.info('Exiting FancyWSL Daemon...')
+    _logger.info('Exiting FancyWSL Daemon...')
+
+if __name__ == '__main__':
+    main()

@@ -204,29 +204,54 @@ Dalam menginspeksi bus perpesanan D-Bus, terdapat berbagai macam perangkat lunak
 
 \subsection{Windows Subsystem for Linux (WSL)}
 
-Windows Subsystem for Linux (WSL) merupakan usaha Microsoft dalam membawa kompatibilitas Linux ke dalam lingkungan Windows. Di samping istilah "WSL" yang mencakup konsep Windows Subsystem for Linux secara umum, terdapat tiga istilah penting lain yang perlu diketahui, yaitu WSL1, WSL2, dan WSLg.
+Windows Subsystem for Linux (WSL) merupakan usaha Microsoft dalam membawa kompatibilitas Linux ke dalam lingkungan Windows. Di samping istilah "WSL" yang mencakup konsep Windows Subsystem for Linux secara umum, terdapat tiga istilah penting lain yang perlu diketahui, yaitu "WSL 1", "WSL 2", dan "WSLg".
 
-Windows Subsystem for Linux (WSL) pertama kali diperkenalkan oleh Microsoft pada tahun 2016 sebagai fitur baru yang akan datang untuk sistem operasi Windows versi terbaru saat itu, Windows 10. Mengemban nama lain "Bash on Ubuntu on Windows" pada masa-masa awal pengembangan, WSL awalnya hanya mendukung distribusi Linux Ubuntu.
+Windows Subsystem for Linux (WSL) pertama kali diperkenalkan oleh Microsoft pada tahun 2016 sebagai fitur baru yang akan datang untuk sistem operasi Windows versi terbaru saat itu, Windows 10. Mengemban nama lain "Bash on Ubuntu on Windows" pada masa-masa awal pengembangan, WSL awalnya hanya mendukung distribusi Linux Ubuntu \cite{bouow-release-article}. Pada Oktober 2017, melalui perilisan Windows 10 versi 1709 yang bertajuk "Fall Creators Update", WSL akhirnya melepas titel "\textit{beta}"-nya dan secara resmi memasuki versi stabil \cite{omgubuntu-wsl-exits-beta}.
 
+Pada tahun 2019, Microsoft mengumumkan kelanjutan pengembangan WSL dalam bentuk Windows Subsystem for Linux versi 2 (WSL 2) \cite{polarsparc-introduction-to-wsl2}. Sejak adanya WSL 2, WSL versi pertama yang sebelumnya tidak memiliki penomoran versi kini memiliki istilah "WSL 1" guna membedakan keduanya.
+
+Meski memiliki tujuan yang sama, pembawaan dukungan penjalanan perangkat lunak berbasis Linux secara langsung di lingkungan Windows, WSL 1 dan WSL 2 memiliki cara kerja di balik layar yang berbeda jauh.
 \begin{itemize}
-    \item \textbf{Windows Subsystem for Linux versi 1 (WSL1)}
-    WSL1 memanfaatkan sebuah lapisan penerjemah panggilan-panggilan sistem (\textit{syscalls}) yang dipanggil oleh perangkat-perangkat lunak Linux agar diterjemahkan menjadi panggilan-pangiglan sistem (\textit{syscalls}) ekuivalen yang terdapat di Windows. WSL1 adalah varian WSL yang diluncurkan pada pengenalan WSL pertama kali di Windows 10 pada tahun 2016.
+    \item WSL 1 memanfaatkan sebuah lapisan penerjemah panggilan-panggilan sistem (\textit{syscalls}) yang dipanggil oleh perangkat-perangkat lunak Linux agar diterjemahkan menjadi panggilan-pangiglan sistem (\textit{syscalls}) ekuivalen yang terdapat di Windows (lihat \autoref{wsl1-architecture}).
 
-    \item \textbf{Windows Subsystem for Linux versi 2 (WSL2)}
-    WSL2 memanfaatkan sebuah \textit{virtual machine} Hyper-V dengan sejumlah integrasi lebih lanjut agar tidak terasa seperti penjalanan \textit{virtual machine} tradisional. WSL2 menjalankan \textit{kernel} Linux asli yang tervirtualisasi sehingga meningkatkan cakupan dukungan perangkat lunak Linux dibandingkan dengan WSL1.
+    \item WSL 2 memanfaatkan sebuah \textit{virtual machine} Hyper-V dengan sejumlah integrasi lebih lanjut agar tidak terasa seperti penjalanan \textit{virtual machine} tradisional. WSL2 menjalankan \textit{kernel} Linux asli yang tervirtualisasi sehingga meningkatkan cakupan dukungan perangkat lunak Linux dibandingkan dengan WSL 1 (lihat \autoref{wsl2-architecture}).
 \end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/wsl1-architecture-extracted-from-pendadaran-slides.png}
+    \caption{Arsitektur Windows Subsystem for Linux 1 (WSL 1) \cite{youtube-new-wsl-architecture}}
+    \label{wsl1-architecture}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/wsl2-architecture-extracted-from-pendadaran-slides.png}
+    \caption{Arsitektur Windows Subsystem for Linux 2 (WSL 2) \cite{youtube-new-wsl-architecture}}
+    \label{wsl2-architecture}
+\end{figure}
 
 % Pada perheletan pengembang tahunan Microsoft Build 2021, Microsoft menyatakan bahwa mereka akan mendukung 
 
-Pada tahun 2021, Microsoft merilis sistem operasi Windows 11 yang membawa sejumlah perkembangan; salah satu perkembangan tersebut terdapat pada WSL. Windows 11 mendukung penjalanan perangkat lunak Linux berantarmuka grafis (GUI) secara langsung. Microsoft menamakan fitur baru ini "Windows Subsystem for Linux GUI (WSLg)".
+Pada tahun 2021, Microsoft merilis sistem operasi Windows 11 yang membawa sejumlah perkembangan; salah satu perkembangan tersebut terdapat pada WSL. Windows 11 mendukung penjalanan perangkat lunak Linux berantarmuka grafis (GUI) secara langsung. Microsoft menamakan kemampuan baru ini "Windows Subsystem for Linux GUI" atau "WSLg". Kemampuan ini memanfaatkan teknologi \textit{remote application integrated locally} (RAIL), teknologi yang ditenagai oleh Remote Desktop Protocol (RDP), yang dimodifikasi sedemikian rupa sehingga lebih teroptimisasi untuk penjalanan perangkat lunak secara lokal alih-alih secara \textit{remote}; modifikasi ini dinamakan \textit{virtualized application integrated locally} (VAIL) \cite{microsoft-devblogs-wslg-architecture}. \autoref{wslg-architecture} menjabarkan arsitektur WSLg secara lebih detail.
 
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{assets/wslg-architecture.png}
-    \caption{Arsitektur Windows Subsystem for Linux GUI (WSLg) \cite{wslg-architecture}}
+    \caption{Arsitektur Windows Subsystem for Linux GUI (WSLg) \cite{microsoft-devblogs-wslg-architecture}}
+    \label{wslg-architecture}
 \end{figure}
 
 % https://link.springer.com/chapter/10.1007/978-1-4842-6873-5_1
+
+WSL mendukung penjalanan berbagai macam distribusi Linux seperti yang terlihat pada \autoref{wsl-distro-list}; distribusi Ubuntu merupakan distribusi yang paling umum dipakai oleh pengguna WSL. Tiap-tiap distribusi yang diinstal dapat diatur agar berjalan sebagai WSL versi 2 (\textit{default}) atau WSL versi 1. Segala manajemen WSL dapat dilakukan melalui perintah \verb|wsl.exe| yang tersedia di Windows.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/Screenshot 2024-01-02 233751.png}
+    \caption{Distribusi-Distribusi Linux yang tersedia untuk diinstal pada Windows Subsystem for Linux (WSL)}
+    \label{wsl-distro-list}
+\end{figure}
 
 \section{Analisis Perbandingan Metode}
 

@@ -7,11 +7,11 @@
 \begin{enumerate}
     \item Perangkat komputer, baik \textit{desktop} maupun komputer jinjing (\textit{laptop}), sebagai \textbf{komputer utama} dengan
     \begin{itemize}
-        \item sistem operasi Windows 11 Home, Pro, atau SKU lain yang mendukung kapabilitas Windows Subsystem for Linux versi 2 (WSL2);
+        \item sistem operasi Windows 11 Home, Pro, atau SKU lain yang mendukung kapabilitas Windows Subsystem for Linux versi 2 (WSL 2);
         \item arsitektur x86\_64 (64-bit) dengan prosesor seri Intel Core generasi ke-8 atau lebih tinggi;
         \item memori (RAM) minimal 8 GB; dan
         \item ruang penyimpanan minimal 64 GB.
-    \end{itemize} Bila menggunakan \textit{virtual machine}, harap pastikan fungsionalitas "\textit{nested virtualization}" bekerja dengan baik karena Windows Subsystem for Linux versi kedua (WSL2) membutuhkan dukungan virtualisasi. Pada tugas akhir ini, digunakan perangkat komputer \textit{all-in-one} ASUS seri ZN270IE beridentitas "COM25" di Laboratorium Jaringan Komputer dan Aplikasi Terdistribusi, Departemen Teknik Elektro dan Teknologi Informasi, Universitas Gadjah Mada dengan detail sebagai berikut.
+    \end{itemize} Bila menggunakan \textit{virtual machine}, harap pastikan fungsionalitas "\textit{nested virtualization}" bekerja dengan baik karena Windows Subsystem for Linux versi kedua (WSL 2) membutuhkan dukungan virtualisasi. Pada tugas akhir ini, digunakan perangkat komputer \textit{all-in-one} ASUS seri ZN270IE beridentitas "COM25" di Laboratorium Jaringan Komputer dan Aplikasi Terdistribusi, Departemen Teknik Elektro dan Teknologi Informasi, Universitas Gadjah Mada dengan detail sebagai berikut.
     \begin{itemize}
         \item Sistem operasi Windows 11 Pro (versi 22H2) 64-bit
         \item Prosesor Intel Core i7-7700T dengan kecepatan 2,90 GHz dan arsitektur x86\_64 (64-bit)
@@ -19,10 +19,10 @@
         \item Kemampuan layar sentuh dengan multisentuh hingga sepuluh jari secara bersamaan
     \end{itemize}
 
-    \item Perangkat lunak "Windows Subsystem for Linux 2 (WSL2)" versi perilisan terbaru yang terinstal pada komputer utama. Untuk menginstal WSL2 serta distribusi Linux \textit{default}-nya atau memastikan keterbaruan versi WSL yang telah terinstal, jalankan perintah berikut pada PowerShell atau Command Prompt.
+    \item Perangkat lunak "Windows Subsystem for Linux 2 (WSL 2)" versi perilisan terbaru yang terinstal pada komputer utama. Untuk menginstal WSL 2 serta distribusi Linux \textit{default}-nya atau memastikan keterbaruan versi WSL yang telah terinstal, jalankan perintah berikut pada PowerShell atau Command Prompt.
     \begin{lstlisting}
 wsl --install\end{lstlisting}
-    Apabila terdapat perangkat lunak \textit{virtual machine} pihak ketiga (VirtualBox, VMware, dan sebagainya) yang terinstal pada komputer utama tersebut, harap pastikan bahwa perangkat lunak \textit{virtual machine} tersebut telah diperbarui ke versi paling baru dan kompatibel dengan WSL2 atau Hyper-V (kapabilitas yang menenagai WSL2); instalasi WSL2 dan perangkat lunak \textit{virtual machine} pihak ketiga tersebut dalam sistem yang sama dapat menyebabkan degradasi performa pada perangkat lunak \textit{virtual machine} pihak ketiga tersebut karena perangkat lunak \textit{virtual machine} pihak ketiga tersebut mencoba mengakomodasi aktifnya kapabilitas Hyper-V.
+    Apabila terdapat perangkat lunak \textit{virtual machine} pihak ketiga (VirtualBox, VMware, dan sebagainya) yang terinstal pada komputer utama tersebut, harap pastikan bahwa perangkat lunak \textit{virtual machine} tersebut telah diperbarui ke versi paling baru dan kompatibel dengan WSL 2 atau Hyper-V (kapabilitas yang menenagai WSL 2); instalasi WSL 2 dan perangkat lunak \textit{virtual machine} pihak ketiga tersebut dalam sistem yang sama dapat menyebabkan degradasi performa pada perangkat lunak \textit{virtual machine} pihak ketiga tersebut karena perangkat lunak \textit{virtual machine} pihak ketiga tersebut mencoba mengakomodasi aktifnya kapabilitas Hyper-V.
 
     \item Perangkat komputer bersistem operasi Ubuntu 22.04 (LTS) sebagai \textbf{komputer referensi (\textit{reference machine})}. Perangkat komputer dapat berupa komputer \textit{desktop} ataupun komputer jinjing (\textit{laptop}). Apabila tidak memungkinkan, mesin referensi dapat disubstitusikan dengan \textit{virtual machine} yang berjalan di suatu perangkat komputer \textit{host} melalui perangkat lunak \textit{virtual machine}. Pada tugas akhir ini, penulis menggunakan \textit{virtual machine} yang menjalankan sistem operasi Ubuntu 22.04 (LTS) melalui perangkat lunak virtualisasi "UTM" dengan \textit{host} komputer jinjing Apple MacBook Air keluaran tahun 2020 (berprosesor M1) bersistem operasi macOS 13 "Ventura".
 

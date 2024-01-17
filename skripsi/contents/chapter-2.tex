@@ -4,7 +4,7 @@
 
 Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian terdahulu yang menjadi basis, penuntun, ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian; subbab ini membahas karya-karya tulis tersebut. Mengingat tugas akhir ini melibatkan lingkup teknologi yang cukup luas, pustaka-pustaka yang diangkat dalam pembahasan ini ditinjau dari berbagai aspek yang berbeda, yaitu implementasi serupa (1 buah karya tulis), arsitektur penjalanan sistem (2 buah karya tulis), dan antarmuka notifikasi (2 buah karya tulis). Penjabaran tiap-tiap aspek diakhiri oleh sebuah tabel yang menyimpulkan perbandingan karya-karya tulis yang telah dibahas dengan tugas akhir ini.
 
-\subsection{Penelitian Implementasi Serupa}
+\subsection{Penelitian yang Membahas Implementasi Serupa}
 
 Terdapat satu buah karya tulis yang membahas penelitian yang serupa dengan tugas akhir ini, yaitu sebuah tesis master berjudul "Through the Wormhole: Cross-OS Desktop Integration for Linux Applications" yang ditulis oleh John Ingve Olsen dan dipublikasikan pada tahun 2022 \cite{olsen-2022-through-the-wormhole}. Tesis ini merupakan karya tulis yang paling signifikan dalam penyusunan tugas akhir penulis karena memiliki topik dan tujuan yang serupa dengan tugas akhir penulis dan menjadi inspirasi terbesar dalam perancangan tugas akhir penulis.
 
@@ -42,7 +42,7 @@ Secara garis besar, pengimplementasian oleh Olsen (Wormhole) memiliki perbedaan 
     \item perlunya pengembangan perangkat lunak pengelola sesi (\textit{session manager}) D-Bus (systemd telah didukung oleh WSL sejak September 2022 \cite{systemd-support-is-now-available-in-wsl} dan telah menjadi \textit{default} pada instalasi distribusi Ubuntu di WSL sejak perilisan Ubuntu 23.04 pada April 2023 \cite{ubuntu-2304-release-roundup-systemd-now-becomes-default-for-ubuntu-on-wsl} sehingga pengelolaan sesi bus perpesanan D-Bus saat ini telah berada di bawah kontrol systemd seperti halnya pada sistem operasi Linux asli; ketiadaan pembahasan systemd oleh Olsen mengindikasikan bahwa waktu pengembangan Wormhole terjadi sebelum hadirnya dukungan systemd tersebut sehingga diperlukan pengembangan perangkat lunak \textit{session manager} tersendiri pada saat itu).
 \end{itemize}
 
-\subsection{Penelitian Mengenai Antarmuka Notifikasi}
+\subsection{Penelitian yang Membahas Teknologi Penanganan Notifikasi}
 
 Karya tulis kedua yang dibahas adalah sebuah tesis master berjudul "Notifications in a Multi-Device Environment" yang ditulis oleh Dominik Weber dan dipublikasikan pada tahun 2015 \cite{weber2015notifications}. Secara garis besar, Weber membahas penanganan notifikasi antarperangkat yang memfokuskan pada aspek pengumpulan data dari pengguna. Dalam sisi teknis, Weber membahas pengimplementasian notifikasi multiperangkat dalam bentuk ekstensi \textit{browser} Google Chrome. Karya tulis oleh Weber ini memiliki sejumlah perbedaan dengan tugas akhir ini:
 \begin{itemize}

@@ -29,18 +29,24 @@ wsl --install\end{lstlisting}
     \item Perangkat lunak untuk keperluan pengembangan (semuanya diinstal di lingkungan Windows):
     \begin{enumerate}
         \item Microsoft Visual Studio Code (versi terbaru)
-        \item Python versi 3.11 atau lebih baru dengan sejumlah pustaka (\textit{library}) pihak ketiga yang terinstal (menggunakan \verb|pip|):
+        \item Python versi 3.11 atau lebih baru dengan sejumlah pustaka bawaan (umumnya telah terinstal secara \textit{default}):
         \begin{enumerate}
-            \item dbus-next
-            \item winsdk
-            \item infi.systray
+            \item logging,
+            \item argparse, dan
+            \item asyncio
+        \end{enumerate}
+        serta sejumlah pustaka (\textit{library}) pihak ketiga yang terinstal (menggunakan \verb|pip|):
+        \begin{enumerate}
+            \item dbus-next,
+            \item winsdk, dan
+            \item infi.systray.
         \end{enumerate}
     \end{enumerate}
     
     \item Perangkat lunak untuk keperluan pengujian akhir (semuanya diinstal di dalam WSL):
     \begin{enumerate}
-        \item \verb|notify-send|
-        \item Google Chrome
+        \item \verb|notify-send| dan
+        \item Spotify.
     \end{enumerate}
 \end{enumerate}
 
@@ -132,4 +138,15 @@ Pada akhir penelitian, akan dilakukan pengujian akhir yang membandingkan kondisi
 \begin{itemize}
     \item Spotify (pengujian kontrol media dan notifikasi) dan
     \item Google Chrome (pengujian notifikasi).
+\end{itemize}
+
+Pada akhir penelitian, akan dilakukan dua jenis pengujian akhir yang menunjukkan penggunaan perangkat lunak FancyWSL yang telah dikembangkan dalam dunia nyata.
+\begin{itemize}
+    \item Pengujian jenis pertama dilakukan secara individu dan memanfaatkan perangkat lunak \verb|notify-send| yang umumnya terpasang secara \textit{default} pada berbagai distribusi Linux seperti Ubuntu (distribusi \textit{default} WSL). Pengujian ini berfungsi menguji skenario pengelolaan paket perangkat lunak (\textit{software packages}) yang terpasang di distribusi Linux di WSL yang umum dilakukan oleh pengguna WSL secara rutin, terutama pada aspek pembaruan paket. Paket-paket perangkat lunak yang terpasang umumnya wajib diperiksa dan diperbarui secara berkala \cite{legay2020package}, tetapi pengguna masih harus melakukan hal tersebut secara manual dalam lingkungan WSL karena belum terdapat mekanisme pembaruan secara otomatis (\textit{automatic update}); pengujian ini berfungsi menguji mekanisme pemberitahuan (notifikasi) pembaruan secara terjadwal agar pengguna bisa lebih sadar (\textit{aware}) apabila terdapat pembaruan paket-paket perangkat lunak yang perlu diinstal.
+
+    \item Pengujian jenis kedua dilakukan dengan mengundang sejumlah partisipan untuk menguji perangkat lunak FancyWSL secara langsung. Guna meringankan partisipan, pengujian dilakukan secara \textit{remote} pada perangkat komputer utama menggunakan bantuan perangkat lunak Quick Assist yang telah terinstal secara \textit{default} di sistem operasi Windows 10 dan Windows 11 versi pembaruan terbaru; hal ini mensyaratkan partisipan memiliki perangkat komputer yang menjalankan salah satu dari dua sistem operasi tersebut. Perangkat lunak yang diujikan pada pengujian ini adalah Spotify; perangkat lunak ini dirasa cocok untuk pengujian ini karena berbagai alasan:
+    \begin{enumerate}
+        \item Perangkat lunak Spotify, terutama pada platform Linux, memanfaatkan fungsionalitas pengiriman notifikasi dan pengontrolan media sekaligus sehingga kedua aspek tersebut dapat diuji dalam sekali jalan.
+        \item Bila terhubung dengan akun Spotify yang sama, perangkat lunak Spotify pada dua perangkat atau lebih dapat menyinkronkan status pemutaran media agar seragam; pengujian dilakukan dengan menggunakan akun Spotify pribadi milik penulis sehingga aktivitas yang partisipan lakukan pada pengujian dapat penulis pantau e
+    \end{enumerate}
 \end{itemize}

@@ -77,9 +77,29 @@ Karya tulis kedua yang dibahas pada bagian ini adalah sebuah prosiding berjudul 
 
 \subsection{Ringkasan Perbandingan}
 
-\autoref{} berikut menyajikan ulang seluruh perbandingan yang telah dilakukan di atas secara ringkas.
+\autoref{tabel-ringkasan-perbandingan-di-tinjauan-pustaka} berikut menyajikan ulang seluruh perbandingan yang telah dilakukan di atas secara ringkas serta hal-hal yang menjadi pembeda tugas akhir ini (FancyWSL) dengan karya-karya tulis yang telah dibahas.
 
-
+\begin{landscape}
+\begin{table}
+    \centering
+    \caption{Perbandingan metode penghubungan dengan bus perpesanan D-Bus di WSL}
+    \label{tabel-ringkasan-perbandingan-di-tinjauan-pustaka}
+    \begin{tabularx}{\linewidth}{|c|p{3.5cm}|p{3.5cm}|X|X|X|X|X|X|} \hline
+        \textbf{No.} & \textbf{Penelitian} & \textbf{Topik Utama yang Dibahas} & \textbf{Teknologi \textit{Back-End} Utama} & \textbf{Teknologi \textit{Back-End} Pendukung} & \textbf{Teknologi \textit{User-Facing}} & \textbf{Bahasa/Platform Pemrograman} & \textbf{Jumlah Hal yang Perlu Dikembangkan} & \textbf{Aspek yang Diimplementasikan}\\ \hline
+        1 & Olsen \cite{olsen-2022-through-the-wormhole} & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus & WSLg (Wayland) & Rust & 2 (dua) buah perangkat lunak & Ikon status, notifikasi, dan jendela dialog pemilih berkas \\ \hline
+        
+        2 & Weber & & N/A & Komponen-komponen \textit{server-side} (PHP dan MySQL) & Google Chrome\cite{weber2015notifications} & PHP (\textit{server-side}), SQL (basis data), dan JavaScript (ekstensi Google Chrome) & 3 (tiga) buah perangkat lunak\\ \hline
+        
+        3 & Emathinger \cite{emathinger2015unified} & Pengiriman notifikasi berbasis \textit{push messaging} & \textit{Push service} & N/A & \textit{Push service} & JavaScript & 2 (dua) buah perangkat lunak & N/A\\ \hline
+        
+        4 & Agarwal et al. & Penjalanan dan integrasi antarmuka pengguna (GUI) Docker dengan sistem operasi \textit{host} Linux & Docker &  X Server (X11)\cite{agarwal2021gui}\\ \hline
+        
+        5 & Lewis et al. & Penjalanan berkas \textit{executable} bertipe ELF di lingkungan Windows & WSL (WSL1 dan WSL2) & N/A & \cite{lewis2018memory}\\ \hline
+        
+        6 & Tugas akhir ini (FancyWSL) & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus dan systemd & WSLg (Wayland) & Python & 1 (satu) buah perangkat lunak & Notifikasi dan kontrol media\\ \hline
+    \end{tabularx}
+\end{table}
+\end{landscape}
 
 \section{Dasar Teori}
 

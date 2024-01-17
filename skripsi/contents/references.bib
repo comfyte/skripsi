@@ -1,3 +1,8 @@
+@IEEEtranBSTCTL{IEEEexample:BSTcontrol,
+    CTLuse_forced_etal="yes",
+    CTLnames_show_etal="2"
+}
+
 @electronic{stackoverflow-developer-survey-2022-most-popular-os,
     url={https://survey.stackoverflow.co/2022#section-most-popular-technologies-operating-system},
     year={2022},
@@ -74,16 +79,25 @@
     url={https://www.freedesktop.org/wiki/Software/dbus/},
     year={2022},
     month=feb # "~28",
-    author={{FreeDesktop Group}},
+    author={{FreeDesktop Group authors}},
     title={{D-Bus}}
 }
 
-@electronic{xdg-desktop-notifications-specification,
+@manual{xdg-desktop-notifications-specification,
     url={https://specifications.freedesktop.org/notification-spec/notification-spec-latest.html},
+    organization={FreeDesktop Group},
+    author={Mike Hearn and Christian Hammond and William Jon McCann},
+    title={{Desktop Notifications Specification}},
+    note={Version 1.2}
 }
 
-@electronic{xdg-mpris-specification,
-    url={https://specifications.freedesktop.org/mpris-spec/latest/}
+@manual{xdg-mpris-specification,
+    url={https://specifications.freedesktop.org/mpris-spec/latest/},
+    year={2012},
+    organization={FreeDesktop Group},
+    author={Mirsal Ennaime and Rafaël Carré and Jean-Paul Saman and Milosz Derezynski and Nick Welch and Alex Merry},
+    title={{MPRIS} {D-Bus} Interface Specification},
+    note={Version 2.2}
 }
 
 @electronic{official-introduction-to-dbus,
@@ -133,8 +147,11 @@
 }
 
 @manual{dbus-daemon-man-page,
-    author={{D-Bus Authors}},
-    url={https://dbus.freedesktop.org/doc/dbus-daemon.1.html}
+    url={https://dbus.freedesktop.org/doc/dbus-daemon.1.html},
+    year={2023},
+    month=aug # "~21",
+    author={{D-Bus authors}},
+    title={{dbus-daemon — Message bus daemon}}
 }
 
 @electronic{tied-stdin-and-stdout-ascii-diagram-source,
@@ -142,8 +159,12 @@
 }
 
 @manual{dbus-specification,
+    url={https://dbus.freedesktop.org/doc/dbus-specification.html},
+    author={Havoc Pennington and Anders Carlsson and Alexander Larsson and Sven Herzberg and Simon McVittie and David Zeuthen},
+    year={2023},
+    month=aug # "~21",
     title={D-Bus Specification},
-    url={https://dbus.freedesktop.org/doc/dbus-specification.html}
+    note={Version 0.42}
 }
 
 @article{garcia2014analysis,
@@ -191,7 +212,7 @@
 }
 
 @mastersthesis{olsen-2022-through-the-wormhole,
-    title={Through the Wormhole: Cross-{OS} Desktop Integration for {Linux} Applications},
+    title={Through the {Wormhole}: Cross-{OS} Desktop Integration for {Linux} Applications},
     author={Olsen, John Ingve},
     year={2022},
     school={University of Oslo},
@@ -229,27 +250,51 @@
 }
 
 @manual{notify-send-man-page,
-    url={https://manpages.ubuntu.com/manpages/jammy/man1/notify-send.1.html}
+    url={https://manpages.ubuntu.com/manpages/jammy/man1/notify-send.1.html},
+    year={2022},
+    author={Andre Filipe de Assuncao e Brito and Paul van Tilburg and Riccardo Setti},
+    title={{Ubuntu Manpage: notify-send - a program to send desktop notifications}}
 }
 
 @electronic{gnome-hig-notifications,
-    url={https://wiki.gnome.org/Design/OS/Notifications}
+    url={https://wiki.gnome.org/Design/OS/Notifications},
+    year={2015},
+    month=jun # "~25",
+    author={{GNOME UX Design Team}},
+    title={Notifications}
 }
 
 @electronic{microsoft-docs-manual-control-of-the-smtc,
-    url={https://learn.microsoft.com/en-us/windows/uwp/audio-video-camera/system-media-transport-controls}
+    url={https://learn.microsoft.com/en-us/windows/uwp/audio-video-camera/system-media-transport-controls},
+    year={2022},
+    month=oct # "~21",
+    author={Drew Batchelor and Matt Wojciakowski},
+    title={Manual control of the {System Media Transport Controls}}
 }
 
 @electronic{microsoft-toast-notification-overview,
-    url={https://learn.microsoft.com/en-us/previous-versions/windows/apps/hh779727(v=win.10)}
+    url={https://learn.microsoft.com/en-us/previous-versions/windows/apps/hh779727(v=win.10)},
+    year={2015},
+    month=aug # "~31",
+    author={{Microsoft Documentation} contributors},
+    title={Toast notification overview ({Windows Runtime} apps)}
 }
 
 @electronic{microsoft-toast-notification-schema,
-    url={https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root}
+    url={https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root},
+    year={2022},
+    month=aug # "~8",
+    author={John Kennedy and {GitHub30} and Drew Batchelor and Kent Sharkey and Thomas Fennel and David Coulter and Karl Bridge and Mike Jacobs and Mark LeBLanc and Michael Satran},
+    title={Toast schema}
 }
 
-@electronic{dbus-source-code-address-argumen-and-listen-config,
-    url={https://gitlab.freedesktop.org/dbus/dbus/-/blob/dbus-1.14/bus/bus.c#L489}
+@misc{dbus-source-code-address-argumen-and-listen-config,
+    url={https://gitlab.freedesktop.org/dbus/dbus/-/blob/dbus-1.14/bus/bus.c#L489},
+    year={2023},
+    month=jun # "~30",
+    author={{D-Bus contributors}},
+    title={{bus.c}},
+    note={Version 1.14}
 }
 
 @article{oliphant2007python,
@@ -385,14 +430,14 @@
     url={https://www.opengroup.org/openbrand/certificates/1188p.pdf},
     year={2023},
     author={{The Open Group}},
-    title={{Open Brand Certificate} (P1188)}
+    title={{Open Brand Certificate (P1188)}}
 }
 
 @electronic{ibm-z-os-3-1-unix-certification-certificate,
     url={https://www.opengroup.org/openbrand/certificates/1218p.pdf},
     year={2023},
     author={{The Open Group}},
-    title={{Open Brand Certificate} (P1218)}
+    title={{Open Brand Certificate (P1218)}}
 }
 
 @article{gorauskas2015managing,

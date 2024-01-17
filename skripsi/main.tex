@@ -25,6 +25,16 @@
     linktoc=all
 }
 
+% For additional control over the references (bibliography) management
+\makeatletter
+\def\bstctlcite{\@ifnextchar[{\@bstctlcite}{\@bstctlcite[@auxout]}}
+\def\@bstctlcite[#1]#2{\@bsphack
+ \@for\@citeb:=#2\do{%
+   \edef\@citeb{\expandafter\@firstofone\@citeb}%
+   \if@filesw\immediate\write\csname #1\endcsname{\string\citation{\@citeb}}\fi}%
+ \@esphack}
+\makeatother
+
 %======================================
 % Information Input
 %======================================
@@ -65,6 +75,8 @@
 %\hbadness=10000
 
 \begin{document}
+
+\bstctlcite{IEEEexample:BSTcontrol}
 
 % (Re)define ref names
 \renewcommand{\tableautorefname}{Tabel}

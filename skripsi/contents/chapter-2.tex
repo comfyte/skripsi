@@ -202,13 +202,12 @@ Dalam menginspeksi bus perpesanan D-Bus, terdapat berbagai macam perangkat lunak
     \label{fig:enter-label}
 \end{figure}
 
-% \subsection{Sistem Init systemd}
-
-% systemd merupakan salah satu sistem init yang tersedia untuk digunakan di sistem operasi Linux di samping sistem-sistem init lain seperti SysV Init, .
-
 \subsection{Windows Subsystem for Linux (WSL)}
 
-Windows Subsystem for Linux merupakan usaha Microsoft dalam membawa kompatibilitas Unix/Linux ke dalam lingkungan Windows. Secara garis besar, terdapat dua versi WSL yang telah dirilis dengan konsep dan arsitektur yang berbeda.
+Windows Subsystem for Linux (WSL) merupakan usaha Microsoft dalam membawa kompatibilitas Linux ke dalam lingkungan Windows. Di samping istilah "WSL" yang mencakup konsep Windows Subsystem for Linux secara umum, terdapat tiga istilah penting lain yang perlu diketahui, yaitu WSL1, WSL2, dan WSLg.
+
+Windows Subsystem for Linux (WSL) pertama kali diperkenalkan oleh Microsoft pada tahun 2016 sebagai fitur baru yang akan datang untuk sistem operasi Windows versi terbaru saat itu, Windows 10. Mengemban nama lain "Bash on Ubuntu on Windows" pada masa-masa awal pengembangan, WSL awalnya hanya mendukung distribusi Linux Ubuntu.
+
 \begin{itemize}
     \item \textbf{Windows Subsystem for Linux versi 1 (WSL1)}
     WSL1 memanfaatkan sebuah lapisan penerjemah panggilan-panggilan sistem (\textit{syscalls}) yang dipanggil oleh perangkat-perangkat lunak Linux agar diterjemahkan menjadi panggilan-pangiglan sistem (\textit{syscalls}) ekuivalen yang terdapat di Windows. WSL1 adalah varian WSL yang diluncurkan pada pengenalan WSL pertama kali di Windows 10 pada tahun 2016.
@@ -258,7 +257,7 @@ Dalam aspek penghubungan lingkungan Windows Subsystem for Linux (WSL) dengan lin
 # Di shell PowerShell atau cmd.exe
 wsl.exe /path/to/fwsl-send-to-wsl --data="<insert JSON-serialized data here>"\end{lstlisting}
 
-        \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), submetode ini memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL).
+        \item Informasi tekstual dipertukarkan melalui mekanisme \textit{piping}. Cara pertukaran data ini serupa dengan penggunaan berkas \textit{executable} pembantu (\textit{helper}) pada submetode (a), namun data disalurkan melalui \textit{standard stream} (seperti \textit{standard input} dan \textit{standard output}) dan dihubungkan dengan \textit{pipe} alih-alih diletakkan sebagai argumen suatu berkas \textit{executable}. Pertukaran data dengan cara ini tetap memerlukan berkas-berkas \textit{executable} sebagai pengirim dan/atau penerima data. Tetapi, berbeda dengan submetode (a), submetode ini memungkinkan penggunaan perangkat lunak utama itu sendiri sebagai pengirim dan penerima data. Pertukaran data difasilitasi oleh berkas \textit{named pipe} sebanyak dua buah yang masing-masing menangani pengiriman data ke tiap-tiap arah (menuju Windows dan menuju WSL). Berikut ilustrasi dua buah perangkat lunak yang saling terhubung dengan dua buah \textit{named pipe}.
         \begin{verbatim}
  ________________               ________________
 |                |             |                |

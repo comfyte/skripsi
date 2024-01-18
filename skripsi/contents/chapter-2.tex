@@ -2,7 +2,7 @@
 
 \section{Tinjauan Pustaka}
 
-Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian terdahulu yang menjadi basis, penuntun, ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian; subbab ini membahas karya-karya tulis tersebut. Mengingat tugas akhir ini melibatkan lingkup teknologi yang cukup luas, pustaka-pustaka yang diangkat dalam pembahasan ini ditinjau dari berbagai aspek yang berbeda berdasarkan hal-hal utama yang dibahas pada masing-masing pustaka, yaitu penelitian yang membahas implementasi serupa (1 buah karya tulis), penelitian yang berkaitan dengan teknologi penanganan notifikasi (2 buah karya tulis), dan penelitian yang berkaitan dengan teknologi virtualisasi (2 buah karya tulis). Seluruh perbandingan yang dilakukan akan diringkas kembali dalam sebuah tabel yang terletak di akhir subbab ini.
+Penyusunan tugas akhir ini tidak terlepas dari karya-karya tulis dan penelitian terdahulu yang menjadi basis, penuntun, ataupun inspirasi penulis dalam melaksanakan seluruh rangkaian penelitian; subbab ini membahas karya-karya tulis tersebut. Mengingat tugas akhir ini melibatkan lingkup teknologi yang cukup luas, pustaka-pustaka yang diangkat dalam pembahasan ini ditinjau dari berbagai aspek yang berbeda berdasarkan hal-hal utama yang dibahas pada masing-masing pustaka, yaitu penelitian yang membahas implementasi serupa (1 buah karya tulis), penelitian yang berkaitan dengan teknologi penanganan notifikasi (2 buah karya tulis), dan penelitian yang berkaitan dengan teknologi virtualisasi (2 buah karya tulis). Seluruh perbandingan yang dilakukan akan diringkas kembali dalam tabel dan perincian singkat yang terletak di akhir subbab ini.
 
 \subsection{Penelitian yang Membahas Implementasi Serupa}
 
@@ -80,7 +80,9 @@ Karya tulis kedua yang dibahas pada bagian ini adalah sebuah prosiding berjudul 
 \autoref{tabel-ringkasan-perbandingan-di-tinjauan-pustaka} menyajikan ulang seluruh perbandingan yang telah dilakukan di atas secara ringkas serta hal-hal yang menjadi pembeda tugas akhir ini (FancyWSL) dengan karya-karya tulis yang telah dibahas. Pada tabel, terlihat bahwa FancyWSL memiliki sejumlah keunggulan:
 \begin{itemize}
     \item jumlah perangkat lunak yang perlu dikembangkan di FancyWSL lebih ringkas, hanya satu buah perangkat lunak, bila dibandingkan dengan penelitian-penelitian lain yang juga mengembangkan perangkat lunak;
-    \item bila dibandingkan dengan karya tulis yang paling relevan dengan tugas akhir ini (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}), FancyWSL memiliki satu kemampuan tambahan yang tidak dimiliki
+    \item bila dibandingkan dengan karya tulis yang paling relevan dengan tugas akhir ini (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}), FancyWSL memiliki satu aspek tambahan yang tidak diimplementasikan pada karya tulis tersebut, yaitu pengontrolan media;
+    \item FancyWSL memiliki kemampuan menggunakan distribusi Linux WSL yang diinginkan melalui argumen \verb|-d <nama-distribusi>| saat penjalanan FancyWSL, sedangkan karya tulis serupa (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}) tidak membahas dukungkan multidistribusi Linux di WSL; dan
+    \item FancyWSL mendukung sistem init systemd yang baru-baru ini (sejak September 2022) tersedia di WSL, sedangkan karya tulis serupa (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}) tidak mendukung penggunaan dengan sistem ini systemd dan memilih mengembangkan manajer sesi (\textit{session manager}) secara mandiri.
 \end{itemize}
 
 \begin{landscape}
@@ -88,8 +90,8 @@ Karya tulis kedua yang dibahas pada bagian ini adalah sebuah prosiding berjudul 
     \centering
     \caption{Perbandingan karya-karya tulis yang dibahas serta perbedaan dengan tugas akhir ini}
     \label{tabel-ringkasan-perbandingan-di-tinjauan-pustaka}
-    \begin{tabularx}{\linewidth}{|c|p{2cm}|p{3.5cm}|X|X|X|X|X|X|X|} \hline
-        \textbf{No.} & \textbf{Penelitian} & \textbf{Topik Utama yang Dibahas} & \textbf{Teknologi \textit{Back-End} Utama} & \textbf{Teknologi \textit{Back-End} Pendukung} & \textbf{Teknologi \textit{User-Facing}} & \textbf{Bahasa Pemrograman} & \textbf{Jumlah Hal yang Perlu Dikembangkan} & \textbf{Aspek yang Diimplementasikan} & \textbf{Dukungan Multidistribusi di WSL}\\ \hline
+    \begin{tabularx}{\linewidth}{|c|p{2cm}|p{3.5cm}|X|X|X|X|p{2cm}|p{2.5cm}|p{2.5cm}|} \hline
+        \textbf{No.} & \textbf{Penelitian} & \textbf{Topik Utama yang Dibahas} & \textbf{Teknologi \textit{Back-End} Utama} & \textbf{Teknologi \textit{Back-End} Pendukung} & \textbf{Teknologi \textit{User-Facing}} & \textbf{Bahasa Pemrograman} & \textbf{Jumlah Pengembangan} & \textbf{Aspek yang Diimplementasikan} & \textbf{Dukungan Multidistribusi di WSL}\\ \hline
         1 & Olsen \cite{olsen-2022-through-the-wormhole} & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus & WSLg (Wayland) & Rust & 2 (dua) buah perangkat lunak & Ikon status, notifikasi, dan jendela dialog pemilih berkas & Tidak dibahas di karya tulis yang bersangkutan\\ \hline
         
         2 & Weber \cite{weber2015notifications} & Penyampaian notifikasi di lebih dari satu perangkat & N/A & PHP dan MySQL & Google Chrome & PHP, SQL, dan JavaScript & 3 (tiga) buah perangkat lunak & N/A & N/A\\ \hline

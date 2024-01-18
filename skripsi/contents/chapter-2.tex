@@ -77,26 +77,30 @@ Karya tulis kedua yang dibahas pada bagian ini adalah sebuah prosiding berjudul 
 
 \subsection{Ringkasan Perbandingan}
 
-\autoref{tabel-ringkasan-perbandingan-di-tinjauan-pustaka} menyajikan ulang seluruh perbandingan yang telah dilakukan di atas secara ringkas serta hal-hal yang menjadi pembeda tugas akhir ini (FancyWSL) dengan karya-karya tulis yang telah dibahas.
+\autoref{tabel-ringkasan-perbandingan-di-tinjauan-pustaka} menyajikan ulang seluruh perbandingan yang telah dilakukan di atas secara ringkas serta hal-hal yang menjadi pembeda tugas akhir ini (FancyWSL) dengan karya-karya tulis yang telah dibahas. Pada tabel, terlihat bahwa FancyWSL memiliki sejumlah keunggulan:
+\begin{itemize}
+    \item jumlah perangkat lunak yang perlu dikembangkan di FancyWSL lebih ringkas, hanya satu buah perangkat lunak, bila dibandingkan dengan penelitian-penelitian lain yang juga mengembangkan perangkat lunak;
+    \item bila dibandingkan dengan karya tulis yang paling relevan dengan tugas akhir ini (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}), FancyWSL memiliki satu kemampuan tambahan yang tidak dimiliki
+\end{itemize}
 
 \begin{landscape}
 \begin{table}
     \centering
     \caption{Perbandingan karya-karya tulis yang dibahas serta perbedaan dengan tugas akhir ini}
     \label{tabel-ringkasan-perbandingan-di-tinjauan-pustaka}
-    \begin{tabularx}{\linewidth}{|c|p{3.5cm}|p{3.5cm}|X|X|X|X|X|X|} \hline
-        \textbf{No.} & \textbf{Penelitian} & \textbf{Topik Utama yang Dibahas} & \textbf{Teknologi \textit{Back-End} Utama} & \textbf{Teknologi \textit{Back-End} Pendukung} & \textbf{Teknologi \textit{User-Facing}} & \textbf{Bahasa Pemrograman} & \textbf{Jumlah Hal yang Perlu Dikembangkan} & \textbf{Aspek yang Diimplementasikan}\\ \hline
-        1 & Olsen \cite{olsen-2022-through-the-wormhole} & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus & WSLg (Wayland) & Rust & 2 (dua) buah perangkat lunak & Ikon status, notifikasi, dan jendela dialog pemilih berkas \\ \hline
+    \begin{tabularx}{\linewidth}{|c|p{2cm}|p{3.5cm}|X|X|X|X|X|X|X|} \hline
+        \textbf{No.} & \textbf{Penelitian} & \textbf{Topik Utama yang Dibahas} & \textbf{Teknologi \textit{Back-End} Utama} & \textbf{Teknologi \textit{Back-End} Pendukung} & \textbf{Teknologi \textit{User-Facing}} & \textbf{Bahasa Pemrograman} & \textbf{Jumlah Hal yang Perlu Dikembangkan} & \textbf{Aspek yang Diimplementasikan} & \textbf{Dukungan Multidistribusi di WSL}\\ \hline
+        1 & Olsen \cite{olsen-2022-through-the-wormhole} & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus & WSLg (Wayland) & Rust & 2 (dua) buah perangkat lunak & Ikon status, notifikasi, dan jendela dialog pemilih berkas & Tidak dibahas di karya tulis yang bersangkutan\\ \hline
         
-        2 & Weber \cite{weber2015notifications} & Penyampaian notifikasi di lebih dari satu perangkat & N/A & PHP dan MySQL & Google Chrome & PHP, SQL, dan JavaScript & 3 (tiga) buah perangkat lunak & N/A\\ \hline
+        2 & Weber \cite{weber2015notifications} & Penyampaian notifikasi di lebih dari satu perangkat & N/A & PHP dan MySQL & Google Chrome & PHP, SQL, dan JavaScript & 3 (tiga) buah perangkat lunak & N/A & N/A\\ \hline
         
-        3 & Emathinger \cite{emathinger2015unified} & Pengiriman notifikasi berbasis \textit{push messaging} & \textit{Push service} & N/A & \textit{Push service} & JavaScript & 2 (dua) buah perangkat lunak & N/A\\ \hline
+        3 & Emathinger \cite{emathinger2015unified} & Pengiriman notifikasi berbasis \textit{push messaging} & \textit{Push service} & N/A & \textit{Push service} & JavaScript & 2 (dua) buah perangkat lunak & N/A & N/A\\ \hline
         
-        4 & Agarwal et al. \cite{agarwal2021gui} & Penjalanan dan integrasi antarmuka pengguna (GUI) Docker dengan sistem operasi \textit{host} Linux & Docker & N/A & X Server (X11) & N/A & N/A & N/A\\ \hline
+        4 & Agarwal et al. \cite{agarwal2021gui} & Penjalanan dan integrasi antarmuka pengguna (GUI) Docker dengan sistem operasi \textit{host} Linux & Docker & N/A & X Server (X11) & N/A & N/A & N/A & N/A\\ \hline
         
-        5 & Lewis et al. \cite{lewis2018memory} & Penjalanan berkas \textit{executable} bertipe ELF di lingkungan Windows & WSL (WSL1 dan WSL2) & N/A & N/A & N/A & N/A & N/A\\ \hline
+        5 & Lewis et al. \cite{lewis2018memory} & Penjalanan berkas \textit{executable} bertipe ELF di lingkungan Windows & WSL (WSL1 dan WSL2) & N/A & N/A & N/A & N/A & N/A & N/A\\ \hline
         
-        6 & Tugas akhir ini (FancyWSL) & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus dan systemd & WSLg (Wayland) & Python & 1 (satu) buah perangkat lunak & Notifikasi dan kontrol media\\ \hline
+        6 & Tugas akhir ini (FancyWSL) & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus dan systemd & WSLg (Wayland) & Python & 1 (satu) buah perangkat lunak & Notifikasi dan kontrol media & Mendukung \textit{switching} distribusi Linux WSL yang dipakai\\ \hline
     \end{tabularx}
 \end{table}
 \end{landscape}

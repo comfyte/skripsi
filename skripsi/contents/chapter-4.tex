@@ -281,44 +281,44 @@ Menganalisis kedua ekosistem penampilan notifikasi tersebut, ekuivalensi dan pen
 
 \subsection{Analisis Sistem Kontrol Media}
 
-Sistem operasi Linux memiliki standar sistem pengontrolan media universal bernama Media Plyer Remote Interfacing Specification (MPRIS) \cite{xdg-mpris-specification}. Spesifikasi ini mengatur mekanisme komunikasi dalam D-Bus untuk pengontrolan media dengan menetapkan sejumlah antarmuka standar yang harus disetujui oleh klien-klien yang akan berpartisipasi, yakni antarmuka \verb|org.mpris.MediaPlayer2| dan antarmuka \verb|org.mpris.MediaPlayer2.Player| yang kedua terletak pada objek \path{/org/mpris/MediaPlayer2}. Berikut elemen-elemen dalam antarmuka tersebut, baik properti maupun metode, yang perlu diperhatikan dalam pengerjaan tugas akhir ini.
+Sistem operasi Linux memiliki standar sistem pengontrolan media universal bernama Media Plyer Remote Interfacing Specification (MPRIS) \cite{xdg-mpris-specification}. Spesifikasi ini mengatur mekanisme komunikasi dalam D-Bus untuk pengontrolan media dengan menetapkan sejumlah antarmuka standar yang harus disetujui oleh klien-klien yang akan berpartisipasi, yakni antarmuka "org.mpris.MediaPlayer2" dan antarmuka "org.mpris.MediaPlayer2.Player" yang kedua terletak pada objek \path{/org/mpris/MediaPlayer2}. Berikut elemen-elemen dalam antarmuka tersebut, baik properti maupun metode, yang perlu diperhatikan dalam pengerjaan tugas akhir ini.
 
 \begin{itemize}
-    \item Properti "PlaybackStatus" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan status pemutaran media ("Playing", "Paused", atau "Stopped").
+    \item Properti "PlaybackStatus" pada antarmuka "org.mpris.MediaPlayer2.Player" yang mengindikasikan status pemutaran media ("Playing", "Paused", atau "Stopped").
 
-    \item Properti "Metadata" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| berisi informasi-informasi tentang media yang sedang diputar, seperti judul media (\verb|xesam:title|), artis (\verb|xesam:artist|), dan artis album (\verb|xesam:albumArtist|), dalam bentuk \textit{array} yang berisi pasangan nama-nilai (\textit{key-value pairs}).
+    \item Properti "Metadata" pada antarmuka "org.mpris.MediaPlayer2.Player" berisi informasi-informasi tentang media yang sedang diputar, seperti judul media ("xesam:title"), artis ("xesam:artist"), dan artis album ("xesam:albumArtist"), dalam bentuk \textit{array} yang berisi pasangan nama-nilai (\textit{key-value pairs}).
     
-    \item Properti "CanGoNext" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan apakah perangkat lunak yang sedang memutar media saat ini memungkinkan pemindahan pemutaran ke media selanjutnya.
+    \item Properti "CanGoNext" pada antarmuka "org.mpris.MediaPlayer2.Player" yang mengindikasikan apakah perangkat lunak yang sedang memutar media saat ini memungkinkan pemindahan pemutaran ke media selanjutnya.
     
-    \item Properti "CanGoPrevious" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan apakah perangkat lunak yang sedang memutar media saat ini memungkinkan pemindahan pemutaran ke media sebelumnya.
+    \item Properti "CanGoPrevious" pada antarmuka "org.mpris.MediaPlayer2.Player" yang mengindikasikan apakah perangkat lunak yang sedang memutar media saat ini memungkinkan pemindahan pemutaran ke media sebelumnya.
     
-    \item Properti "CanPlay" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikasikan apakah perangkat lunak pemutar media saat ini dapat memulai pemutaran media (\textit{play}).
+    \item Properti "CanPlay" pada antarmuka "org.mpris.MediaPlayer2.Player" yang mengindikasikan apakah perangkat lunak pemutar media saat ini dapat memulai pemutaran media (\textit{play}).
     
-    \item Properti "CanPause" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang mengindikaskan apakah perangkat lunak pemutar media saat ini dapat menjeda pemutaran media saat ini (\textit{pause}).
+    \item Properti "CanPause" pada antarmuka "org.mpris.MediaPlayer2.Player" yang mengindikaskan apakah perangkat lunak pemutar media saat ini dapat menjeda pemutaran media saat ini (\textit{pause}).
     
-    \item Metode "Next()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk berpindah ke media selanjutnya apabila properti "CanGoNext" bernilai benar (\textit{true}).
+    \item Metode "Next()" pada antarmuka "org.mpris.MediaPlayer2.Player" yang memerintahkan klien yang sedang memutar media untuk berpindah ke media selanjutnya apabila properti "CanGoNext" bernilai benar (\textit{true}).
     
-    \item Metode "Previous()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk berpindah ke media sebelumnya apabila properti "CanGoPrevious" bernilai benar (\textit{true}).
+    \item Metode "Previous()" pada antarmuka "org.mpris.MediaPlayer2.Player" yang memerintahkan klien yang sedang memutar media untuk berpindah ke media sebelumnya apabila properti "CanGoPrevious" bernilai benar (\textit{true}).
     
-    \item Metode "PlayPause()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk menjeda media apabila sedang memutar media (jika properti "CanPause" bernilai benar (\textit{true})) atau memulai pemutaran media apabila media sedang dijeda (jika properti "CanPlay" bernilai benar (\textit{true})).
+    \item Metode "PlayPause()" pada antarmuka "org.mpris.MediaPlayer2.Player" yang memerintahkan klien yang sedang memutar media untuk menjeda media apabila sedang memutar media (jika properti "CanPause" bernilai benar (\textit{true})) atau memulai pemutaran media apabila media sedang dijeda (jika properti "CanPlay" bernilai benar (\textit{true})).
     
-    \item Metode "Play()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk menjeda media yang sedang memutar diputar apabila properti "CanPlay" bernilai benar (\textit{true}).
+    \item Metode "Play()" pada antarmuka "org.mpris.MediaPlayer2.Player" yang memerintahkan klien yang sedang memutar media untuk menjeda media yang sedang memutar diputar apabila properti "CanPlay" bernilai benar (\textit{true}).
     
-    \item Metode "Stop()" pada antarmuka \verb|org.mpris.MediaPlayer2.Player| yang memerintahkan klien yang sedang memutar media untuk menghentikan media yang sedang diputar.
+    \item Metode "Stop()" pada antarmuka "org.mpris.MediaPlayer2.Player" yang memerintahkan klien yang sedang memutar media untuk menghentikan media yang sedang diputar.
 \end{itemize}
 
-Seperti yang telah dijelaskan di atas, antarmuka \verb|org.mpris.MediaPlayer2.Player| memiliki properti dan metode. Apabila klien-klien lain dalam bus perpesanan D-Bus yang sama ingin memantau perubahan pada properti-properti tersebut, klien-klien tersebut dapat menunggu sinyal \verb|PropertiesChanged| yang dikeluarkan oleh antarmuka \verb|org.freedesktop.DBus| pada objek \path{/org/mpris/MediaPlayer2}.
+Seperti yang telah dijelaskan di atas, antarmuka "org.mpris.MediaPlayer2.Player" memiliki properti dan metode. Apabila klien-klien lain dalam bus perpesanan D-Bus yang sama ingin memantau perubahan pada properti-properti tersebut, klien-klien tersebut dapat menunggu sinyal "PropertiesChanged" yang dikeluarkan oleh antarmuka "org.freedesktop.DBus" pada objek \path{/org/mpris/MediaPlayer2}.
 
 Di sisi Windows, sistem kontrol media pada pemutaran media oleh perangkat-perangkat lunak 
 dikomunikasikan melalui standar System Media Transport Controls (SMTC) yang mengatur sejumlah mekanisme yang wajib dipatuhi dan dilakukan oleh perangkat-perangkat lunak di Windows yang ingin berpartisipasi \cite{microsoft-docs-manual-control-of-the-smtc}. Berikut elemen-elemen yang digunakan untuk mengatur penampilan kontrol media di \textit{shell} Windows yang penting diperhatikan dalam pengerjaan tugas akhir ini.
 \begin{itemize}
-    \item Properti \verb|IsPlayEnabled| pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan nilai \textit{boolean} benar atau salah.
+    \item Properti "IsPlayEnabled" pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan nilai \textit{boolean} benar atau salah.
     
-    \item Properti \verb|IsPauseEnabled| pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan nilai \textit{boolean} benar atau salah.
+    \item Properti "IsPauseEnabled" pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan nilai \textit{boolean} benar atau salah.
     
-    \item Properti \verb|PlaybackStatus| pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan status pemutaran media saat ini (berputar, terjeda, terhenti, atau tertutup) yang terletak di objek enumerasi (\verb|enum|) MediaPlaybackStatus.
+    \item Properti "PlaybackStatus" pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan status pemutaran media saat ini (berputar, terjeda, terhenti, atau tertutup) yang terletak di objek enumerasi (\verb|enum|) MediaPlaybackStatus.
     
-    \item Properti \verb|Type| di dalam properti \path{DisplayUpdater} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan tipe media yang sedang diputar saat ini menggunakan nilai-nilai yang berada di dalam objek enumerasi (\verb|enum|) MediaPlaybackType (\verb|Music|, \verb|Video|, \verb|Image|, atau \verb|Unknown|).
+    \item Properti "Type" di dalam properti \path{DisplayUpdater} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan tipe media yang sedang diputar saat ini menggunakan nilai-nilai yang berada di dalam objek enumerasi (\verb|enum|) MediaPlaybackType (\verb|Music|, \verb|Video|, \verb|Image|, atau \verb|Unknown|).
     
     \item Properti \verb|Artist| di dalam rantai properti \path{DisplayUpdater.MusicProperties} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan teks berisi informasi nama-nama artis/penyanyi pada media yang sedang diputar.
     

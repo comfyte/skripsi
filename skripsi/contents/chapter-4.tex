@@ -20,13 +20,13 @@ Pada penjalanan Google Chrome di dalam WSL, pembedaan ini terlihat jelas; notifi
 
 \section{Analisis pada Sistem Operasi Linux Sungguhan}
 
-Dengan bantuan perangkat lunak virtualisasi UTM, analisis sistem penanganan notifikasi dan sisten kontrol media pada sistem operasi Linux sungguhan dilakukan pada sebuah \textit{virtual machine} (bertindak sebagai komputer referensi) yang menjalankan sistem operasi Ubuntu 22.04 (LTS) edisi arsitektur ARM 64-bit dan berjalan di atas perangkat komputer \textit{host} MacBook Air keluaran tahun 2020 (berprosesor M1) bersistem operasi macOS 13 "Ventura".
+Dengan bantuan perangkat lunak virtualisasi UTM, analisis sistem penanganan notifikasi dan sisten kontrol media pada sistem operasi Linux sungguhan dilakukan pada sebuah \textit{virtual machine} (bertindak sebagai komputer referensi) yang menjalankan sistem operasi Ubuntu 22.04 (LTS) edisi arsitektur ARM 64-bit dan berjalan di atas perangkat komputer \textit{host} MacBook Air keluaran tahun 2020 (berprosesor M1) bersistem operasi macOS 13 "Ventura" (\autoref{screenshot-of-ubuntu-vm-running-on-utm} menunjukkan tangkapan layar \textit{virtual machine} tersebut).
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{assets/Screenshot 2023-12-19 at 10.51.04.png}
     \caption{Tangkapan layar \textit{virtual machine} Ubuntu 22.04 (LTS) yang sedang berjalan di perangkat lunak virtualisasi UTM}
-    \label{fig:enter-label}
+    \label{screenshot-of-ubuntu-vm-running-on-utm}
 \end{figure}
 
 \subsection{Analisis Sistem Penanganan Notifikasi}
@@ -76,7 +76,7 @@ Setelah perintah tersebut dijalankan, muncul notifikasi pada layar komputer sepe
     \label{ubuntu-notification-panel}
 \end{figure}
 
-Pada sistem operasi Linux, dimungkinkan penampilan notifikasi yang lebih kompleks (seperti mengandung tombol-tombol aksi) daripada sekadar notifikasi simpel seperti yang telah diujicobakan. Namun, mengingat alat \verb|notify-send| tidak mendukung jenis notifikasi kompleks seperti itu, pengujian pada bagian ini hanya mengujikan notifikasi yang simpel saja.
+Pada sistem operasi Linux, dimungkinkan penampilan notifikasi yang lebih kompleks (seperti mengandung tombol-tombol aksi) daripada sekadar notifikasi simpel seperti yang telah diujicobakan (contoh penampilan notifikasi kompleks dapat dilihat di \autoref{example-of-notification-with-action-buttons-on-gnome-desktop}). Namun, mengingat alat \verb|notify-send| tidak mendukung jenis notifikasi kompleks seperti itu, pengujian pada bagian ini hanya mengujikan notifikasi yang simpel saja.
 
 \begin{figure}
     \centering
@@ -373,7 +373,7 @@ Untuk dapat berkomunikasi dengan perangkat-perangkat lunak yang berjalan di dala
 
 Pengembangan FancyWSL memanfaatkan pustaka pemrograman (\textit{library}) bernama "\verb|dbus-next|" yang utamanya digunakan untuk terhubung dengan bus perpesanan D-Bus. Agar suatu perangkat lunak dapat berjalan secara terus-menerus meskipun tidak sedang melakukan pemrosesan setiap saat, diperlukan adanya logika "\textit{main loop}" di dalam fungsi utama perangkat lunak tersebut; untungnya, pustaka pemrograman \verb|dbus-next| juga menyediakan fungsi yang menyebabkan program memasuki \textit{main loop} saat sedang terhubung dengan suatu alamat bus perpesanan D-Bus dan secara otomatis menghentikan \textit{main loop} tersebut begitu koneksi dengan bus perpesanan telah putus. Dengan kata lain, penulis tidak perlu lagi mengelola penghubungan dengan bus perpesanan dan manajemen \textit{main loop} secara terpisah karena fungsi penghubungan dengan bus perpesanan D-Bus pada pustaka \verb|dbus-next| telah menyediakan logika \textit{main loop} secara \textit{default}.
 
-FancyWSL merupakan perangkat lunak yang didesain berjalan di latar belakang sehingga tidak diperlukan adanya jendela perangkat lunak utama yang muncul. Namun, tetap diperlukan adanya indikasi berjalannya program agar pengguna sadar bahwa FancyWSL sedang berjalan di komputer mereka. Hal ini dapat dicapai dengan peletakan ikon status yang berada di area status \textit{taskbar} Windows. Untuk mengimplementasikan hal ini, digunakan pustaka pemrograman lain yang bernama \verb|infi.systray|. Pustaka pemrograman ini berfungsi mengimplementasikan aspek ikon status pada suatu proyek Python secara mudah dan cepat. Penciptaan ikon status dengan menggunakan pustaka pemrograman ini lakukan dengan cara membuat \textit{instance} kelas yang disediakan oleh pustaka pemrograman ini, kelas \verb|SysTrayIcon|, dan kemudian memanggil metode \verb|start()| pada \textit{instance} kelas tersebut. Pembuatan \textit{instance} kelas \verb|SysTrayIcon| menerima sejumlah argumen:
+FancyWSL merupakan perangkat lunak yang didesain berjalan di latar belakang sehingga tidak diperlukan adanya jendela perangkat lunak utama yang muncul. Namun, tetap diperlukan adanya indikasi berjalannya program agar pengguna sadar bahwa FancyWSL sedang berjalan di komputer mereka. Hal ini dapat dicapai dengan peletakan ikon status yang berada di area status \textit{taskbar} Windows (lihat \autoref{fancywsl-status-icon-in-taskbar} untuk hasil implementasi). Untuk mengimplementasikan hal ini, digunakan pustaka pemrograman lain yang bernama \verb|infi.systray|. Pustaka pemrograman ini berfungsi mengimplementasikan aspek ikon status pada suatu proyek Python secara mudah dan cepat. Penciptaan ikon status dengan menggunakan pustaka pemrograman ini lakukan dengan cara membuat \textit{instance} kelas yang disediakan oleh pustaka pemrograman ini, kelas \verb|SysTrayIcon|, dan kemudian memanggil metode \verb|start()| pada \textit{instance} kelas tersebut. Pembuatan \textit{instance} kelas \verb|SysTrayIcon| menerima sejumlah argumen:
 \begin{itemize}
     \item \verb|icon|,
     \item \verb|hover_text| (bertipe data \textit{string}),
@@ -389,12 +389,13 @@ Bus perpesanan D-Bus yang berjalan di dalam WSL secara \textit{default} hanya me
     \item menghilangkan argumen \verb|--address=systemd:| pada penjalanan otomatis \textit{daemon} D-Bus agar argumen tersebut tidak menimpa (\textit{override}) pengaturan di berkas konfigurasi D-Bus dan
     \item menambahkan alamat \textit{listen} TCP dengan pengaturan \textit{port} acak (\textit{random}) di berkas konfigurasi D-Bus pada lokasi \path{/usr/share/dbus-1/session.conf}
 \end{enumerate}
-Poin modifikasi pertama diperlukan karena berdasarkan observasi penulis pada kode sumber \textit{daemon} D-Bus, terutama pada berkas kode \path{bus/bus.c} \cite{dbus-source-code-address-argumen-and-listen-config}, pemberian argumen \verb|--address| pada penjalanan perangkat lunak \textit{daemon} D-Bus (\verb|dbus-daemon|) akan menimpa seluruh konfigurasi alamat yang diatur pada elemen \verb|<listen>| di berkas konfigurasi, namun argumen \verb|--address| itu sendiri tidak mendukung penentuan lebih dari satu alamat. Dengan kata lain, apabila berkas kondifurasi D-Bus mengatur lebih dari satu elemen \verb|<listen>| (lebih dari satu alamat), pemanggilan \verb|dbus-daemon| dengan memberikan argumen \verb|--address| akan menimpa (\textit{override}) seluruh alamat yang ditentukan pada berkas konfigurasi tersebut dengan satu buah alamat yang ditentukan di argumen \verb|--address| tersebut. Analisis ini sekaligus menjawab pertanyaan tugas akhir (Bab II) nomor satu.
+Poin modifikasi pertama diperlukan karena berdasarkan observasi penulis pada kode sumber \textit{daemon} D-Bus, terutama pada berkas kode \path{bus/bus.c} \cite{dbus-source-code-address-argumen-and-listen-config}, pemberian argumen \verb|--address| pada penjalanan perangkat lunak \textit{daemon} D-Bus (\verb|dbus-daemon|) akan menimpa seluruh konfigurasi alamat yang diatur pada elemen \verb|<listen>| di berkas konfigurasi, namun argumen \verb|--address| itu sendiri tidak mendukung penentuan lebih dari satu alamat. Dengan kata lain, apabila berkas kondifurasi D-Bus mengatur lebih dari satu elemen \verb|<listen>| (lebih dari satu alamat), pemanggilan \verb|dbus-daemon| dengan memberikan argumen \verb|--address| akan menimpa (\textit{override}) seluruh alamat yang ditentukan pada berkas konfigurasi tersebut dengan satu buah alamat yang ditentukan di argumen \verb|--address| tersebut. Analisis ini sekaligus menjawab pertanyaan tugas akhir yang disebutkan di Bab II.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{assets/Screenshot 2023-12-20 114455.png}
     \caption{Hasil implementasi ikon status pada FancyWSL}
+    \label{fancywsl-status-icon-in-taskbar}
 \end{figure}
 
 \subsection{Pengimplementasian Fungsi Penanganan Notifikasi}

@@ -142,7 +142,7 @@ Salah satu komponen penyusun distribusi Linux yang penting adalah sistem init (\
 
 \subsection{D-Bus}
 
-D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communication}) yang populer digunakan di sebagian besar distribusi Linux. Sesuai dengan namanya, D-Bus bekerja dengan konsep arsitektur "bus" yang berarti terdapat sebuah kanal utama (bus) sebagai jalur pertukaran informasi dan terdapat sejumlah klien yang terhubung dengan kanal utama (bus) tersebut. Secara garis besar, terdapat dua komponen utama dalam penggunaan sistem D-Bus:
+D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communication}) yang populer digunakan di sebagian besar distribusi Linux. Sesuai dengan namanya, D-Bus bekerja dengan konsep arsitektur "bus" yang berarti terdapat sebuah kanal utama (bus) sebagai jalur pertukaran informasi dan terdapat sejumlah klien yang terhubung dengan kanal utama (bus) tersebut seperti yang terlihat pada \autoref{dbus-analogy-diagram}. Secara garis besar, terdapat dua komponen utama dalam penggunaan sistem D-Bus:
 
 \begin{itemize}
     \item \textbf{\textit{Server} atau \textit{daemon} D-Bus}\\
@@ -156,14 +156,7 @@ D-Bus merupakan sistem komunikasi antarproses (\textit{interprocess communicatio
     \centering
     \includegraphics[width=0.75\linewidth]{assets/dbus-analogy-diagram.png}
     \caption{Ilustrasi bus perpesanan D-Bus \cite{dbus-bus-illustration}}
-    \label{fig:enter-label}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{assets/dbus-diagram.png}
-    \caption{Diagram mendetail arsitektur D-Bus \cite{dbus-main-project-page}}
-    \label{fig:enter-label}
+    \label{dbus-analogy-diagram}
 \end{figure}
 
 Dalam suatu sistem operasi yang sedang berjalan, dimungkinkan penjalanan lebih dari satu bus dalam satu waktu. Pada sistem operasi Linux, umumnya digunakan dua buah bus yang memiliki peran masing-masing, yaitu bus sistem (\textit{system bus}) dan bus sesi (\textit{session bus}). Bus sistem digunakan untuk mengelola dan mengadministrasi hal-hal yang bersifat penting terhadap berjalannya sistem operasi, seperti penyambungan perangkat keras baru, peringatan baterai lemah, dan status jaringan \cite{will2020trusted}. Bus sistem berjalan secara \textit{system-wide} sehingga mencakup seluruh sesi pengguna yang sedang berjalan di sistem operasi. Di sisi lain, bus sesi digunakan untuk hal-hal yang bersifat lebih mengarah ke pengguna (\textit{user-facing}) seperti pengiriman notifikasi dan sistem kontrol media, dua hal yang menjadi topik utama tugas akhir ini. Bus sesi tersedia secara lokal di tiap-tiap sesi pengguna yang sedang berjalan di suatu sistem operasi. Istilah "bus perpesanan D-Bus", "\textit{server} D-Bus", dan "\textit{daemon} D-Bus" dapat dikatakan identik dalam konteks ini; tiap-tiap bus memiliki \textit{instance} \textit{daemon} D-Bus-nya masing-masing, sehingga sistem operasi Linux secara \textit{default} memiliki dua buah \textit{instance} \textit{daemon} D-Bus yang berjalan dalam satu waktu.
@@ -209,15 +202,22 @@ Secara garis besar, proses komunikasi di dalam suatu bus perpesanan D-Bus dilaku
     Sinyal merupakan pesan yang dikirimkan secara tidak terarah (tidak memiliki tujuan spesifik). Pesan berjenis sinyal disebarluaskan (\textit{advertise}) di dalam bus perpesanan untuk didengarkan oleh klien-klien lain yang berkepentingan.
 \end{itemize}
 
-Selain dua jenis pesan di atas, objek-objek pada klien D-Bus juga memiliki elemen bernama "properti" (\textit{property}) yang juga berkonsep serupa dengan pemrograman berorientasi objek. Properti pada suatu objek D-Bus umumnya berisi informasi-informasi yang berkaitan dengan objek tersebut dan/atau klien yang memiliki objek tersebut. Pada umumnya, setiap pergantian nilai properti akan menyebabkan sinyal bernama "PropertiesChanged" pada antarmuka "org.freedesktop.DBus.Properties" tersebar sehingga pergantian nilai properti tersebut dapat diketahui oleh klien-klien lain yang berkepentingan.
+Selain dua jenis pesan di atas, objek-objek pada klien D-Bus juga memiliki elemen bernama "properti" (\textit{property}) yang juga berkonsep serupa dengan pemrograman berorientasi objek. Properti pada suatu objek D-Bus umumnya berisi informasi-informasi yang berkaitan dengan objek tersebut dan/atau klien yang memiliki objek tersebut. Pada umumnya, setiap pergantian nilai properti akan menyebabkan sinyal bernama "PropertiesChanged" pada antarmuka "org.freedesktop.DBus.Properties" tersebar sehingga pergantian nilai properti tersebut dapat diketahui oleh klien-klien lain yang berkepentingan. Arsitektur D-Bus secara lebih mendetail dapat dilihat pada \autoref{dbus-detailed-architecture-diagram}.
 
-Dalam menginspeksi bus perpesanan D-Bus, terdapat berbagai macam perangkat lunak atau peralatan (\textit{tools}) yang dapat membantu. Secara \textit{default}, perangkat lunak D-Bus yang terinstal juga memiliki peralatan-peralatan bawaan seperti \verb|dbus-monitor| dan \verb|dbus-send| yang dapat bermanfaat untuk memeriksa serta berinteraksi langsung dengan bus perpesanan D-Bus dalam antarmuka baris perintah (\textit{command-line interface}). Selain itu, tersedia pula solusi-solusi pihak ketiga seperti perangkat lunak D-Feet yang dapat memeriksa bus perpesanan D-Bus dalam antarmuka grafis (\textit{graphical user interface}).
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/dbus-diagram.png}
+    \caption{Diagram mendetail arsitektur D-Bus \cite{dbus-main-project-page}}
+    \label{dbus-detailed-architecture-diagram}
+\end{figure}
+
+Dalam menginspeksi bus perpesanan D-Bus, terdapat berbagai macam perangkat lunak atau peralatan (\textit{tools}) yang dapat membantu. Secara \textit{default}, perangkat lunak D-Bus yang terinstal juga memiliki peralatan-peralatan bawaan seperti \verb|dbus-monitor| dan \verb|dbus-send| yang dapat bermanfaat untuk memeriksa serta berinteraksi langsung dengan bus perpesanan D-Bus dalam antarmuka baris perintah (\textit{command-line interface}). Selain itu, tersedia pula solusi-solusi pihak ketiga seperti perangkat lunak D-Feet yang dapat memeriksa bus perpesanan D-Bus dalam antarmuka grafis (\textit{graphical user interface}) seperti yang dapat dilihat pada \autoref{screenshot-of-dfeet}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{assets/dfeet-window-screenshot.png}
     \caption{Tangkapan layar perangkat lunak "D-Feet" yang berjalan di Windows Subsystem for Linux (WSL)}
-    \label{fig:enter-label}
+    \label{screenshot-of-dfeet}
 \end{figure}
 
 \subsection{Windows Subsystem for Linux (WSL)}
@@ -353,11 +353,12 @@ Berdasarkan penjabaran dan analisis perbandingan metode penghubungan lingkungan 
 
 \subsection{Bahasa dan Platform Pemrograman yang Digunakan}
 
-Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal seperti kelengkapan integrasi dengan \textit{application programming interface} (API) \textit{shell} Windows dan kemampuan berkomunikasi dengan D-Bus (baik dengan solusi bawaan atau pihak pertama, apabila tersedia, maupun dengan bantuan pustaka pihak ketiga yang tersedia pada bahasa pemrograman tersebut). Berikut perbandingan platform dan bahasa pemrograman yang dapat digunakan yang disajikan dalam bentuk tabel.
+Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal seperti kelengkapan integrasi dengan \textit{application programming interface} (API) \textit{shell} Windows dan kemampuan berkomunikasi dengan D-Bus (baik dengan solusi bawaan atau pihak pertama, apabila tersedia, maupun dengan bantuan pustaka pihak ketiga yang tersedia pada bahasa pemrograman tersebut). \autoref{perbandingan-metode-pemilihan-platform-dan-bahasa-pemrograman} menyajikan perbandingan platform dan bahasa pemrograman yang dapat digunakan.
 
 \begin{table}[h]
     \centering
     \caption{Perbandingan platform dan bahasa pemrograman}
+    \label{perbandingan-metode-pemilihan-platform-dan-bahasa-pemrograman}
     \begin{tabularx}{\textwidth}{|c|X|X|} \hline
         \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline
         C\# & Tersedia (mengingat C\# adalah salah satu platform \textit{native} di Windows & Terbatas dan kurang terdokumentasi (\textit{undocumented})\\ \hline

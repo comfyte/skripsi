@@ -2,7 +2,11 @@
 
 \section{Kesimpulan}
 
-Berdasarkan sejumlah penelitian dan pengujian yang telah dilakukan dalam tugas akhir ini, terbukti bahwa penghubungan sejumlah aspek-aspek antarmuka di Windows Subsystem for Linux (WSL) dengan Windows mungkin dilakukan. Melalui tugas akhir ini, dapat diketahui bahwa sistem D-Bus yang aslinya cukup eksklusif digunakan di dalam sistem operasi Linux pada akhirnya dapat diakses pula oleh sistem operasi Windows melalui salah satu protokol komunikasi yang didukung oleh \textit{daemon} D-Bus, yaitu TCP. Tugas akhir ini juga menunjukkan bahwa kekurangan-kekurangan implementasi secara pihak pertama yang dilakukan oleh Microsoft dapat ditambal oleh solusi-solusi pihak ketiga seperti perangkat lunak FancyWSL yang dikembangkan dalam tugas akhir ini.
+Pada awal penelitian ini, ditentukan rumusan masalah bahwa perangkat-perangkat lunak berbasis Linux yang mengandalkan penyampaian notifikasi dan/atau pengontrolan media sebagai bagian interaksinya tidak dapat bekerja dengan baik apabila dijalankan di dalam lingkungan Windows Subsystem for Linux (WSL). Penelitian ini bertujuan menyelesaikan permasalahan tersebut dengan cara membawa dukungan kedua aspek tersebut (notifikasi dan kontrol media) ke lingkungan WSL sehingga dapat terintegrasi secara \textit{native} dengan lingkungan \textit{host} Windows.
+
+Pengimplementasian pada penelitian ini dilakukan secara \textit{downstream} dengan mengembangkan perangkat lunak pembantu (\textit{helper}) bernama "FancyWSL". Perangkat lunak ini berjalan di latar belakang dan bertugas menyediakan kemampuan notifikasi dan kontrol media kepada perangkat-perangkat lunak di WSL yang membutuhkan.
+
+Melalui serangkaian uji coba yang telah dilakukan, terlihat bahwa keberadaan perangkat lunak FancyWSL sukses meningkatkan usabilitas perangkat-perangkat lunak yang berjalan di dalam WSL; perangkat-perangkat lunak berbasis Linux yang umumnya mengirim notifikasi kini dapat bekerja dengan baik di dalam lingkungan WSL dan perangkat-perangkat pemutar media berbasis Linux yang berjalan di lingkungan WSL kini dapat dikontrol secara langsung oleh panel pengontrolan media universal pada \textit{shell} Windows. Hal ini dibuktikan lebih lanjut melalui sejumlah pengujian (\textit{testing}) dan survei yang dilakukan seperti pengujian berdasarkan \textit{system usability scale} (SUS) dan pengujian \textit{time to task}.
 
 \section{Saran}
 

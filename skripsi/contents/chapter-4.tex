@@ -99,7 +99,7 @@ Pada sistem operasi Linux, dimungkinkan penampilan notifikasi yang lebih komplek
     \label{example-of-notification-with-action-buttons-on-gnome-desktop}
 \end{figure}
 
-Di balik layar, notifikasi yang tertampil tersebut disalurkan dari \verb|notify-send| ke \textit{shell} GNOME melalui bus perpesanan D-Bus yang berjalan pada sesi (\textit{session}) pengguna saat ini. Alat \verb|notify-send| terhubung dengan bus sesi sebagai klien yang memanggil metode \verb|Notify()| pada antarmuka \verb|org.freedesktop.Notifications|; antarmuka tersebut disediakan oleh perangkat lunak \textit{notification server} yang pada lingkungan \textit{desktop} GNOME merupakan \textit{shell} GNOME itu sendiri.
+Di balik layar, notifikasi yang tertampil tersebut disalurkan dari \verb|notify-send| ke \textit{shell} GNOME melalui bus perpesanan D-Bus yang berjalan pada sesi (\textit{session}) pengguna saat ini. Alat \verb|notify-send| terhubung dengan bus sesi sebagai klien yang memanggil metode \verb|Notify()| pada antarmuka "org.freedesktop.Notifications"; antarmuka tersebut disediakan oleh perangkat lunak \textit{notification server} yang pada lingkungan \textit{desktop} GNOME merupakan \textit{shell} GNOME itu sendiri.
 
 Dalam serangkaian peralatan yang disediakan secara bawaan oleh paket perangkat lunak D-Bus, terdapat alat bernama \verb|dbus-monitor| yang berfungsi memantau detail pesan-pesan yang dipertukarkan di dalam bus perpesanan D-Bus. Secara \textit{default}, penjalanan \verb|dbus-monitor| tanpa memberikan argumen apa pun akan memonitor dan mencetak (di \textit{standard output}) seluruh pesan yang dipertukarkan di bus perpesanan D-Bus sehingga mungkin dirasa berlebihan; penjalanan \verb|dbus-monitor| dapat diatur dengan sebuah argumen berupa perintah filter sehingga pesan-pesan yang dimonitor dan dicetak terbatas pada pesan-pesan yang diinginkan saja. Apabila alat \verb|dbus-monitor| dijalankan dengan perintah lengkap
 \begin{lstlisting}[language=bash]
@@ -320,11 +320,11 @@ dikomunikasikan melalui standar System Media Transport Controls (SMTC) yang meng
     
     \item Properti "Type" di dalam properti \path{DisplayUpdater} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan tipe media yang sedang diputar saat ini menggunakan nilai-nilai yang berada di dalam objek enumerasi (\verb|enum|) MediaPlaybackType (\verb|Music|, \verb|Video|, \verb|Image|, atau \verb|Unknown|).
     
-    \item Properti \verb|Artist| di dalam rantai properti \path{DisplayUpdater.MusicProperties} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan teks berisi informasi nama-nama artis/penyanyi pada media yang sedang diputar.
+    \item Properti "Artist" di dalam rantai properti \path{DisplayUpdater.MusicProperties} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan teks berisi informasi nama-nama artis/penyanyi pada media yang sedang diputar.
     
-    \item Properti \verb|AlbumArtist| di dalam rantai properti \path{DisplayUpdater.MusicProperties} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan teks berisi informasi nama-nama artis album pada media yang sedang diputar.
+    \item Properti "AlbumArtist" di dalam rantai properti \path{DisplayUpdater.MusicProperties} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur (\textit{settable}) dengan teks berisi informasi nama-nama artis album pada media yang sedang diputar.
     
-    \item Properti \verb|Title| di dalam rantai properti \path{DisplayUpdater.MusicProperties} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur dengan teks berisi informasi judul media yang sedang diputar.
+    \item Properti "Title" di dalam rantai properti \path{DisplayUpdater.MusicProperties} pada \textit{instance} objek SystemMediaTransportControls yang dapat diatur dengan teks berisi informasi judul media yang sedang diputar.
 
 \end{itemize}
 
@@ -417,7 +417,7 @@ Bus perpesanan D-Bus yang berjalan di dalam WSL secara \textit{default} hanya me
     \item menghilangkan argumen \verb|--address=systemd:| pada penjalanan otomatis \textit{daemon} D-Bus agar argumen tersebut tidak menimpa (\textit{override}) pengaturan di berkas konfigurasi D-Bus dan
     \item menambahkan alamat \textit{listen} TCP dengan pengaturan \textit{port} acak (\textit{random}) di berkas konfigurasi D-Bus pada lokasi \path{/usr/share/dbus-1/session.conf}
 \end{enumerate}
-Poin modifikasi pertama diperlukan karena berdasarkan observasi penulis pada kode sumber \textit{daemon} D-Bus, terutama pada berkas kode \path{bus/bus.c} \cite{dbus-source-code-address-argumen-and-listen-config}, pemberian argumen \verb|--address| pada penjalanan perangkat lunak \textit{daemon} D-Bus (\verb|dbus-daemon|) akan menimpa seluruh konfigurasi alamat yang diatur pada elemen \verb|<listen>| di berkas konfigurasi, namun argumen \verb|--address| itu sendiri tidak mendukung penentuan lebih dari satu alamat. Dengan kata lain, apabila berkas kondifurasi D-Bus mengatur lebih dari satu elemen \verb|<listen>| (lebih dari satu alamat), pemanggilan \verb|dbus-daemon| dengan memberikan argumen \verb|--address| akan menimpa (\textit{override}) seluruh alamat yang ditentukan pada berkas konfigurasi tersebut dengan satu buah alamat yang ditentukan di argumen \verb|--address| tersebut. Analisis ini sekaligus menjawab pertanyaan tugas akhir yang disebutkan di Bab II.
+Poin modifikasi pertama diperlukan karena berdasarkan observasi penulis pada kode sumber \textit{daemon} D-Bus, terutama pada berkas kode \path{bus/bus.c} \cite{dbus-source-code-address-argumen-and-listen-config}, pemberian argumen \verb|--address| pada penjalanan perangkat lunak \textit{daemon} D-Bus (\verb|dbus-daemon|) akan menimpa seluruh konfigurasi alamat yang diatur pada elemen \verb|<listen>| di berkas konfigurasi, namun argumen \verb|--address| itu sendiri tidak mendukung penentuan lebih dari satu alamat. Dengan kata lain, apabila berkas konfigurasi D-Bus mengatur lebih dari satu elemen \verb|<listen>| (lebih dari satu alamat), pemanggilan \verb|dbus-daemon| dengan memberikan argumen \verb|--address| akan menimpa (\textit{override}) seluruh alamat yang ditentukan pada berkas konfigurasi tersebut dengan satu buah alamat yang ditentukan di argumen \verb|--address| tersebut. Analisis ini sekaligus menjawab pertanyaan tugas akhir yang disebutkan di Bab II.
 
 \begin{figure}
     \centering

@@ -348,7 +348,7 @@ Berdasarkan kedua ekosistem pemutaran media (\textit{Linux dan Windows}) yang te
 
 \section{Pengembangan Perangkat Lunak FancyWSL}
 
-Guna mencapai tujuan utama tugas akhir ini, dikembangkan sebuah perangkat lunak bernama "FancyWSL" yang bertugas menjembatani aspek penanganan notifikasi dan aspek kontrol media pada lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows. Seluruh kode sumber yang dikembangkan dalam tugas akhir ini juga tersedia untuk diakses oleh publik di platform GitHub di alamat \href{https://github.com/comfyte/skripsi}{https://github.com/comfyte/skripsi}, tepatnya di direktori \path{FancyWSL/}. Perangkat lunak ini dikembangkan dengan menggunakan bahasa pemrograman Python dan sejumlah pustaka pemrograman (\textit{library}) pihak ketiga dengan pertimbangan yang telah dibahas pada Bab II. Secara garis besar, proyek perangkat lunak ini dikembangkan dengan struktur direktori yang mengacu sepatuh mungkin kepada konvensi penstrukturan direktori dan penamaan berkas proyek Python pada umumnya. Struktur direktori yang dimaksud berikut penjelasan singkatnya adalah sebagai berikut.
+Guna mencapai tujuan utama tugas akhir ini, dikembangkan sebuah perangkat lunak bernama "FancyWSL" yang bertugas menjembatani aspek penanganan notifikasi dan aspek kontrol media pada lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows. Seluruh kode sumber yang dikembangkan dalam tugas akhir ini juga tersedia untuk diakses oleh publik di platform GitHub di alamat \href{https://github.com/comfyte/skripsi}{https://github.com/comfyte/skripsi}, tepatnya di direktori \path{FancyWSL/} (lihat pula Lampiran L.1). Perangkat lunak ini dikembangkan dengan menggunakan bahasa pemrograman Python dan sejumlah pustaka pemrograman (\textit{library}) pihak ketiga dengan pertimbangan yang telah dibahas pada Bab II. Secara garis besar, proyek perangkat lunak ini dikembangkan dengan struktur direktori yang mengacu sepatuh mungkin kepada konvensi penstrukturan direktori dan penamaan berkas proyek Python pada umumnya. Struktur direktori yang dimaksud berikut penjelasan singkatnya adalah sebagai berikut.
 
 \begin{verbatim}
 fwsl_daemon/
@@ -486,7 +486,7 @@ FancyWSL dapat digunakan secara berdampingan dengan sebuah berkas \textit{script
 \begin{lstlisting}
     0 9 * * * root /usr/local/bin/farrel-apt-update-notifier
 \end{lstlisting}
-Sintaksis ini mengasumsikan berkas \textit{script} disimpan dengan nama "farrel-apt-update-notifier" di lokasi \path{/usr/local/bin/} dan telah diatur agar dapat dieksekusi dengan menjalankan perintah \lstinline{chmod +x farrel-apt-update-notifier} terlebih dahulu (berkas \textit{script} lengkap dapat dilihat pada lampiran L-2).
+Sintaksis ini mengasumsikan berkas \textit{script} disimpan dengan nama "farrel-apt-update-notifier" di lokasi \path{/usr/local/bin/} dan telah diatur agar dapat dieksekusi dengan menjalankan perintah \lstinline{chmod +x farrel-apt-update-notifier} terlebih dahulu (berkas \textit{script} lengkap dapat dilihat pada Lampiran L.2).
 
 Pada waktu rutin yang telah ditentukan, akan muncul notifikasi dengan sendirinya yang memberi tahu pengguna apabila terdapat pembaruan paket-paket perangkat lunak APT yang siap diinstal (lihat \autoref{screenshot-of-automatic-apt-update-notifier-in-action}). Berkas \textit{script} ini berjalan di latar belakang selama \textit{instance} distribusi WSL yang bersangkutan berjalan.
 
@@ -499,7 +499,7 @@ Pada waktu rutin yang telah ditentukan, akan muncul notifikasi dengan sendirinya
 
 \subsection{Pengujian Pemutaran Media di Spotify}
 
-Pengujian ini melibatkan partisipan sebanyak dua orang sehingga telah memenuhi kriteria minimal pengumpulan data menggunakan kerangka kerja \textit{system usability scale} (SUS) \cite{measuringu-10-things-sus}. Di samping itu, dilakukan pula pengujian berdasarkan \textit{time to task} atau waktu yang diperlukan untuk melakukan suatu tugas (\textit{task}) tertentu. Seluruh pengumpulan data dilakukan melalui platform Google Forms (data lengkap dapat dilihat pada lampiran L-3).
+Pengujian ini melibatkan partisipan sebanyak dua orang sehingga telah memenuhi kriteria minimal pengumpulan data menggunakan kerangka kerja \textit{system usability scale} (SUS) \cite{measuringu-10-things-sus}. Di samping itu, dilakukan pula pengujian berdasarkan \textit{time to task} atau waktu yang diperlukan untuk melakukan suatu tugas (\textit{task}) tertentu. Seluruh pengumpulan data dilakukan melalui platform Google Forms (data lengkap dapat dilihat pada Lampiran L.3).
 
 Pada pengujian ini, didefinisikan dua buah tugas (\textit{task}) yang akan dilakukan oleh partisipan:
 \begin{enumerate}

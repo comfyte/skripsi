@@ -9,14 +9,28 @@ Sebelum melakukan pengerjaan lebih lanjut, perlu dilakukan verifikasi fungsional
     \item Google Chrome.
 \end{itemize}
 
-Setelah mencoba menjalankan sejumlah perangkat lunak tersebut, ditemukan bahwa sejauh ini, WSL belum memiliki dukungan penampilan notifikasi dan pengontrolan media yang tertampil secara \textit{native} di \textit{shell} Windows. Hal ini dapat diuji dengan perangkat-perangkat lunak yang mendukung penjalanan di Linux dan memanfaatkan notifikasi dan/atau sistem kontrol media universal dalam interaksinya dengan pengguna. Pada aplikasi Spotify yang berjalan di dalam WSL, sebagai contoh, pemutaran media tidak menghasilkan sistem pengontrolan media universal yang biasanya tertampil di bilah pengaturan cepat (\textit{quick settings}) pada Windows 11. Sama halnya dengan penampilan notifikasi; pemanggilan alat \verb|notify-send| di terminal WSL menghasilkan eror yang menyebutkan bahwa belum ada layanan D-Bus yang menangani hal pernotifikasian (lihat \ref{}).
+Setelah mencoba menjalankan sejumlah perangkat lunak tersebut, ditemukan bahwa sejauh ini, WSL belum memiliki dukungan penampilan notifikasi dan pengontrolan media yang tertampil secara \textit{native} di \textit{shell} Windows. Hal ini dapat diuji dengan perangkat-perangkat lunak yang mendukung penjalanan di Linux dan memanfaatkan notifikasi dan/atau sistem kontrol media universal dalam interaksinya dengan pengguna. Pada aplikasi Spotify yang berjalan di dalam WSL, sebagai contoh, pemutaran media tidak menghasilkan sistem pengontrolan media universal yang biasanya tertampil di bilah pengaturan cepat (\textit{quick settings}) pada Windows 11. Sama halnya dengan penampilan notifikasi; pemanggilan alat \verb|notify-send| di terminal WSL menghasilkan eror yang menyebutkan bahwa belum ada layanan D-Bus yang menangani hal pernotifikasian (lihat \autoref{notify-send-no-dbus-service-provided-error-message}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/Screenshot 2024-01-18 130001.png}
+    \caption{Pesan eror yang ditampilkan pada penjalanan notify-send di dalam WSL sebelum terdapat FancyWSL}
+    \label{notify-send-no-dbus-service-provided-error-message}
+\end{figure}
 
 Pada perangkat lunak Google Chrome, terdapat dua jenis implementasi penyampaian notifikasi:
 \begin{itemize}
     \item penampilan notifikasi secara \textit{native} yang memanfaatkan fungsionalitas notifikasi sistem operasi dan
     \item penampilan notifikasi secara mandiri oleh Google Chrome itu sendiri untuk lingkungan-lingkungan yang tidak mendukung penampilan notifikasi secara \textit{native}.
 \end{itemize}
-Pada penjalanan Google Chrome di dalam WSL, pembedaan ini terlihat jelas; notifikasi yang tertampil memiliki \textit{user interface} yang terlihat \textit{out of place} dan lebih menyerupai desain \textit{user interface} Google Chrome (lihat \ref{}) yang menandakan bahwa belum terdapat dukungan penanganan notifikasi di lingkungan WSL sehingga Google Chrome melakukan \textit{fallback} ke implementasi penampilan notifikasi secara mandiri.
+Pada penjalanan Google Chrome di dalam WSL, pembedaan ini terlihat jelas; notifikasi yang tertampil memiliki \textit{user interface} yang terlihat \textit{out of place}, lebih menyerupai desain \textit{user interface} Google Chrome, dan terkadang bersifat \textit{buggy} (lihat \autoref{tampilan-notifikasi-google-chrome-yang-tidak-native}) yang menandakan bahwa belum terdapat dukungan penanganan notifikasi di lingkungan WSL sehingga Google Chrome melakukan \textit{fallback} ke implementasi penampilan notifikasi secara mandiri.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/Screenshot 2024-01-18 125649.png}
+    \caption{Penampilan notifikasi oleh Google Chrome pada lingkungan WSL yang belum memiliki dukungan penanganan notifikasi}
+    \label{tampilan-notifikasi-google-chrome-yang-tidak-native}
+\end{figure}
 
 \section{Analisis pada Sistem Operasi Linux Sungguhan}
 
@@ -341,7 +355,12 @@ fwsl_daemon/
 ├── __main__.py
 ├── helpers/
 │   ├── __init__.py
-│   └── verify_platform.py
+│   └── bus_address_parser.py
+│   └── constants.py
+│   └── obtain_bus_address.py
+│   └── platform_verifications.py
+│   └── spawn_win32_alert_window.py
+│   └── wsl_manager.py
 ├── services/
 │   ├── __init__.py
 │   ├── mpris.py
@@ -370,7 +389,7 @@ Secara garis besar, alur logika perangkat lunak FancyWSL dapat dilihat pada diag
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{assets/diagram-untuk-pendadaran-Page-2.drawio.png}
-    \caption{Diagram alir (\textit{flowchart}) }
+    \caption{Diagram alir (\textit{flowchart}) logika penjalanan perangkat lunak FancyWSL}
     \label{flowchart-garis-besar-logika-fancywsl}
 \end{figure}
 
@@ -402,7 +421,7 @@ Poin modifikasi pertama diperlukan karena berdasarkan observasi penulis pada kod
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{assets/Screenshot 2023-12-20 114455.png}
+    \includegraphics[width=0.5\linewidth]{assets/Screenshot 2024-01-18 123909.png}
     \caption{Hasil implementasi ikon status pada FancyWSL}
     \label{fancywsl-status-icon-in-taskbar}
 \end{figure}
@@ -425,7 +444,7 @@ Secara garis besar, mekanisme penanganan notifikasi ini bekerja adalah dengan me
 Pengimplementasian aspek pengontrolan media pada FancyWSL melibatkan dua hal utama yang perlu dilakukan:
 \begin{itemize}
     \item \textbf{Penangkapan sinyal-sinyal yang memberitahukan penggantian informasi media yang sedang diputar di bus perpesanan D-Bus}
-    Hal ini diimplementasikan pada berkas kode \path{services/media_control.py}. Kode ini bekerja dengan cara
+    Hal ini diimplementasikan pada berkas kode \path{services/mpris.py}. Kode ini bekerja dengan cara
     \begin{enumerate}
         \item menambahkan aturan kecocokan (\textit{match rule}) tentang pengontrolan media (MPRIS) kepada pengelola bus perpesanan D-Bus atas nama perangkat lunak FancyWSL agar FancyWSL dapat menerima pesan-pesan yang memiliki kecocokan dengan aturan kecocokan tersebut (hal ini sesuai dengan spesifikasi D-Bus \cite{dbus-specification} dan diperlukan untuk alasan keamanan agar mengurangi kemungkinan terjadinya \textit{sniffing}),
         
@@ -443,23 +462,27 @@ Pengimplementasian aspek pengontrolan media pada FancyWSL melibatkan dua hal uta
     \end{itemize}
 \end{itemize}
 
-\section Hasil Pengembangan
+\section{Hasil Pengembangan}
 
-\section{Dokumentasi Pengujian Akhir FancyWSL}
+Produk akhir yang telah selesai dikembangkan berupa perangkat lunak bernama "FancyWSL". Perangkat lunak ini dijalankan melalui baris perintah (\textit{command line}) dengan sintaksis berikut.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{assets/Screenshot 2023-12-20 202713.png}
-    \caption{Fungsionalitas notifikasi saat ini bekerja pada perangkat lunak yang berjalan di dalam WSL saat \textit{daemon} FancyWSL dijalankan.}
-    \label{fig:enter-label}
-\end{figure}
+\begin{lstlisting}
+    python3.exe fwsl_daemon [-v] [-d <nama-distribusi>]
+\end{lstlisting}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{assets/Screenshot 2023-12-20 153317.png}
-    \caption{Fungsionalitas kontrol media saat ini bekerja pada perangkat lunak yang berjalan di dalam WSL saat \textit{daemon} FancyWSL dijalankan.}
-    \label{fig:enter-label}
-\end{figure}
+FancyWSL menerima sejumlah argumen opsional sebagai berikut.
+\begin{itemize}
+    \item \verb|-v| atau \verb|--verbose|: Memerintahkan FancyWSL untuk mencetak keluaran \textit{log} yang lebih lengkap sehingga memudahkan proses \textit{debugging}.
+    \item \verb|-d <nama-distribusi>| atau \verb|--wsl-distribution=<nama-distribusi>|: Menetapkan distribusi Linux WSL yang akan digunakan oleh FancyWSL (daftar distribusi Linux yang tersedia dalam suatu instalasi WSL dapat diketahui melalui penjalanan perintah \lstinline{wsl.exe --list}).
+\end{itemize}
+
+\section{Pengujian}
+
+Dilaksanakan dua jenis pengujian pada perangkat lunak FancyWSL yang telah selesai dikembangkan, yaitu pengujian skenario notifikasi ketersediaan pembaruan paket perangkat lunak (\textit{software packages update notifier}) secara individu dan pengujian pemutaran media di Spotify yang menyertakan partisipan.
+
+\subsection{Notifikasi Ketersediaan Pembaruan Paket Perangkat Lunak}
+
+FancyWSL dapat digunakan secara berdampingan dengan sebuah berkas \textit{script} terjadwal yang bertugas memeriksa ketersediaan pembaruan paket-paket perangkat lunak (\textit{software packages}) APT secara berkala. 
 
 \section{Kelebihan, Kekurangan, dan Saran Peningkatan}
 

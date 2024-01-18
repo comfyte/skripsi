@@ -344,7 +344,7 @@ fwsl_daemon/
 │   └── verify_platform.py
 ├── services/
 │   ├── __init__.py
-│   ├── media_control.py
+│   ├── mpris.py
 │   └── notifications.py
 └── shell/
     ├── __init__.py
@@ -364,6 +364,15 @@ fwsl_daemon/
 
     \item Berkas \verb|__init__.py| pada masing-masing direktori berfungsi menandakan bahwa direktori-direktori tersebut bisa diimpor (\textit{importable}) sebagai satu kesatuan modul \cite{oliphant2007python}.
 \end{itemize}
+
+Secara garis besar, alur logika perangkat lunak FancyWSL dapat dilihat pada diagram alir (\textit{flowchart}) di \autoref{flowchart-garis-besar-logika-fancywsl}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/diagram-untuk-pendadaran-Page-2.drawio.png}
+    \caption{Diagram alir (\textit{flowchart}) }
+    \label{flowchart-garis-besar-logika-fancywsl}
+\end{figure}
 
 Pengembangan perangkat lunak FancyWSL melibatkan sejumlah tahap yang perlu dilakukan. Berikut tahap-tahap tersebut yang dijelaskan dalam bagian masing-masing.
 
@@ -434,50 +443,7 @@ Pengimplementasian aspek pengontrolan media pada FancyWSL melibatkan dua hal uta
     \end{itemize}
 \end{itemize}
 
-\subsection{Pengimplementasian \textit{Guards} Tambahan}
-
-Pada pengembangan perangkat lunak FancyWSL, diimplementasikan sejumlah \textit{guard} atau proteksi tambahan yang memastikan FancyWSL berjalan pada platform yang semestinya, mencegah/menghalangi penjalanan FancyWSL pada platform yang tidak berhubungan sama sekali (seperti macOS), dan memastikan bahwa kapabilitas-kapabilitas pada WSL yang diperlukan untuk bekerjanya FancyWSL tersedia, aktif, dan dapat diakses. Seluruh \textit{guard} yang diimplementasikan terletak pada berkas kode \path{helpers/verify_platform.py}. Berikut \textit{guard}-\textit{guard} yang diimplementasikan pada FancyWSL.
-
-\begin{itemize}
-    \item Pemastian bahwa sistem operasi tempat FancyWSL dijalankan adalah Windows (di luar WSL), bukan platform lain atau di dalam WSL (\verb|_verify_proper_os()|)
-    
-    \item Memastikan bahwa perangkat lunak WSL telah terinstal dengan baik di \textit{host} Windows (\verb|_verify_wsl_availability()|)
-    
-    \item Pemeriksaan bahwa distribusi \textit{default} pada WSL merupakan WSL versi 2 (WSL 2) yang telah mendukung sistem init systemd dan perangkat-perangkat lunak berantarmuka grafis (GUI) (\verb|_verify_wsl_availability()|)
-    
-    \item Memeriksa bahwa sistem init systemd tersedia dan telah aktif pada distribusi WSL yang akan digunakan (\verb|_verify_wsl_availability()|)
-\end{itemize}
-
-Seluruh fungsi \textit{guard} di atas bersifat privat (\textit{private function}) dan hanya tersedia untuk diakses pada modul tersebut; hanya terdapat satu fungsi tunggal, \verb|verify_platform()|, yang menggabungkan fungsi-fungsi \textit{guard} di atas dan diekspos kepada modul-modul luar yang memanfaatkan modul ini.
-
-\section{Pengintegrasian FancyWSL dengan \textit{Lifecycle} Windows Subsystem for Linux (WSL)}
-
-Perangkat lunak FancyWSL yang telah dikembangkan dapat dijalankan secara manual setiap kali pengguna ingin merasakan tingkat integrasi WSL dengan Windows yang lebih mendalam. Namun, mengingat solusi ini berkaitan dengan integrasi yang umumnya bersifat transparan ke pengguna, akan jauh lebih baik apabila fungsionalitas integrasi yang ditingkatkan ini berjalan secara mandiri dan otomatis. Hal ini dapat dicapai salah satunya dengan menambahkan perangkat lunak FancyWSL sebagai layanan (\textit{service}) systemd.
-
-Untuk mengimplementasikan hal ini, dibuat sebuah berkas baru yang terletak di \path{/home/<nama-pengguna>/.config/systemd/user/fancywsl-windows-daemon.service} yang digunakan sebagai defisi layanan (\textit{service}) FancyWSL. Berkas tersebut berisi informasi-informasi penjalanan perangkat lunak FancyWSL sebagai layanan \textit{service} systemd. Berikut isi berkas tersebut.
-
-\begin{lstlisting}
-[Unit]
-Description=FancyWSL Windows-side daemon
-After=dbus.service
-
-[Service]
-ExecStart=/home/comfyte/.local/bin/start-fancywsl-windows-daemon.sh
-
-[Install]
-WantedBy=graphical.target
-\end{lstlisting}
-
-Berdasarkan berkas definisi tersebut, layanan (\textit{service}) systemd ini akan dijalankan setelah layanan D-Bus berjalan. Berkas ini juga menginstruksikan agar layanan ini menjalankan sebuah berkas \textit{shell script} yang terletak di \path{/home/comfyte/.local/bin/start-fancywsl-windows-daemon.sh}. Berikut isi berkas \textit{shell script} tersebut.
-
-\begin{lstlisting}[language=bash]
-#!/usr/bin/env bash
-export BUS_ADDRESS_FOR_FWSL=$(journalctl --user -b -u dbus.service | grep 'dbus-daemon' | tail -n 1 | grep -P -o 'tcp\:host=\S+,port=\d+(?:,family=(?:ipv4|ipv6))?')
-export PYTHONPATH=/mnt/c/Users/rafir/Projects/skripsi/FancyWSL
-WSLENV=$WSLENV:PYTHONPATH/wp /mnt/c/Users/rafir/AppData/Local/Microsoft/WindowsApps/python3.exe -m fwsl_daemon --bus-address="$BUS_ADDRESS_FOR_FWSL"
-\end{lstlisting}
-
-Dalam isi berkas \textit{shell script} tersebut, terdapat penjalanan berkas \textit{executable} berakhiran \verb|.exe| secara langsung di dalam lingkungan Linux (WSL). Hal ini dimungkinkan oleh kemampuan WSL dalam menjalankan berkas \textit{executable} Windows secara langsung di dalam lingkungan WSL \cite{msdocs-run-windows-tools-from-linux}.
+\section Hasil Pengembangan
 
 \section{Dokumentasi Pengujian Akhir FancyWSL}
 

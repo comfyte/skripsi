@@ -482,7 +482,20 @@ Dilaksanakan dua jenis pengujian pada perangkat lunak FancyWSL yang telah selesa
 
 \subsection{Notifikasi Ketersediaan Pembaruan Paket Perangkat Lunak}
 
-FancyWSL dapat digunakan secara berdampingan dengan sebuah berkas \textit{script} terjadwal yang bertugas memeriksa ketersediaan pembaruan paket-paket perangkat lunak (\textit{software packages}) APT secara berkala. 
+FancyWSL dapat digunakan secara berdampingan dengan sebuah berkas \textit{script} terjadwal yang bertugas memeriksa ketersediaan pembaruan paket-paket perangkat lunak (\textit{software packages}) APT secara berkala. Berkas \textit{script} dijadwalkan berjalan secara berkala dengan memanfaatkan fungsionalitas cron yang tersedia secara bawaan di Linux. Pada percobaan kali ini, fungsi pemeriksaan pembaruan diatur berjalan setiap satu hari sekali, tepatnya pada pukul 9 pagi, sehingga sintaksis yang ditambahkan ke berkas konfigurasi \path{/etc/crontab} adalah sebagai berikut.
+\begin{lstlisting}
+    0 9 * * * root /usr/local/bin/farrel-apt-update-notifier
+\end{lstlisting}
+Sintaksis ini mengasumsikan berkas \textit{script} disimpan dengan nama "farrel-apt-update-notifier" di lokasi \path{/usr/local/bin/} dan telah diatur agar dapat dieksekusi dengan menjalankan perintah \lstinline{chmod +x farrel-apt-update-notifier} terlebih dahulu (berkas \textit{script} lengkap dapat dilihat pada lampiran L-2).
+
+Pada waktu rutin yang telah ditentukan, akan muncul notifikasi dengan sendirinya yang memberi tahu pengguna apabila terdapat pembaruan paket-paket perangkat lunak APT yang siap diinstal (lihat \autoref{}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/Screenshot 2024-01-18 090529.png}
+    \caption{Enter Caption}
+    \label{fig:enter-label}
+\end{figure}
 
 \section{Kelebihan, Kekurangan, dan Saran Peningkatan}
 

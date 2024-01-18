@@ -478,24 +478,49 @@ FancyWSL menerima sejumlah argumen opsional sebagai berikut.
 
 \section{Pengujian}
 
-Dilaksanakan dua jenis pengujian pada perangkat lunak FancyWSL yang telah selesai dikembangkan, yaitu pengujian skenario notifikasi ketersediaan pembaruan paket perangkat lunak (\textit{software packages update notifier}) secara individu dan pengujian pemutaran media di Spotify yang menyertakan partisipan.
+Dilaksanakan dua jenis pengujian pada perangkat lunak FancyWSL yang telah selesai dikembangkan, yaitu pengujian skenario notifikasi ketersediaan pembaruan paket perangkat lunak (\textit{software packages update notifier}) secara individu dan pengujian pemutaran media di Spotify yang melibatkan sejumlah partisipan.
 
 \subsection{Notifikasi Ketersediaan Pembaruan Paket Perangkat Lunak}
 
-FancyWSL dapat digunakan secara berdampingan dengan sebuah berkas \textit{script} terjadwal yang bertugas memeriksa ketersediaan pembaruan paket-paket perangkat lunak (\textit{software packages}) APT secara berkala. Berkas \textit{script} dijadwalkan berjalan secara berkala dengan memanfaatkan fungsionalitas cron yang tersedia secara bawaan di Linux. Pada percobaan kali ini, fungsi pemeriksaan pembaruan diatur berjalan setiap satu hari sekali, tepatnya pada pukul 9 pagi, sehingga sintaksis yang ditambahkan ke berkas konfigurasi \path{/etc/crontab} adalah sebagai berikut.
+FancyWSL dapat digunakan secara berdampingan dengan sebuah berkas \textit{script} terjadwal yang bertugas memeriksa ketersediaan pembaruan paket-paket perangkat lunak (\textit{software packages}) APT secara berkala. Berkas \textit{script} dijadwalkan berjalan secara berkala dengan memanfaatkan fungsionalitas cron yang tersedia secara bawaan di Linux. Pada percobaan kali ini, fungsi pemeriksaan pembaruan diatur berjalan setiap satu hari sekali, tepatnya pada pukul 9 pagi, sehingga baris yang ditambahkan ke berkas konfigurasi \path{/etc/crontab} adalah sebagai berikut.
 \begin{lstlisting}
     0 9 * * * root /usr/local/bin/farrel-apt-update-notifier
 \end{lstlisting}
 Sintaksis ini mengasumsikan berkas \textit{script} disimpan dengan nama "farrel-apt-update-notifier" di lokasi \path{/usr/local/bin/} dan telah diatur agar dapat dieksekusi dengan menjalankan perintah \lstinline{chmod +x farrel-apt-update-notifier} terlebih dahulu (berkas \textit{script} lengkap dapat dilihat pada lampiran L-2).
 
-Pada waktu rutin yang telah ditentukan, akan muncul notifikasi dengan sendirinya yang memberi tahu pengguna apabila terdapat pembaruan paket-paket perangkat lunak APT yang siap diinstal (lihat \autoref{}).
+Pada waktu rutin yang telah ditentukan, akan muncul notifikasi dengan sendirinya yang memberi tahu pengguna apabila terdapat pembaruan paket-paket perangkat lunak APT yang siap diinstal (lihat \autoref{screenshot-of-automatic-apt-update-notifier-in-action}). Berkas \textit{script} ini berjalan di latar belakang selama \textit{instance} distribusi WSL yang bersangkutan berjalan.
 
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{assets/Screenshot 2024-01-18 090529.png}
-    \caption{Enter Caption}
-    \label{fig:enter-label}
+    \caption{Notifikasi ketersediaan pembaruan paket-paket perangkat lunak APT yang muncul secara otomatis}
+    \label{screenshot-of-automatic-apt-update-notifier-in-action}
 \end{figure}
+
+\subsection{Pengujian Pemutaran Media di Spotify}
+
+Pengujian ini melibatkan partisipan sebanyak dua orang sehingga telah memenuhi kriteria minimal pengumpulan data menggunakan kerangka kerja \textit{system usability scale} (SUS) \cite{measuringu-10-things-sus}. Di samping itu, dilakukan pula pengujian berdasarkan \textit{time to task} atau waktu yang diperlukan untuk melakukan suatu tugas (\textit{task}) tertentu. Seluruh pengumpulan data dilakukan melalui platform Google Forms (data lengkap dapat dilihat pada lampiran L-3).
+
+Pada pengujian ini, didefinisikan dua buah tugas (\textit{task}) yang akan dilakukan oleh partisipan:
+\begin{enumerate}
+    \item mengetahui judul lagu selanjutnya yang terputar otomatis saat lagu sebelumnya telah berakhir dan
+    \item melakukan penjedaan (\textit{pause}) pada media yang sedang diputar pada perangkat lunak Spotify.
+\end{enumerate}
+Kedua tugas tersebut dilakukan pada dua buah lingkungan, lingkungan tanpa FancyWSL dan lingkungan dengan FancyWSL, guna menghitung kebermanfaatan perangkat FancyWSL yang telah selesai dikembangkan.
+
+Pada partisipan pertama (berinisial H. A. H.), nilai \textit{system usability scale} yang diperoleh yaitu
+\[x = (4 + 5 + 3 + 5 + 3) - 5 = 15\]
+\[y = 25 - (1 + 1 + 3 + 1 + 1) = 18\]
+\[Score = 2,5 * (x + y) = 2,5 * 33 = 82,5\]
+
+Pada partisipan kedua (berinisial K. M.), nilai \textit{system usability scale} yang diperoleh yaitu
+\[x = (4 + 5 + 4 + 5 + 3) - 5 = 16\]
+\[y = 25 - (1 + 1 + 3 + 2 + 2) = 16\]
+\[Score = 2,5 * (x + y) = 2,5 * 32 = 80\]
+
+Bila menilik data \textit{time to task}, partisipan pertama membutuhkan waktu rata-rata \((7,36 + 4,11) / 2 = 5,735\) detik pada lingkungan tanpa FancyWSL dan \((2,45 + 6,76) / 2 = 4,605\) detik pada lingkungan dengan FancyWSL, sedangkan partisipan kedua membutuhkan waktu rata-rata \((16,71 + 11,08) / 2 = 13,895\) detik pada lingkungan tanpa FancyWSL dan \((2,96 + 7,28) / 2 = 5,12\) detik pada lingkungan dengan FancyWSL.
+
+Kedua data di atas membuktikan bahwa keberadaan perangkat lunak FancyWSL cukup bermanfaat dalam mempercepat tindakan yang ingin dilakukan oleh pengguna, terutama pada aspek notifikasi dan pengontrolan media.
 
 \section{Kelebihan, Kekurangan, dan Saran Peningkatan}
 
@@ -521,6 +546,4 @@ Produk akhir berupa perangkat lunak FancyWSL yang dikembangkan dalam tugas akhir
 
 \begin{enumerate}
     \item Meskipun pengembangan FancyWSL memilih menggunakan metode penghubungan dengan bus perpesanan D-Bus melalui TCP (metode nomor 4 pada \autoref{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}), metode penghubungan melalui soket Unix (metode nomor 1 pada \autoref{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}) sesungguhnya jauh lebih efisien mengingat TCP masih membawa sejumlah beban \textit{overhead} yang sejatinya dapat dihindari; metode soket Unix tidak dipilih dalam pengembangan perangkat lunak FancyWSL hanya karena dukungan soket Unix di Windows masih belum mendukung penggunaan dengan WSL 2, komponen yang cukup krusial dalam topik utama tugas akhir ini. Apabila dukungan WSL 2 dalam penggunaan soket Unix di lingkungan Windows telah tersedia, logika penghubungan dengan bus perpesanan D-Bus di perangkat lunak FancyWSL lebih baik dialihkan ke menggunakan soket Unix alih-alih menggunakan TCP seperti saat ini.
-
-    \item Perangkat lunak FancyWSL telah didesain mendukung semua jenis distribusi Linux yang dapat diinstal di WSL dan memiliki kemampuan berpindah distribusi dalam penjalanan FancyWSL. Namun, perangkat komputer tempat penulis melaksanakan percobaan dan pengerjaan memiliki masalah penginstalan distribusi Linux WSL lebih dari satu sehingga fungsionalitas FancyWSL ini belum teruji. Akan lebih baik apabila FancyWSL diuji pada perangkat komputer yang tidak memiliki masalah ini.
 \end{enumerate}

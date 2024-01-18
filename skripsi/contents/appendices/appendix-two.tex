@@ -1,0 +1,11 @@
+\chapter*{LAMPIRAN}
+
+\section{Berkas \textit{Script} Pemeriksaan Pembaruan Paket-Paket Perangkat Lunak (\textit{Software Packages}) APT}
+
+\begin{lstlisting}[language=bash]
+#!/usr/bin/env bash
+
+if apt update | grep 'can be upgraded'; then
+    DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus sudo -E -u comfyte notify-send 'APT updates available!' 'Several packages need to be updated' >> /tmp/farrel-apt-update-notifier-log.txt 2>&1
+fi
+\end{lstlisting}

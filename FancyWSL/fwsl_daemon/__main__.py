@@ -2,8 +2,6 @@ import logging
 import sys
 from argparse import ArgumentParser
 import asyncio
-from typing import Callable
-import os
 
 from dbus_next.aio import MessageBus
 from dbus_next.auth import AuthAnnonymous
@@ -22,6 +20,8 @@ _logger: logging.Logger = None
 
 bus: MessageBus = None
 distro_name: str = None
+
+_persistent_tray_icon: PersistentTrayIcon = None
 
 _is_already_attached = False
 async def attach_services_to_bus():
@@ -47,24 +47,10 @@ def cleanup_before_exiting():
     ToastNotificationManager.history.remove_group(NOTIFICATION_GROUP_NAME)
     _logger.info(f'Cleared all Windows ToastNotification with group name "{NOTIFICATION_GROUP_NAME}".')
 
-    bus.disconnect()
+    if bus is not None:
+        bus.disconnect()
 
     _logger.info('Clean-up complete.')
-
-def switch_distro(target_distro_name: str, exit_function: Callable[[], None]):
-    executable_name = sys.executable
-
-    # FIXME: This is just duplicating the logic that is already done at another part of the codebase.
-    is_verbose = '-v' in sys.argv or '--verbose' in sys.argv
-
-    verbose_argv = ['--verbose'] if is_verbose else []
-
-    _logger.info(f'Re-executing FancyWSL with distribution set to "{target_distro_name}"...')
-    _logger.info(f'Executable name was/is "{executable_name}". Using it for re-execution.')
-
-    # Potential race-condition?
-    exit_function()
-    os.execv(executable_name, [executable_name] + verbose_argv + ['-d', target_distro_name])
 
 async def fwsl_daemon():
     # Do checks first
@@ -78,8 +64,14 @@ async def fwsl_daemon():
     _logger.info('Starting FancyWSL Daemon...')
 
     _distro_list = wsl_get_distro_list()
-    distro_list = [item['name'] for item in _distro_list]
-    default_distro_name = [item for item in _distro_list if item['is_default']][0]['name']
+    distro_list = [item['name'] for item in _distro_list if item['version'] == 2]
+
+    try:
+        default_distro_name = [item for item in _distro_list if item['is_default']][0]['name']
+    except IndexError:
+        raise RuntimeError('The WSL default distribution seem to have version 1 (WSL 1). Please specify the '
+                           'distribution in the argument when launching FancyWSL or alternatively change '
+                           'the WSL default distribution version to 2 (WSL 2).')
 
     global distro_name
 
@@ -88,16 +80,20 @@ async def fwsl_daemon():
         _logger.info('No specific WSL distribution is supplied in the execution argument. '
                      f'Using the default WSL distribution ({default_distro_name}).')
         distro_name = default_distro_name
-
-    PersistentTrayIcon((distro_list, distro_list.index(default_distro_name), distro_list.index(distro_name)),
-                       switch_distro_callback=switch_distro,
-                       exit_callback=lambda _: cleanup_before_exiting())
+    
+    global _persistent_tray_icon
+    _persistent_tray_icon = PersistentTrayIcon((distro_list, distro_list.index(default_distro_name),
+                                                distro_list.index(distro_name)),
+                                                exit_callback=lambda _: cleanup_before_exiting())
     
     # Obtain the bus address for the specified distro.
     try:
         bus_address = obtain_bus_address(distro_name)
     except RuntimeError as e:
         spawn_win32_alert_window(f'Error connecting to "{distro_name}" distribution', e.args[0])
+        # print('a')
+        # sys.exit(1)
+        return
 
     _logger.info(f'Connecting to distribution "{distro_name}" with bus address "{bus_address}"...')
 
@@ -107,7 +103,8 @@ async def fwsl_daemon():
         _logger.info('Connected to bus successfully.')
     except:
         _logger.error('Some error happened. Exiting FancyWSL Daemon...')
-        sys.exit(1)
+        # sys.exit(1)
+        return
 
     await attach_services_to_bus()
 
@@ -155,6 +152,7 @@ def main():
     asyncio.get_event_loop().run_until_complete(fwsl_daemon())
 
     # The main loop will end when the bus has disconnected
+    _persistent_tray_icon.manual_shutdown()
     _logger.info('Exiting FancyWSL Daemon...')
 
 if __name__ == '__main__':

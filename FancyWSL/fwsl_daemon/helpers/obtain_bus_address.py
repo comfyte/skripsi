@@ -1,11 +1,19 @@
 import subprocess
 import re
 import logging
+from typing import TypedDict, NotRequired, Literal
 
 # Get logger for current module
 _logger = logging.getLogger(__name__)
 
-def obtain_bus_address(distro_name: str):
+class BusAddress(TypedDict):
+    full_address: str
+    host: str
+    port: int
+    # family: NotRequired[Literal['ipv4', 'ipv6']]
+    family: Literal['ipv4', 'ipv6'] | None
+
+def obtain_bus_address(distro_name: str) -> BusAddress:
     command_list = (['wsl.exe'] +
                     (['-d', distro_name] if distro_name is not None else []) +
                     ['journalctl', '--user', '-b', '-u', 'dbus.service'])
@@ -13,15 +21,20 @@ def obtain_bus_address(distro_name: str):
 
     lines_reversed = reversed(command_result.stdout.splitlines())
 
-    compiled_regex = re.compile(r'tcp\:host=\S+,port=\d+(?:,family=(?:ipv4|ipv6))?')
+    compiled_regex = re.compile(r'tcp\:host=(\S+),port=(\d+)(?:,family=(ipv4|ipv6))?')
 
     for line in lines_reversed:
         result = compiled_regex.search(line)
         if result is not None:
-            bus_address = result.group(0)
+            # full_address = result.group(0)
+            # host = result.group(1)
+            full_address, host, port, family = result.group(0, 1, 2, 3)
             _logger.info('Successfully obtained bus address for the '
-                         f'selected distro "{distro_name}": "{bus_address}".')
-            return bus_address
+                         f'selected distro "{distro_name}": "{full_address}".')
+            return {'full_address': full_address,
+                    'host': host,
+                    'port': int(port),
+                    'family': family}
             
     # Else
-    raise RuntimeError('TCP address not found')
+    raise ValueError('TCP address not found')

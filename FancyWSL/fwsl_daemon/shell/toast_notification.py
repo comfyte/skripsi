@@ -1,4 +1,4 @@
-import logging
+from logging import getLogger
 from typing import Callable
 from winsdk.windows.ui.notifications import (ToastNotificationManager,
                                              ToastNotification,
@@ -8,16 +8,19 @@ from winsdk.windows.ui.notifications import (ToastNotificationManager,
 from winsdk.windows.data.xml import dom
 from xml.sax.saxutils import escape as xml_escape
 from ..helpers.unbox_winrt_object import unbox_winrt_object, WinRTObject
-from ..helpers.constants import NOTIFICATION_GROUP_NAME
 
-# Get logger for current module
-_logger = logging.getLogger(__name__)
+_COMMON_GROUP_NAME = 'FancyWSL Notifications'
+
+# _get_group_name: Callable[[str], str] = lambda distro_name: _COMMON_GROUP_NAME + f'({distro_name})'
+
+def _get_group_name(distro_name: str):
+    return f'{_COMMON_GROUP_NAME} ({distro_name})'
 
 _toast_notifier = ToastNotificationManager.create_toast_notifier()
 
 _notification_id_counter: int = 1
 
-def show_windows_toast_notification(wsl_distro_name: str,
+def show_windows_toast_notification(distro_name: str,
                                     *,
                                     app_name: str = '',
                                     id: int,
@@ -27,6 +30,7 @@ def show_windows_toast_notification(wsl_distro_name: str,
                                     expire_timeout: int,
                                     activated_callback: Callable,
                                     dismiss_callback: Callable) -> int:
+    logger = getLogger(f'toast_notification.{distro_name}')
     
     # Is hardcoding the "default" launch argument the proper way?
     markup_string = f"""
@@ -34,7 +38,7 @@ def show_windows_toast_notification(wsl_distro_name: str,
     <visual>
         <binding template='ToastGeneric'>
             {f'<text>{xml_escape(title)}</text>' if title != '' else ''}
-            <text placement='attribution'>{f'{xml_escape(app_name)} on' if app_name != '' else 'From'} {xml_escape(wsl_distro_name)} (WSL)</text>
+            <text placement='attribution'>{f'{xml_escape(app_name)} on' if app_name != '' else 'From'} {xml_escape(distro_name)} (WSL)</text>
             <text>{xml_escape(body_content)}</text>
         </binding>
     </visual>
@@ -54,8 +58,10 @@ def show_windows_toast_notification(wsl_distro_name: str,
 
     toast_notification.expires_on_reboot = True
 
+    group_name = _get_group_name(distro_name)
+
     # Apparently, group names are not for visual distinction, but rather just kind of internal IDs.
-    toast_notification.group = NOTIFICATION_GROUP_NAME
+    toast_notification.group = group_name
 
     if id == 0:
         global _notification_id_counter
@@ -63,7 +69,7 @@ def show_windows_toast_notification(wsl_distro_name: str,
         _notification_id_counter += 1
     else:
         id_new = id
-        ToastNotificationManager.history.remove(str(id_new), NOTIFICATION_GROUP_NAME)
+        ToastNotificationManager.history.remove(str(id_new), group_name)
 
     # tag = str(_id)
 
@@ -74,15 +80,15 @@ def show_windows_toast_notification(wsl_distro_name: str,
 
     def activation_handler(sender: ToastNotification, args):
         activation_argument = ToastActivatedEventArgs._from(args).arguments
-        _logger.info(f'Received an activation event from notification with ID/tag {sender.tag} and '
-                     f'argument (action key) "{activation_argument}".')
+        logger.info(f'Received an activation event from notification with ID/tag {sender.tag} and '
+                    f'argument (action key) "{activation_argument}".')
         activated_callback(id_new, activation_argument)
         # print(ToastActivatedEventArgs._from(args).arguments)
 
     def dismiss_handler(sender: ToastNotification, _args):
         args = ToastDismissedEventArgs._from(_args)
-        _logger.info(f'Toast notification with ID/tag "{sender.tag}" was dismissed with '
-                     f'reason (ToastDismissalReason) number {args.reason}.')
+        logger.info(f'Toast notification with ID/tag "{sender.tag}" was dismissed with '
+                    f'reason (ToastDismissalReason) number {args.reason}.')
         dismiss_callback(id_new, args.reason)
 
     toast_notification.add_activated(activation_handler)
@@ -92,10 +98,15 @@ def show_windows_toast_notification(wsl_distro_name: str,
 
     return id_new
 
-def close_windows_toast_notification(id: int, post_removal_callback: Callable):
-    ToastNotificationManager.history.remove(str(id), NOTIFICATION_GROUP_NAME)
+def close_windows_toast_notification(id: int, distro_name: str, post_removal_callback: Callable):
+    ToastNotificationManager.history.remove(str(id), _get_group_name(_COMMON_GROUP_NAME, distro_name))
 
     # Do we need to do this or will a signal automatically emitted by the toast notification?
     post_removal_callback(id)
 
-# __all__ = ['show_windows_toast_notification']
+# def clear_all_fwsl_notifications():
+#     ToastNotificationManager.history.remove_group(NOTIFICATION_GROUP_NAME)
+
+def clear_all_windows_toast_notifications_for_specific_distro(distro_name: str):
+    # ToastNotificationManager.history.remove_group(_get_group_name(_COMMON_GROUP_NAME, distro_name))
+    ToastNotificationManager.history.remove_group(_get_group_name(distro_name))

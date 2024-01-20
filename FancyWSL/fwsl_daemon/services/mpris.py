@@ -24,9 +24,12 @@ def disregard_unregistered_client(original_function):
     return wrapper_function
 
 class MediaControlService:
-    def __init__(self, bus_instance: MessageBus, wsl_distro_name: str):
+    """
+    You must call the `attach()` method first before being able to use this class instance.
+    """
+    def __init__(self, bus_instance: MessageBus, distro_name: str):
         self.bus = bus_instance
-        self.wsl_distro_name = wsl_distro_name
+        self.distro_name = distro_name
 
         self.mpris_clients: dict[str, WindowsSMTC] = {}
 
@@ -34,7 +37,7 @@ class MediaControlService:
         # in WSL starts. This could be improved by e.g. reading the list of existing running media-playing
         # apps on FancyWSL startup (or at least at the time of instantiating this class).
 
-    async def init_async(self):
+    async def attach(self):
         await self.__add_dbus_match('sender=org.freedesktop.DBus, path=/org/freedesktop/DBus, '
                                     'interface=org.freedesktop.DBus, member=NameOwnerChanged')
         

@@ -3,6 +3,8 @@ import platform
 import subprocess
 from subprocess import CalledProcessError
 
+from .exceptions import DistroUnsupportedError
+
 # Get logger for current module
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,10 @@ def _verify_wsl_availability():
                            'edition is preferred).')
 
 
-def verify_wsl_distro_readiness(distro_name: str = None):    
+def verify_wsl_distro_readiness(distro_name: str = None):
+    """
+    Can raise a `DistroUnsupportedError` exception.
+    """
     # Check systemd availability inside the default distro.
     try:
         command_list = (['wsl.exe'] +
@@ -37,9 +42,12 @@ def verify_wsl_distro_readiness(distro_name: str = None):
                         ['[', '-d', '/run/systemd/system', ']'])
         subprocess.run(command_list, check=True)
     except CalledProcessError:
-        raise RuntimeError('The default WSL distribution is not booted with systemd. Enable systemd in '
-                           'the WSL configuration in order to use FancyWSL.')
+        raise DistroUnsupportedError('The default WSL distribution is not booted with systemd. Enable systemd in '
+                                     'the WSL configuration in order to use FancyWSL.')
 
-def preliminary_checks() -> None:
+def preliminary_platform_checks() -> None:
+    """
+    Can raise a `RuntimeError` exception.
+    """
     _verify_proper_os()
     _verify_wsl_availability()

@@ -1,52 +1,62 @@
 import logging
 from typing import Callable
 
-from ..helpers.spawn_win32_alert_window import spawn_win32_alert_window
-
 from infi.systray import SysTrayIcon
 
-# Get logger for current module
-_logger = logging.getLogger(__name__)
+# from ..helpers.spawn_win32_alert_window import spawn_win32_alert_window
+
+_logger = logging.getLogger('tray_icon')
 
 class PersistentTrayIcon:
-    def __init__(self, distro_data: tuple[list[str], int, int],
-                 *,
-                 exit_callback: Callable) -> None:
-        """
-        Note: `distro_data` argument is a tuple with the first element being a list of distributions, the
-        second element being the index of the default distribution, and the third element being the index of
-        the currently-used distribution (in regard to the first list).
-        """
-        # distro_list, default_distro_index, current_distro_index = distro_data
-        distro_list, default_distro_index, active_distro_index = distro_data
+    """
+    Make sure to call `set_distro_connection_count(value)` after instantiating, otherwise the system tray
+    hover text will display "Not connected yet".
+    """
+    def __init__(self, *, exit_callback: Callable) -> None:
+        # self.__product_name = 'FancyWSL Daemon'
 
         # TODO: Check first if the exit_callback function is properly given and properly exists
 
-        dn: Callable[[str, int], str] = lambda n, i: n if i != default_distro_index else f'{n} (Default)'
+        self.instance = SysTrayIcon(None,
+                                    self.__generate_hover_text_with_info('Not connected yet'),
+                                    None,
+                                    exit_callback)
 
-        # menu_items = ((f'Switch WSL distribution',
-        #               None,
-        #               tuple([tuple([dn(distro_name, distro_index) + (' (reload)' if distro_index == active_distro_index else ''), None, lambda _: _temporary_alert_because_distro_switching_is_not_implemented_yet(distro_name)]) for distro_index, distro_name in enumerate(distro_list) if distro_index != active_distro_index])),)
-
-        _active_distro_name = dn(distro_list[active_distro_index], active_distro_index)
-
-        self._is_already_shut_down_automatically = False
-
-        def wrap_exit_callback(systray):
-            self._is_already_shut_down_automatically = True
-            exit_callback(systray)
-
-        self.instance = SysTrayIcon(None, f'FancyWSL Daemon (Connected to {_active_distro_name})', None, wrap_exit_callback)
+        # Non-blocking
         self.instance.start()
+
+        # self.distro_connection_count = distro_connection_count
+
         _logger.info('Summoned the system tray icon')
 
-    def manual_shutdown(self):
-        if self._is_already_shut_down_automatically:
-            _logger.warn('The system tray instance has been shut down automatically; ignoring '
-                         'manual shutdown method call...')
-            return
-        
-        return self.instance.shutdown()
+    def __generate_hover_text_with_info(self, info_text: str):
+        return f'FancyWSL Daemon ({info_text})'
+
+    # @property
+    # def distro_connection_count(self) -> int:
+    #     return self.__distro_connection_count
+    
+    # @distro_connection_count.setter
+    # def distro_connection_count(self, value: int):
+    def set_distro_connection_count(self, value: int):
+        # self.__distro_connection_count = value
+        if self.instance:
+            # self.instance.update(hover_text=' '.join(self.__product_name,
+            #                                          '(Connected '
+            #                                          f'to {self.__distro_connection_count} distributions)'))
+            # self.instance.update(hover_text=f'{self.__product_name} (Connected '
+            #                      f'to {self.distro_connection_count} distributions)')
+            # self.instance.update(hover_text=self.__generate_hover_text_with_info(' '.join(['Connected',
+            #                                                                                'to',
+            #                                                                                self.distro_connection_count])))
+            # hover_text = self.__generate_hover_text_with_info('Connected '
+            #                                                   f'to {self.distro_connection_count} distributions')
+            # text = self.__generate_hover_text_with_info(' '.join(['Connected',
+            #                                                             'to',
+            #                                                             self.distro_connection_count,
+            #                                                             'distributions']))
+            text = self.__generate_hover_text_with_info(f'Connected to {value} distributions')
+            self.instance.update(hover_text=text)
 
 # FIXME (and TODO)
 # def _temporary_alert_because_distro_switching_is_not_implemented_yet(target_distro_name: str):

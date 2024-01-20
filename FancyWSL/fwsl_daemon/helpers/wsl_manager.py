@@ -1,6 +1,6 @@
 import subprocess
 
-def wsl_get_distro_list():
+def list_distros() -> dict:
     command_result = subprocess.run(['wsl.exe', '--list', '--verbose'], check=True, capture_output=True,
                                     encoding='utf-16-le')
     

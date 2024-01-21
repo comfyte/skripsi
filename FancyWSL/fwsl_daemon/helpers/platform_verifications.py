@@ -3,12 +3,13 @@ import platform
 import subprocess
 from subprocess import CalledProcessError
 
+from .obtain_bus_address import obtain_bus_address
 from .exceptions import DistroUnsupportedError
 
 # Get logger for current module
 logger = logging.getLogger(__name__)
 
-def _verify_proper_os():
+def _verify_proper_os() -> None:
     if platform.system() != 'Windows':
         if platform.system() == 'Linux' and (platform.uname().release.endswith('-Microsoft') or
                                              platform.uname().release.endswith('microsoft-standard-WSL')):
@@ -17,7 +18,7 @@ def _verify_proper_os():
             raise RuntimeError('This program is designed to bridge Windows and WSL; hence, it needs to run '
                                'on Windows. Running this program on non-Windows platforms is not supported.')
             
-def _verify_wsl_availability():
+def _verify_wsl_availability() -> None:
     # Check availability of the WSL itself
     try:
         # The top answer in https://stackoverflow.com/a/19328914 says that the output we'll get is
@@ -30,8 +31,7 @@ def _verify_wsl_availability():
                            'way, please ensure that WSL is installed on this system (the Microsoft Store '
                            'edition is preferred).')
 
-
-def verify_wsl_distro_readiness(distro_name: str = None):
+def verify_wsl_distro_systemd_support(distro_name: str = None) -> None:
     """
     Can raise a `DistroUnsupportedError` exception.
     """
@@ -44,6 +44,34 @@ def verify_wsl_distro_readiness(distro_name: str = None):
     except CalledProcessError:
         raise DistroUnsupportedError('The default WSL distribution is not booted with systemd. Enable systemd in '
                                      'the WSL configuration in order to use FancyWSL.')
+    
+def verify_wsl_distro_dbus_availability(distro_name: str) -> None:
+    """
+    This function must be called AFTER verifying that systemd is
+    available (with `verify_wsl_distro_systemd_support(distro_name)`).
+
+    Can raise a `DistroUnsupportedError` exception.
+    """
+    try:
+        subprocess.run(['wsl.exe', '-d', distro_name, 'systemctl', '--user', 'is-active', 'dbus.service',
+                        '--quiet'], check=True)
+    except CalledProcessError:
+        raise DistroUnsupportedError('D-Bus is either not running or not available')
+
+def verify_wsl_distro_overall_readiness(distro_name: str = None) -> None:
+    """
+    Can raise a `DistroUnsupportedError` exception.
+    """
+    # TODO: Add check of distro's WSL version (WSL 1 or WSL 2) here.
+
+    # TODO: Add check of whether the specified distro has been configured to work with FancyWSL or not.
+    try:
+        obtain_bus_address(distro_name)
+    except ValueError:
+        raise DistroUnsupportedError
+
+    verify_wsl_distro_systemd_support(distro_name)
+    verify_wsl_distro_dbus_availability(distro_name)
 
 def preliminary_platform_checks() -> None:
     """

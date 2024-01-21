@@ -6,14 +6,14 @@ from typing import TypedDict, NotRequired, Literal
 # Get logger for current module
 _logger = logging.getLogger(__name__)
 
-class BusAddress(TypedDict):
+class BusAddressResult(TypedDict):
     full_address: str
     host: str
     port: int
     # family: NotRequired[Literal['ipv4', 'ipv6']]
     family: Literal['ipv4', 'ipv6'] | None
 
-def obtain_bus_address(distro_name: str) -> BusAddress:
+def obtain_bus_address(distro_name: str) -> BusAddressResult:
     command_list = (['wsl.exe'] +
                     (['-d', distro_name] if distro_name is not None else []) +
                     ['journalctl', '--user', '-b', '-u', 'dbus.service'])

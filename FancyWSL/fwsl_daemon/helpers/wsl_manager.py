@@ -1,6 +1,14 @@
 import subprocess
+from typing import TypedDict, Literal
 
-def list_distros() -> dict:
+# class WSLDistroItem(TypedDict):
+class DistroItem(TypedDict):
+    name: str
+    state: Literal['Running', 'Stopped']
+    version: Literal[1, 2]
+    is_default: bool
+
+def list_distros() -> list[DistroItem]:
     command_result = subprocess.run(['wsl.exe', '--list', '--verbose'], check=True, capture_output=True,
                                     encoding='utf-16-le')
     

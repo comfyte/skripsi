@@ -5,7 +5,7 @@ from asyncio import CancelledError
 from dbus_next.aio import MessageBus
 from dbus_next.auth import AuthAnnonymous
 
-from .helpers.platform_verifications import verify_wsl_distro_readiness
+from .helpers.platform_verifications import verify_wsl_distro_overall_readiness
 from .services.notifications import NotificationHandlerService
 from .services.mpris import MediaControlService
 from .helpers.obtain_bus_address import obtain_bus_address
@@ -22,22 +22,14 @@ class DistroConnectionInstance:
     def __init__(self, distro_name, completion_callback: Callable[[str], None] = None) -> None:
         self.distro_name = distro_name
 
-        verify_wsl_distro_readiness(distro_name)
+        verify_wsl_distro_overall_readiness(distro_name)
 
         try:
-            # self.bus_address, port = obtain_bus_address(distro_name)
             obtained_bus_address = obtain_bus_address(distro_name)
         except ValueError:
             raise DistroUnsupportedError
         
         self.bus_address = obtained_bus_address['full_address']
-        # port_number = obtained_bus_address['port']
-        
-        # Make logging just a bit nicer by appending the port number after the distro name.
-        # port = 
-        
-        # self.__instance_logger = getLogger('.'.join('distro_connection_instance', distro_name))
-        # self.__logger = getLogger('.'.join(distro_name, str(port_number)))
         self.__logger = getLogger(distro_name)
         self.__completion_callback = completion_callback
 
@@ -45,12 +37,9 @@ class DistroConnectionInstance:
         return hash(self.distro_name)
     
     def __eq__(self, other: object) -> bool:
-        # return self.distro_name == __value.distro_name
         return self.distro_name == other.distro_name
 
     async def connect(self) -> None:
-        # self.bus_address = obtain_bus_address(self.distro_name)
-
         self.__bus_instance = MessageBus(self.bus_address, auth=AuthAnnonymous())
         await self.__bus_instance.connect()
 
@@ -60,9 +49,6 @@ class DistroConnectionInstance:
         await self.__bus_instance.request_name('dev.farrel.FancyWSL')
 
         await self.__attach_services()
-
-        # self.__instance_logger.info(f'Connected to {self.distro_name} with '
-        #                             f'bus address "{self.bus_address}".')
         
     async def __setup_notification_service(self) -> None:
         # Assign an additional name to ourselves to designate ourselves as the (sole) notification handler
@@ -88,7 +74,6 @@ class DistroConnectionInstance:
             self.__completion_callback(self)
 
     async def enter_loop(self) -> None:
-        # self.__logger.info('Entering loop...')
         self.__logger.info('Entered loop.')
 
         try:
@@ -104,7 +89,6 @@ class DistroConnectionInstance:
                 self.__logger.info('Bus has been disconnected.')
             raise
         finally:
-            # self.__logger.info('Loop ended.')
             self.__logger.info('Bus disconnection ended the loop.')
             self.__post_disconnection()
 

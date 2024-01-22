@@ -145,21 +145,45 @@ Apabila pengguna sistem operasi Linux memutar media (musik, video, atau lainnya)
     \label{ubuntu-media-controls}
 \end{figure}
 
-Penggunaan alat \verb|dbus-monitor| yang terfilter pada pemonitoran \textit{path} tempat pengomunikasian pemutaran media MPRIS, \path{/org/mpris/MediaPlayer2}, menunjukkan informasi dan data yang berkaitan dengan media yang sedang diputar beserta statusnya.
+Penggunaan alat \verb|dbus-monitor| yang terfilter pada pemonitoran \textit{path} tempat pengomunikasian pemutaran media MPRIS, \path{/org/mpris/MediaPlayer2}, menunjukkan informasi dan data yang berkaitan dengan media yang sedang diputar beserta statusnya (contoh berikut berbeda dengan media yang diputar pada \autoref{ubuntu-media-controls}).
 \begin{lstlisting}
-signal time=1703030006.305799 sender=:1.179 -> destination=(null destination) serial=24 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+signal time=1705941940.019590 sender=:1.26 -> destination=(null destination) serial=9 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+   string "org.mpris.MediaPlayer2.Player"
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Playing"
+      )
+   ]
+   array [
+   ]
+signal time=1705941940.019901 sender=:1.26 -> destination=(null destination) serial=10 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+   string "org.mpris.MediaPlayer2.Player"
+   array [
+      dict entry(
+         string "CanSeek"
+         variant             boolean true
+      )
+   ]
+   array [
+   ]
+signal time=1705941940.131722 sender=:1.26 -> destination=(null destination) serial=11 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
    string "org.mpris.MediaPlayer2.Player"
    array [
       dict entry(
          string "Metadata"
          variant             array [
                dict entry(
-                  string "mpris:trackid"
-                  variant                      object path "/org/mpris/MediaPlayer2/firefox"
+                  string "mpris:artUrl"
+                  variant                      string "file:///tmp/.com.google.Chrome.b4hOo1"
                )
                dict entry(
-                  string "xesam:title"
-                  variant                      string "Marshmello - Alone (Official Music Video)"
+                  string "mpris:length"
+                  variant                      int64 168201000
+               )
+               dict entry(
+                  string "mpris:trackid"
+                  variant                      object path "/org/chromium/MediaPlayer2/TrackList/TrackBD84EF13445C2AF75311FDEB2D342DEF"
                )
                dict entry(
                   string "xesam:album"
@@ -168,20 +192,14 @@ signal time=1703030006.305799 sender=:1.179 -> destination=(null destination) se
                dict entry(
                   string "xesam:artist"
                   variant                      array [
-                        string "Marshmello"
+                        string "Kirara Magic"
                      ]
                )
+               dict entry(
+                  string "xesam:title"
+                  variant                      string "Kirara Magic - Palette"
+               )
             ]
-      )
-   ]
-   array [
-   ]
-signal time=1703030006.312580 sender=:1.179 -> destination=(null destination) serial=25 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
-   string "org.mpris.MediaPlayer2.Player"
-   array [
-      dict entry(
-         string "PlaybackStatus"
-         variant             string "Playing"
       )
    ]
    array [
@@ -351,25 +369,39 @@ Berdasarkan kedua ekosistem pemutaran media (\textit{Linux dan Windows}) yang te
 Guna mencapai tujuan utama tugas akhir ini, dikembangkan sebuah perangkat lunak bernama "FancyWSL" yang bertugas menjembatani aspek penanganan notifikasi dan aspek kontrol media pada lingkungan Windows Subsystem for Linux (WSL) dengan lingkungan \textit{host} Windows. Seluruh kode sumber yang dikembangkan dalam tugas akhir ini juga tersedia untuk diakses oleh publik di platform GitHub di alamat \href{https://github.com/comfyte/skripsi}{https://github.com/comfyte/skripsi}, tepatnya di direktori \path{FancyWSL/} (lihat pula Lampiran L.1). Perangkat lunak ini dikembangkan dengan menggunakan bahasa pemrograman Python dan sejumlah pustaka pemrograman (\textit{library}) pihak ketiga dengan pertimbangan yang telah dibahas pada Bab II. Secara garis besar, proyek perangkat lunak ini dikembangkan dengan struktur direktori yang mengacu sepatuh mungkin kepada konvensi penstrukturan direktori dan penamaan berkas proyek Python pada umumnya. Struktur direktori yang dimaksud berikut penjelasan singkatnya adalah sebagai berikut.
 
 \begin{verbatim}
-fwsl_daemon/
-├── __main__.py
-├── helpers/
+FancyWSL/
+├── fwsl/
 │   ├── __init__.py
-│   └── bus_address_parser.py
-│   └── constants.py
-│   └── obtain_bus_address.py
-│   └── platform_verifications.py
-│   └── spawn_win32_alert_window.py
-│   └── wsl_manager.py
-├── services/
-│   ├── __init__.py
-│   ├── mpris.py
-│   └── notifications.py
-└── shell/
-    ├── __init__.py
-    ├── persistent_tray_icon.py
-    ├── smtc.py
-    └── toast_notification.py
+│   ├── __main__.py
+│   ├── distro_connection_instance.py
+│   ├── distro_prober.py
+│   ├── fwsld.py
+│   ├── helpers/
+│   │   ├── __init__.py
+│   │   ├── create_wsl_command_runner.py
+│   │   ├── exceptions.py
+│   │   ├── obtain_bus_address.py
+│   │   ├── platform_verifications/
+│   │   │   ├── __init__.py
+│   │   │   ├── host_os_verification.py
+│   │   │   └── wsl_distro_verification.py
+│   │   ├── spawn_win32_alert_window.py
+│   │   └── wsl_manager.py
+│   ├── management/
+│   │   ├── __init__.py
+│   │   ├── configure_distro.py
+│   │   └── list_distros.py
+│   ├── requirements.txt
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── mpris.py
+│   │   └── notifications.py
+│   └── shell/
+│       ├── __init__.py
+│       ├── persistent_tray_icon.py
+│       ├── smtc.py
+│       └── toast_notification.py
+└── fwsl.bat
 \end{verbatim}
 
 \begin{itemize}

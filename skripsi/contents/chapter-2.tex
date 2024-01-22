@@ -81,7 +81,7 @@ Karya tulis kedua yang dibahas pada bagian ini adalah sebuah prosiding berjudul 
 \begin{itemize}
     \item jumlah perangkat lunak yang perlu dikembangkan di FancyWSL lebih ringkas, hanya satu buah perangkat lunak, bila dibandingkan dengan penelitian-penelitian lain yang juga mengembangkan perangkat lunak;
     \item bila dibandingkan dengan karya tulis yang paling relevan dengan tugas akhir ini (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}), FancyWSL memiliki satu aspek tambahan yang tidak diimplementasikan pada karya tulis tersebut, yaitu pengontrolan media;
-    \item FancyWSL memiliki kemampuan menggunakan distribusi Linux WSL yang diinginkan melalui argumen \verb|-d <nama-distribusi>| saat penjalanan FancyWSL, sedangkan karya tulis serupa (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}) tidak membahas dukungkan multidistribusi Linux di WSL; dan
+    \item FancyWSL mendukung penghubungan secara bersamaan ke lebih dari satu distribusi WSL yang terpasang di suatu sistem (distribusi-distribusi yang didukung dan sedang berjalan akan secara otomatis terhubung dengan FancyWSL), sedangkan karya tulis serupa (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}) tidak membahas dukungkan multidistribusi Linux di WSL; dan
     \item FancyWSL mendukung sistem init systemd yang baru-baru ini (sejak September 2022) tersedia di WSL, sedangkan karya tulis serupa (karya tulis oleh Olsen \cite{olsen-2022-through-the-wormhole}) tidak mendukung penggunaan dengan sistem ini systemd dan memilih mengembangkan manajer sesi (\textit{session manager}) secara mandiri.
 \end{itemize}
 
@@ -102,7 +102,7 @@ Karya tulis kedua yang dibahas pada bagian ini adalah sebuah prosiding berjudul 
         
         5 & Lewis et al. \cite{lewis2018memory} & Penjalanan berkas \textit{executable} bertipe ELF di lingkungan Windows & WSL (WSL1 dan WSL2) & N/A & N/A & N/A & N/A & N/A & N/A\\ \hline
         
-        6 & Tugas akhir ini (FancyWSL) & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus dan systemd & WSLg (Wayland) & Python & 1 (satu) buah perangkat lunak & Notifikasi dan kontrol media & Mendukung \textit{switching} distribusi Linux WSL yang dipakai\\ \hline
+        6 & Tugas akhir ini (FancyWSL) & Integrasi antarmuka pengguna (GUI) WSL & WSL2 & D-Bus dan systemd & WSLg (Wayland) & Python & 1 (satu) buah perangkat lunak & Notifikasi dan kontrol media & Mendukung multidistribusi Linux WSL secara bersamaan\\ \hline
     \end{tabularx}
 \end{table}
 \end{landscape}

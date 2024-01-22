@@ -291,9 +291,9 @@ Menganalisis kedua ekosistem penampilan notifikasi tersebut, ekuivalensi dan pen
     \label{wsl-and-windows-notification-system-equivalence-table}
     \begin{tabularx}{\textwidth}{|c|p{3cm}|X|X|} \hline
         \textbf{No.} & \textbf{Elemen} & \textbf{Mekanisme di Linux (WSL)} & \textbf{Metode penghubungan dengan Windows}\\ \hline
-        1 & Nama aplikasi pengirim notifikasi & Parameter "app\_name" & Mengatur bagian konten elemen \verb|<text>|\\ \hline
-        2 & Judul/ringkasan notifikasi & Parameter "summary" & Memasukkan ke baris pertama di konten elemen \verb|<text>| dan mengatur baris pertama tersebut agar tercetak tebal (\textit{bold})\\ \hline
-        3 & Konten utama (\textit{body}) notifikasi & Parameter "body" & Memasukkan ke baris-baris nonjudul di konten elemen \verb|<text>|\\ \hline
+        1 & Nama aplikasi pengirim notifikasi & Parameter "app\_name" & Meletakkan di dalem elemen \verb|<text>| dengan atribut "placement" bernilai "attribution"\\ \hline
+        2 & Judul/ringkasan notifikasi & Parameter "summary" & Meletakkan di dalam elemen \verb|<text>| paling pertama\\ \hline
+        3 & Konten utama (\textit{body}) notifikasi & Parameter "body" & Meletakkan di dalam elemen \verb|<text>|\\ \hline
     \end{tabularx}
 \end{table}
 
@@ -354,13 +354,16 @@ Berdasarkan kedua ekosistem pemutaran media (\textit{Linux dan Windows}) yang te
     \label{wsl-and-windows-media-control-equivalence-table}
     \begin{tabularx}{\textwidth}{|c|p{3cm}|X|X|} \hline
         \textbf{No.} & \textbf{Elemen} & \textbf{Mekanisme di Linux (WSL)} & \textbf{Metode penghubungan dengan Windows}\\ \hline
-        1 & Status pemutaran media & Properti "PlaybackStatus" & Mengatur properti \verb|PlaybackStatus|\\ \hline
-        2 & Dukungan pemulaian pemutaran media (\textit{play}) & Properti "CanPlay" & Mengatur properti \verb|IsPlayEnabled|\\ \hline
-        3 & Dukungan penjedaan pemutaran media (\textit{pause}) & properti "CanPause" & Mengatur properti \verb|IsPauseEnabled|\\ \hline
-        4 & Judul media & Nilai \verb|xesam:title| pada properti "Metadata" & Mengatur Properti \path{DisplayUpdater.MusicProperties.Title}\\ \hline
-        5 & Album media & Nilai \verb|xesam:album| pada properti "Metadata" & Mengatur properti \path{DisplayUpdater.MusicProperties.Album}\\ \hline
-        6 & Artis media & Nilai \verb|xesam:artist| pada properti "Metadata" & Mengatur properti \path{DisplayUpdater.MusicProperties.Artist}\\ \hline
-        7 & Album artis media & Nilai \verb|xesam:albumArtist| pada properti "Metadata" & Mengatur properti \path{DisplayUpdater.MusicProperties.AlbumArtist}\\ \hline
+        1 & Status pemutaran media & Properti "PlaybackStatus" & Properti \verb|PlaybackStatus|\\ \hline
+        2 & Dukungan operasi \textit{play} & Properti "CanPlay" & Properti \verb|IsPlayEnabled|\\ \hline
+        3 & Dukungan operasi \textit{pause} & Properti "CanPause" & Properti \verb|IsPauseEnabled|\\ \hline
+        4 & Dukungan operasi \textit{go next} & Properti "CanGoNext" & Properti \verb|IsNextEnabled|\\ \hline
+        5 & Dukungan operasi \textit{go previous} & Properti "CanGoPrevious" & Properti \verb|IsPreviousEnabled|\\ \hline
+        6 & Judul media & Nilai \verb|xesam:title| pada properti "Metadata" & Properti \path{DisplayUpdater.MusicProperties.Title}\\ \hline
+        7 & Album media & Nilai \verb|xesam:album| pada properti "Metadata" & Properti \path{DisplayUpdater.MusicProperties.Album}\\ \hline
+        8 & Artis media & Nilai \verb|xesam:artist| pada properti "Metadata" & Properti \path{DisplayUpdater.MusicProperties.Artist}\\ \hline
+        9 & Artis album media & Nilai \verb|xesam:albumArtist| pada properti "Metadata" & Properti \path{DisplayUpdater.MusicProperties.AlbumArtist}\\ \hline
+        10 & Ilustrasi album & Nilai \verb|mpris:artUrl| pada properti "Metadata" & Mengatur properti \path{DisplayUpdater.Thumbnail}\\ \hline
     \end{tabularx}
 \end{table}
 
@@ -442,7 +445,7 @@ FancyWSL merupakan perangkat lunak yang didesain berjalan di latar belakang sehi
     \item \verb|default_menu_index|, dan
     \item \verb|window_class_name|.
 \end{itemize}
-FancyWSL hanya memerlukan dua argumen saja dari argumen-argumen tersebut, \verb|hover_text| dan \verb|on_quit|, mengingat FancyWSL tidak memerlukan opsi menu lain yang ditampilkan dan argumen-argumen lainnya. Pada \verb|hover_text| (teks yang akan muncul saat ikon status berada di bawah kursor \textit{mouse}), akan ditampilkan nama perangkat lunak ini (FancyWSL Daemon) serta informasi alamat bus perpesanan D-Bus tujuan penghubungan FancyWSL. Seluruh implementasi ikon status ini terletak pada berkas kode \path{shell/persistent_tray_icon.py}.
+FancyWSL hanya memerlukan dua argumen saja dari argumen-argumen tersebut, argumen \verb|hover_text| dan argumen \verb|on_quit|, mengingat FancyWSL tidak memerlukan opsi menu lain yang ditampilkan dan argumen-argumen lainnya. Pada argumen \verb|hover_text| (teks yang akan muncul saat ikon status berada di bawah kursor \textit{mouse}), akan ditampilkan nama perangkat lunak ini (FancyWSL Daemon) serta informasi alamat bus perpesanan D-Bus tujuan penghubungan FancyWSL. Seluruh implementasi ikon status ini terletak pada berkas kode \path{shell/persistent_tray_icon.py}.
 
 Bus perpesanan D-Bus yang berjalan di dalam WSL secara \textit{default} hanya melakukan \textit{listen} ke alamat soket Unix lokal (disediakan oleh aktivasi soket systemd) saja sehingga belum dapat langsung dihubungi oleh FancyWSL yang berjalan di lingkungan \textit{host} Windows. Agar FancyWSL dapat menghubungi bus perpesanan D-Bus yang berjalan di dalam WSL, perlu dilakukan modifikasi konfigurasi pada sisi WSL mengenai alamat-alamat yang di-\textit{listen} oleh \textit{daemon} D-Bus. Karena penanganan notifikasi dan kontrol media berjalan di bus sesi D-Bus yang berjalan di tiap-tiap sesi pengguna (WSL hanya memiliki satu sesi pengguna saja sehingga mempermudah pengerjaan), modifikasi hanya perlu dilakukan pada konfigurasi bus sesi saja dan FancyWSL hanya perlu menghubungi bus sesi saja. Terdapat dua buah modifikasi yang dilakukan:
 \begin{enumerate}
@@ -465,7 +468,7 @@ Pada pengimplementasian aspek penanganan notifikasi (\textit{notification handli
     \item \textbf{Pembuatan layanan (\textit{service}) yang teregistrasi di bus perpesanan D-Bus dan bertugas menangkap notifikasi-notifikasi yang dikirim oleh perangkat-perangkat lunak Linux yang berjalan di WSL}\\
     Hal ini diimplementasikan pada berkas kode \path{services/notifications.py}. Mekanisme kode ini adalah dengan mengekspos metode "Notify()" pada perangkat lunak FancyWSL yang dapat dipanggil oleh perangkat-perangkat lunak di WSL yang ingin mengirimkan notifikasi dengan parameter-parameter yang berisi informasi notifikasi tersebut.
 
-    \item \textbf{Penghubungan dengan API Windows yang menangani aspek penampilan notifikasi di \textit{shell} Windows}
+    \item \textbf{Penghubungan dengan API Windows yang menangani aspek penampilan notifikasi di \textit{shell} Windows}\\
     Pada perangkat lunak yang dikembangkan pada tugas akhir ini (FancyWSL), digunakan pula pustaka pemrograman pihak ketiga bernama \verb|winsdk| yang bertindak sebagai \textbf{binding} API Windows agar dapat diakses melalui program yang menggunakan bahasa pemrograman Python. Hal ini diimplementasikan pada berkas kode \path{shell/toast_notification.py}.
 \end{itemize}
 
@@ -475,7 +478,7 @@ Secara garis besar, mekanisme penanganan notifikasi ini bekerja adalah dengan me
 
 Pengimplementasian aspek pengontrolan media pada FancyWSL melibatkan dua hal utama yang perlu dilakukan:
 \begin{itemize}
-    \item \textbf{Penangkapan sinyal-sinyal yang memberitahukan penggantian informasi media yang sedang diputar di bus perpesanan D-Bus}
+    \item \textbf{Penangkapan sinyal-sinyal yang memberitahukan penggantian informasi media yang sedang diputar di bus perpesanan D-Bus}\\
     Hal ini diimplementasikan pada berkas kode \path{services/mpris.py}. Kode ini bekerja dengan cara
     \begin{enumerate}
         \item menambahkan aturan kecocokan (\textit{match rule}) tentang pengontrolan media (MPRIS) kepada pengelola bus perpesanan D-Bus atas nama perangkat lunak FancyWSL agar FancyWSL dapat menerima pesan-pesan yang memiliki kecocokan dengan aturan kecocokan tersebut (hal ini sesuai dengan spesifikasi D-Bus \cite{dbus-specification} dan diperlukan untuk alasan keamanan agar mengurangi kemungkinan terjadinya \textit{sniffing}),
@@ -485,7 +488,7 @@ Pengimplementasian aspek pengontrolan media pada FancyWSL melibatkan dua hal uta
         \item memproses pesan-pesan yang masuk tersebut dengan cara meneruskan ke modul \path{shell/smtc.py}.
     \end{enumerate}
 
-    \item \textbf{Penghubungan dengan API Windows yang menangani aspek pengontrolan media universal}
+    \item \textbf{Penghubungan dengan API Windows yang menangani aspek pengontrolan media universal}\\
     Hal ini diimplementasikan pada berkas kode \path{shell/smtc.py}. Mekanisme kode ini bekerja adalah dengan
     \begin{itemize}
         \item meneruskan properti-properti yang didapat dari sinyal yang ditangkap dari bus perpesanan D-Bus ke pemanggilan API SystemMediaTransportControls pada Windows dan

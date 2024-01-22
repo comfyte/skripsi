@@ -11,10 +11,10 @@ from ..shell.toast_notification import (show_windows_toast_notification,
 _logger = logging.getLogger(__name__)
 
 class NotificationHandlerService(ServiceInterface):
-    def __init__(self, wsl_distro_name: str):
+    def __init__(self, distro_name: str):
         super().__init__('org.freedesktop.Notifications')
 
-        self.wsl_distro_name = wsl_distro_name
+        self.distro_name = distro_name
     
     @method()
     def GetCapabilities(self) -> 'as':
@@ -33,13 +33,13 @@ class NotificationHandlerService(ServiceInterface):
         actions_parsed = [(actions[i], actions[i+1]) for i in range(0, len(actions), 2) if
                           actions[i] != 'default']
 
-        id = show_windows_toast_notification(self.wsl_distro_name,
-                                             app_name=app_name,
-                                             id=replaces_id,
-                                             title=summary,
-                                             body_content=body,
-                                             actions=actions_parsed,
-                                             expire_timeout=expire_timeout,
+        id = show_windows_toast_notification(self.distro_name,
+                                             app_name,
+                                             replaces_id,
+                                             summary,
+                                             body,
+                                             actions_parsed,
+                                             expire_timeout,
                                              activated_callback=self.ActionInvoked,
                                              dismiss_callback=self.notification_dismissed_handler)
         

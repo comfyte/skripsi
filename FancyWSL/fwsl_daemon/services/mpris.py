@@ -80,7 +80,7 @@ class MediaControlService:
     @disregard_unregistered_client
     def __new_playback_instance(self, client_id: str):
         smtc_instance = WindowsSMTC(client_id,
-                                    self.wsl_distro_name,
+                                    self.distro_name,
                                     play_pause_callback=self.__play_pause_request_handler,
                                     go_previous_callback=self.__go_previous_request_handler,
                                     go_next_callback=self.__go_next_request_handler)
@@ -89,10 +89,10 @@ class MediaControlService:
         # proactively get the property values.
         smtc_instance.update_state({
             'abilities': {
-                'can_play': _temporary_get_mpris_player_property(wsl_distro_name=self.wsl_distro_name,
+                'can_play': _temporary_get_mpris_player_property(distro_name=self.distro_name,
                                                                  destination=client_id,
                                                                  property_name='CanPlay'),
-                'can_pause': _temporary_get_mpris_player_property(wsl_distro_name=self.wsl_distro_name,
+                'can_pause': _temporary_get_mpris_player_property(distro_name=self.distro_name,
                                                                   destination=client_id,
                                                                   property_name='CanPause')
             }
@@ -157,26 +157,26 @@ class MediaControlService:
 
     def __play_pause_request_handler(self, client_id: str):
         # HACK and FIXME
-        _temporary_call_mpris_method(wsl_distro_name=self.wsl_distro_name,
+        _temporary_call_mpris_method(distro_name=self.distro_name,
                                            destination=client_id,
                                            method_name='PlayPause')
         
     def __go_previous_request_handler(self, client_id: str):
         # HACK and FIXME
-        _temporary_call_mpris_method(wsl_distro_name=self.wsl_distro_name,
+        _temporary_call_mpris_method(distro_name=self.distro_name,
                                            destination=client_id,
                                            method_name='Previous')
 
     def __go_next_request_handler(self, client_id: str):
         # HACK and FIXME
-        _temporary_call_mpris_method(wsl_distro_name=self.wsl_distro_name,
+        _temporary_call_mpris_method(distro_name=self.distro_name,
                                            destination=client_id,
                                            method_name='Next')
 
 # HACK: These functions below are currently calling `dbus-send` directly because I couldn't make the
 # asynchronous stuff work yet. Please revert to the native Python handling soon after it's worked out!
 
-def _temporary_call_mpris_method(*, wsl_distro_name: str, destination: str, method_name: str) -> None:
+def _temporary_call_mpris_method(*, distro_name: str, destination: str, method_name: str) -> None:
     logger.warn(f'Using a temporary hack for calling D-Bus method "{method_name}" on '
                 f'destination "{destination}".')
     
@@ -186,10 +186,10 @@ def _temporary_call_mpris_method(*, wsl_distro_name: str, destination: str, meth
                          f'--dest={destination}',
                          '/org/mpris/MediaPlayer2',
                          f'org.mpris.MediaPlayer2.Player.{method_name}']
-    subprocess.run(['wsl.exe', '-d', wsl_distro_name] + dbus_send_command, check=True)
+    subprocess.run(['wsl.exe', '-d', distro_name] + dbus_send_command, check=True)
 
 def _temporary_get_mpris_player_property(*,
-                                         wsl_distro_name: str,
+                                         distro_name: str,
                                          destination: str,
                                          property_name: Literal['CanPlay',
                                                                 'CanPause',
@@ -208,7 +208,7 @@ def _temporary_get_mpris_player_property(*,
                          'string:org.mpris.MediaPlayer2.Player',
                          f'string:{property_name}']
     
-    result = subprocess.run(['wsl.exe', '-d', wsl_distro_name] + dbus_send_command,
+    result = subprocess.run(['wsl.exe', '-d', distro_name] + dbus_send_command,
                             check=True,
                             capture_output=True,
                             encoding='utf-8')

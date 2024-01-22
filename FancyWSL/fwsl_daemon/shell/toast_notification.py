@@ -7,11 +7,8 @@ from winsdk.windows.ui.notifications import (ToastNotificationManager,
                                              ToastDismissalReason)
 from winsdk.windows.data.xml import dom
 from xml.sax.saxutils import escape as xml_escape
-# from ..helpers.unbox_winrt_object import unbox_winrt_object, WinRTObject
 
 _COMMON_GROUP_NAME = 'FancyWSL Notifications'
-
-# _get_group_name: Callable[[str], str] = lambda distro_name: _COMMON_GROUP_NAME + f'({distro_name})'
 
 def _get_group_name(distro_name: str):
     return f'{_COMMON_GROUP_NAME} ({distro_name})'
@@ -23,7 +20,7 @@ _notification_id_counter: int = 1
 def show_windows_toast_notification(distro_name: str,
                                     *,
                                     app_name: str = '',
-                                    id: int,
+                                    _id: int,
                                     title: str = '',
                                     body_content: str,
                                     actions: list[tuple[str, str]] = None, #TODO
@@ -63,40 +60,38 @@ def show_windows_toast_notification(distro_name: str,
     # Apparently, group names are not for visual distinction, but rather just kind of internal IDs.
     toast_notification.group = group_name
 
-    if id == 0:
+    if _id == 0:
         global _notification_id_counter
-        id_new = _notification_id_counter
+        id = _notification_id_counter
         _notification_id_counter += 1
     else:
-        id_new = id
-        ToastNotificationManager.history.remove(str(id_new), group_name)
-
-    # tag = str(_id)
+        id = _id
+        ToastNotificationManager.history.remove(str(id), group_name)
 
     # Remove notification with existing same id first.
     # ToastNotificationManager.history.remove(tag)
 
-    toast_notification.tag = str(id_new)
+    toast_notification.tag = str(id)
 
     def activation_handler(sender: ToastNotification, args):
         activation_argument = ToastActivatedEventArgs._from(args).arguments
         logger.info(f'Received an activation event from notification with ID/tag {sender.tag} and '
                     f'argument (action key) "{activation_argument}".')
-        activated_callback(id_new, activation_argument)
+        activated_callback(id, activation_argument)
         # print(ToastActivatedEventArgs._from(args).arguments)
 
     def dismiss_handler(sender: ToastNotification, _args):
         args = ToastDismissedEventArgs._from(_args)
         logger.info(f'Toast notification with ID/tag "{sender.tag}" was dismissed with '
                     f'reason (ToastDismissalReason) number {args.reason}.')
-        dismiss_callback(id_new, args.reason)
+        dismiss_callback(id, args.reason)
 
     toast_notification.add_activated(activation_handler)
     toast_notification.add_dismissed(dismiss_handler)
 
     _toast_notifier.show(toast_notification)
 
-    return id_new
+    return id
 
 def close_windows_toast_notification(id: int, distro_name: str, post_removal_callback: Callable):
     ToastNotificationManager.history.remove(str(id), _get_group_name(_COMMON_GROUP_NAME, distro_name))
@@ -104,9 +99,5 @@ def close_windows_toast_notification(id: int, distro_name: str, post_removal_cal
     # Do we need to do this or will a signal automatically emitted by the toast notification?
     post_removal_callback(id)
 
-# def clear_all_fwsl_notifications():
-#     ToastNotificationManager.history.remove_group(NOTIFICATION_GROUP_NAME)
-
 def clear_all_windows_toast_notifications_for_specific_distro(distro_name: str):
-    # ToastNotificationManager.history.remove_group(_get_group_name(_COMMON_GROUP_NAME, distro_name))
     ToastNotificationManager.history.remove_group(_get_group_name(distro_name))

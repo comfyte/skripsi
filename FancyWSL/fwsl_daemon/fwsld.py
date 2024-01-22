@@ -1,23 +1,31 @@
-from logging import getLogger
-from asyncio import create_task, CancelledError
+from logging import Logger, getLogger
+from asyncio import create_task, Task, CancelledError
 
 from .shell.persistent_tray_icon import PersistentTrayIcon
 from .distro_prober import distro_prober
 
-class FancyWSLDaemon:
-    def __init__(self) -> None:
-        self.__logger = getLogger('fwsld')
-        self.__persistent_tray_icon = PersistentTrayIcon(exit_callback=self.__cleanup_before_exit)
+_logger: Logger
+_main_task: Task
+_persistent_tray_icon: PersistentTrayIcon
 
-    def __cleanup_before_exit(self, _):
-        self.__main_task.cancel()
+def _cleanup_before_exit(*args):
+    # _logger.info('Received exit request.')
+    # _logger.info('User asked to quit.')
+    _logger.info('Received exit request from user. Will exit in a moment...')
+    _main_task.cancel()
 
-    # Blocking (until the daemon is exited, presumably via the tray icon)
-    async def start(self) -> None:
-        main_coroutine = distro_prober(self.__persistent_tray_icon.set_distro_connection_count)
-        self.__main_task = create_task(main_coroutine)
+# Blocking (until the daemon is exited, presumably via the tray icon)
+async def start() -> None:
+    global _logger, _main_task, _persistent_tray_icon
 
-        try:
-            await self.__main_task
-        except CancelledError:
-            self.__logger.info('The main daemon task has been cancelled.')
+    # Initialize the global variables.
+    _logger = getLogger('fwsld')
+    _persistent_tray_icon = PersistentTrayIcon(exit_callback=_cleanup_before_exit)
+    
+    main_coroutine = distro_prober(_persistent_tray_icon.set_distro_connection_count)
+    _main_task = create_task(main_coroutine)
+
+    try:
+        await _main_task
+    except CancelledError:
+        _logger.info('The main daemon task has been cancelled.')

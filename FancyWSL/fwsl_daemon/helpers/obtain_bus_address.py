@@ -29,8 +29,7 @@ def obtain_bus_address(distro_name: str) -> BusAddressResult:
             # full_address = result.group(0)
             # host = result.group(1)
             full_address, host, port, family = result.group(0, 1, 2, 3)
-            _logger.info('Successfully obtained bus address for the '
-                         f'selected distro "{distro_name}": "{full_address}".')
+            _logger.info(f'Port number for "{distro_name}" is {port}.')
             return {'full_address': full_address,
                     'host': host,
                     'port': int(port),

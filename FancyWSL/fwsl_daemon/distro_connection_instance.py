@@ -5,7 +5,7 @@ from asyncio import CancelledError
 from dbus_next.aio import MessageBus
 from dbus_next.auth import AuthAnnonymous
 
-from .helpers.platform_verifications import verify_wsl_distro_overall_readiness
+from .helpers.platform_verifications import wsl_distro_verification
 from .services.notifications import NotificationHandlerService
 from .services.mpris import MediaControlService
 from .helpers.obtain_bus_address import obtain_bus_address
@@ -22,7 +22,8 @@ class DistroConnectionInstance:
     def __init__(self, distro_name, completion_callback: Callable[[str], None] = None) -> None:
         self.distro_name = distro_name
 
-        verify_wsl_distro_overall_readiness(distro_name)
+        if not wsl_distro_verification.is_distro_ready(distro_name):
+            raise DistroUnsupportedError
 
         try:
             obtained_bus_address = obtain_bus_address(distro_name)
@@ -71,7 +72,7 @@ class DistroConnectionInstance:
         clear_all_windows_toast_notifications_for_specific_distro(self.distro_name)
 
         if self.__completion_callback is not None:
-            self.__completion_callback(self)
+            self.__completion_callback()
 
     async def enter_loop(self) -> None:
         self.__logger.info('Entered loop.')
@@ -79,6 +80,12 @@ class DistroConnectionInstance:
         try:
             # Blocking
             await self.__bus_instance.wait_for_disconnect()
+
+        # If the bus disconnects by itself
+        except EOFError:
+            # FIXME
+            self.__logger.warn('Ignored an EOFError exception.')
+        # If cancelled by user
         except CancelledError:
             self.__logger.info('The loop has been cancelled.')
 

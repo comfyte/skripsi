@@ -3,9 +3,11 @@ from argparse import ArgumentParser
 import asyncio
 import sys
 
-from .helpers.platform_verifications import preliminary_platform_checks
+# from .helpers.platform_verifications import host_os, wsl_distro
+# from .helpers import platform_verifications as verify
+from .helpers.platform_verifications import host_os_verification
 from .helpers.spawn_win32_alert_window import spawn_win32_alert_window
-from .fwsld import FancyWSLDaemon
+from . import fwsld
 # from .management.list_distros import list_distributions
 from .management.list_distros import print_distros
 from .management.configure_distro import configure_distro
@@ -52,7 +54,8 @@ class _AlertWindowLogHandler(logging.Handler):
 def main():
     # Do platform checks first and foremost.
     try:
-        preliminary_platform_checks()
+        # verify.host_os.()
+        host_os_verification.check_all()
     except RuntimeError as e:
         root_logger.error(e.args[0])
         # spawn_win32_alert_window('An error occured while launching FancyWSL daemon', e.args[0])
@@ -81,8 +84,7 @@ def main():
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     # Run main loop
-    fwsld_instance = FancyWSLDaemon()
-    asyncio.run(fwsld_instance.start())
+    asyncio.run(fwsld.start())
 
 if __name__ == '__main__':
     main()

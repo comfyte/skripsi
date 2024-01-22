@@ -35,7 +35,7 @@ class MediaState(TypedDict):
 class WindowsSMTC():
     def __init__(self,
                  current_client_id: str,
-                 wsl_distro_name: str,
+                 distro_name: str,
                  *,
                  play_pause_callback,
                  go_previous_callback,
@@ -43,7 +43,7 @@ class WindowsSMTC():
         logger.info(f'Initialized WindowsSMTC for client "{current_client_id}".')
 
         self.dbus_client_id = current_client_id
-        self.wsl_distro_name = wsl_distro_name
+        self.distro_name = distro_name
 
         # Assign the callbacks to this class instance
         self.__play_pause_callback = play_pause_callback

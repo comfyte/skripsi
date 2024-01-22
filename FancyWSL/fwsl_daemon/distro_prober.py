@@ -12,63 +12,87 @@ async def distro_prober(distro_count_change_callback: Callable[[int], None]):
     """
     Note: This function is meant to be run as a separate asyncio task (because it is blocking).
     """
-    _tasks: list[Task] = []
+    _current_tasks: list[Task] = []
 
-    def get_tasks():
-        return _tasks
+    def get_current_tasks():
+        return _current_tasks
     
-    def add_to_tasks(new_task: Task) -> None:
-        _tasks.append(new_task)
-        distro_count_change_callback(len(_tasks))
+    def add_to_current_tasks(new_task: Task) -> None:
+        # Just in case
+        for task in _current_tasks:
+            if task.get_name() == new_task.get_name():
+                raise NameError('There are somehow two (or more) tasks with the same name')
+            
+        _current_tasks.append(new_task)
+        distro_count_change_callback(len(_current_tasks))
 
-    def remove_from_tasks(reference_task: Task) -> None:
-        for task in _tasks:
-            if task.get_name() == reference_task.get_name():
-                _tasks.remove(task)
+    def remove_from_current_tasks(reference_task: Task) -> None:
+        reference_task_name = reference_task.get_name()
+        _logger.info(f'Task for "{reference_task_name}" is finished.')
+        for task in _current_tasks:
+            # _logger.info(_tasks)
+            if task.get_name() == reference_task_name:
+                _current_tasks.remove(task)
                 break
 
-        distro_count_change_callback(len(_tasks))
+        # The name is the distro name, as set before.
+        # previous_distro_names.remove(reference_task_name)
 
-    previous_distro_names: set[str] = set()
+        distro_count_change_callback(len(_current_tasks))
+
+    # previous_distro_names: set[str] = set()
+    # previous_distro_names: list[str] = []
 
     try:
         while True:
-            new_distro_names = [distro['name']
-                                for distro in wsl.list_distros()
-                                if distro['version'] == 2 and distro['state'] == 'Running']
+            detected_distro_names = [distro['name']
+                                     for distro in wsl.list_distros()
+                                     if distro['version'] == 2 and distro['state'] == 'Running']
 
             # This is considered a very-edge case (a nearly impossible case) because each connection task is
             # automatically removed from the list once it is disconnected.
-            if len(new_distro_names) < len(previous_distro_names):
+            if len(detected_distro_names) < len(get_current_tasks()):
                 raise RuntimeError('Newly-obtained list of distributions somehow has less members than '
                                    'the currently-connected distributions.')
             
-            if len(new_distro_names) > len(previous_distro_names):
+            if len(detected_distro_names) > len(get_current_tasks()):
+                current_distro_names = [task.get_name() for task in get_current_tasks()]
+
                 unconnected_distro_names = [name
-                                            for name in new_distro_names
-                                            if name not in previous_distro_names]
+                                            for name in detected_distro_names
+                                            if name not in current_distro_names]
 
                 for distro_name in unconnected_distro_names:
+                    # _logger.info(f'Detected new running distribution: {distro_name}')
+
                     try:
                         dci = DistroConnectionInstance(distro_name)
+                        # _logger.info(f'A new supported distribution has just launched: {distro_name}')
+                        _logger.info(f'Detected "{distro_name}".')
                         await dci.connect()
                     except DistroUnsupportedError:
                         continue
 
-                    task = create_task(dci.enter_loop())
-                    task.add_done_callback(remove_from_tasks)
-                    add_to_tasks(task)
+                    # Use the distro name for identifying the task.
+                    task = create_task(dci.enter_loop(), name=distro_name)
 
-            await sleep(5)
+                    task.add_done_callback(remove_from_current_tasks)
 
-            previous_distro_names = new_distro_names
+                    add_to_current_tasks(task)
+
+            # Set time interval long enough to (hopefully) prevent any race condition from happening,
+            # but also quick enough that the distros can be refreshed quite-swiftly. I think 30 seconds is
+            # a decent compromise here.
+            await sleep(30)
+
+            # previous_distro_names = new_distro_names
     finally:
         # Disconnect the still-existing connections.
-        for task in get_tasks():
+        for task in get_current_tasks():
             try:
                 task.cancel()
             except CancelledError:
                 _logger.info('Got a CancelledError exception, indicating that the task has been '
                              'successfully cancelled.')
         
-        _tasks.clear()
+        _current_tasks.clear()

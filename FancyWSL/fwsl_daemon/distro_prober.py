@@ -9,9 +9,6 @@ from .helpers.exceptions import DistroUnsupportedError
 _logger = getLogger('distro_prober')
 
 async def distro_prober(distro_count_change_callback: Callable[[int], None]):
-    """
-    Note: This function is meant to be run as a separate asyncio task (because it is blocking).
-    """
     _current_tasks: list[Task] = []
 
     def get_current_tasks():
@@ -35,13 +32,7 @@ async def distro_prober(distro_count_change_callback: Callable[[int], None]):
                 _current_tasks.remove(task)
                 break
 
-        # The name is the distro name, as set before.
-        # previous_distro_names.remove(reference_task_name)
-
         distro_count_change_callback(len(_current_tasks))
-
-    # previous_distro_names: set[str] = set()
-    # previous_distro_names: list[str] = []
 
     try:
         while True:
@@ -63,11 +54,8 @@ async def distro_prober(distro_count_change_callback: Callable[[int], None]):
                                             if name not in current_distro_names]
 
                 for distro_name in unconnected_distro_names:
-                    # _logger.info(f'Detected new running distribution: {distro_name}')
-
                     try:
                         dci = DistroConnectionInstance(distro_name)
-                        # _logger.info(f'A new supported distribution has just launched: {distro_name}')
                         _logger.info(f'Detected "{distro_name}".')
                         await dci.connect()
                     except DistroUnsupportedError:
@@ -84,8 +72,6 @@ async def distro_prober(distro_count_change_callback: Callable[[int], None]):
             # but also quick enough that the distros can be refreshed quite-swiftly. I think 30 seconds is
             # a decent compromise here.
             await sleep(30)
-
-            # previous_distro_names = new_distro_names
     finally:
         # Disconnect the still-existing connections.
         for task in get_current_tasks():

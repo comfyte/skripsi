@@ -51,29 +51,19 @@ def _is_dbus_available(distro_name: str) -> bool:
     
     return True
 
-        # The line below will only get executed if systemctl successfully starts the D-Bus service.
-        # return True
-    # except CalledProcessError:
-    #     # raise DistroUnsupportedError('D-Bus is either not running or not available')
-    #     # return (False, 'D-Bus unavailable')
-    #     return False
-    
-    # return (True,)
 
 def is_distro_ready(distro_name: str) -> bool:
-    # TODO: Add check of distro's WSL version (WSL 1 or WSL 2) here.
-
+    # We're assuming that this function is only called with a WSL 2 distro name as its argument.
+    
     if not is_booted_with_systemd(distro_name):
         return False
     
     if not _is_dbus_available(distro_name):
         return False
 
-    # TODO: Add check of whether the specified distro has been configured to work with FancyWSL or not.
     try:
         obtain_bus_address(distro_name)
     except ValueError:
-        # raise DistroUnsupportedError
         return False
 
     return True

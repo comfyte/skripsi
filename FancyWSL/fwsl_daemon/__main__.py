@@ -2,24 +2,14 @@ import logging
 from argparse import ArgumentParser
 import asyncio
 import sys
-
-# from .helpers.platform_verifications import host_os, wsl_distro
-# from .helpers import platform_verifications as verify
 from .helpers.platform_verifications import host_os_verification
 from .helpers.spawn_win32_alert_window import spawn_win32_alert_window
 from . import fwsld
-# from .management.list_distros import list_distributions
 from .management.list_distros import print_distros
 from .management.configure_distro import configure_distro
 
 def setup_and_get_arguments():
     parser = ArgumentParser('FancyWSL Daemon')
-
-    # root_group = parser.add_mutually_exclusive_group
-
-    # primary_subparser = root_parser.add_subparsers
-
-    # parser.add_argument('-l', '--list-wsl-distributions')
 
     parser.add_argument('-l', '--list-distributions',
                         help=('List WSL distributions and whether they are available '
@@ -28,9 +18,6 @@ def setup_and_get_arguments():
     
     parser.add_argument('-c', '--configure-distribution', type=str,
                         help='Configure the specified distribution to work with FancyWSL.')
-
-    # parser.add_argument('-d', '--wsl-distribution',
-    #                     help='Specify the WSL distribution to be used by FancyWSL.', type=str)
 
     parser.add_argument('-v', '--verbose', help='Print more logs verbosely.', action='store_true')
     
@@ -41,33 +28,25 @@ class _AlertWindowLogHandler(logging.Handler):
         super().__init__(level)
 
     def emit(self, record) -> None:
-        # name, msg = record
-
-        partial_title = ['An error occured']
+        final_title = ['An error occured']
         if record.name != 'root':
-            partial_title.append(f'in {record.name}')
+            final_title.append(f'in {record.name}')
 
         # This call is actually blocking because it waits for the user response for the
         # displayed alert window.
-        spawn_win32_alert_window(' '.join(partial_title), record.getMessage())
+        spawn_win32_alert_window(' '.join(final_title), record.getMessage())
     
-def main():
+def main() -> None:
     # Do platform checks first and foremost.
     try:
-        # verify.host_os.()
         host_os_verification.check_all()
     except RuntimeError as e:
         root_logger.error(e.args[0])
-        # spawn_win32_alert_window('An error occured while launching FancyWSL daemon', e.args[0])
-        # return
         raise
 
     args = setup_and_get_arguments()
 
-    # if args.list_wsl_distributions
-
     if args.list_distributions:
-        # print_distributions()
         print_distros()
         return
     

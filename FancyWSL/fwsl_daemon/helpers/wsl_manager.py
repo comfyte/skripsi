@@ -1,7 +1,6 @@
 import subprocess
 from typing import TypedDict, Literal
 
-# class WSLDistroItem(TypedDict):
 class DistroItem(TypedDict):
     name: str
     state: Literal['Running', 'Stopped']

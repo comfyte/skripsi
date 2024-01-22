@@ -1,9 +1,5 @@
 import subprocess
-# from typing import Callable, Any
-# from typing import Any
 
-# def _create_wsl_runner_function(distro_name: str):
-# def create_runner_function
 def create_wsl_command_runner(distro_name: str, *, default_check: bool = False):
     def final_function(_args: list[str],
                        run_as_root: bool = False,
@@ -11,7 +7,6 @@ def create_wsl_command_runner(distro_name: str, *, default_check: bool = False):
                        check: bool = default_check,
                        *subprocess_run_args,
                        **subprocess_run_kwargs) -> subprocess.CompletedProcess:
-        # args: list[str] = ['wsl.exe', '-d', distro_name]
         command_args: list[str] = ['wsl.exe', '-d', distro_name]
 
         if run_as_root:

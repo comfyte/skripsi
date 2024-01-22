@@ -3,8 +3,7 @@ from typing import Callable
 from winsdk.windows.ui.notifications import (ToastNotificationManager,
                                              ToastNotification,
                                              ToastActivatedEventArgs,
-                                             ToastDismissedEventArgs,
-                                             ToastDismissalReason)
+                                             ToastDismissedEventArgs)
 from winsdk.windows.data.xml import dom
 from xml.sax.saxutils import escape as xml_escape
 
@@ -78,7 +77,6 @@ def show_windows_toast_notification(distro_name: str,
         logger.info(f'Received an activation event from notification with ID/tag {sender.tag} and '
                     f'argument (action key) "{activation_argument}".')
         activated_callback(id, activation_argument)
-        # print(ToastActivatedEventArgs._from(args).arguments)
 
     def dismiss_handler(sender: ToastNotification, _args):
         args = ToastDismissedEventArgs._from(_args)

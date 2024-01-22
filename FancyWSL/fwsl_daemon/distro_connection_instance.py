@@ -12,9 +12,6 @@ from .helpers.obtain_bus_address import obtain_bus_address
 from .shell.toast_notification import clear_all_windows_toast_notifications_for_specific_distro
 from .helpers.exceptions import DistroUnsupportedError
 
-# _COMMON_LOGGER_NAME = 'distro_connection_instance'
-# _common_logger = getLogger()
-
 class DistroConnectionInstance:
     """
     Make sure to call the `connect()` method first before doing any other operation.

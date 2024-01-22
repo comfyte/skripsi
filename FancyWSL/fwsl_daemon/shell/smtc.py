@@ -28,7 +28,6 @@ class MediaAbilities(TypedDict):
 class MediaState(TypedDict):
     media_type: MediaPlaybackType
     media_info: MediaInfo
-    # playback_status: Literal['Playing', 'Paused', 'Stopped']
     playback_status: MediaPlaybackStatus
     abilities: MediaAbilities
 
@@ -45,7 +44,7 @@ class WindowsSMTC():
         self.dbus_client_id = current_client_id
         self.distro_name = distro_name
 
-        # Assign the callbacks to this class instance
+        # Assign the callbacks to this class instance.
         self.__play_pause_callback = play_pause_callback
         self.__go_previous_callback = go_previous_callback
         self.__go_next_callback = go_next_callback

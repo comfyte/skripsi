@@ -2,18 +2,13 @@ from configparser import ConfigParser
 import subprocess
 from subprocess import CalledProcessError
 from io import StringIO
-
 from ..helpers.create_wsl_command_runner import create_wsl_command_runner
 from ..helpers import wsl_manager as wsl
 from ..helpers.platform_verifications import wsl_distro_verification
-# from ..helpers.exceptions import DistroUnsupportedError
 
 _BACKUP_FILE_SUFFIX = '.fwsl-backup'
 
-# _wr = create_wsl_command_runner()
-
 def _enable_systemd_support(distro_name: str) -> None:
-    # run_in_wsl = create_wsl_command_runner(distro_name)
     wsl_run = create_wsl_command_runner(distro_name, default_check=True)
 
     wsl_configuration = ConfigParser(delimiters=('=',))
@@ -23,9 +18,7 @@ def _enable_systemd_support(distro_name: str) -> None:
     try:
         wsl_configuration_string = wsl_run(['cat', wsl_configuration_file_path],
                                            capture_output=True, encoding='utf-8').stdout
-        
-        # wsl_run(run_as_root=False)
-        
+                
         # If the above command doesn't throw an error (indicating that the configuration file
         # already exists before), then the below lines can be reached.
 
@@ -38,7 +31,6 @@ def _enable_systemd_support(distro_name: str) -> None:
               'Please restore from it manually if something unexpected (e.g. error) happens.')
     except CalledProcessError:
         wsl_configuration_string = ''
-        # pass
     
     wsl_configuration.read_string(wsl_configuration_string)
 
@@ -126,8 +118,6 @@ def _configure_dbus_listen_address(distro_name: str) -> None:
 ExecStart=
 ExecStart={new_execstart_line}
 """
-    # subprocess.run(_wr(distro_name, ['--cd', '~'], 'mkdir', '-p',
-    #                    systemd_dbus_service_file_override_directory_relative), check=True)
     wsl_run(['mkdir', '-v', '-p', service_override_directory_relative], cd='~')
     wsl_run(['tee', f'{service_override_directory_relative}/{service_override_file_name}'], cd='~',
             input=service_override_file_content_string, encoding='utf-8', stdout=subprocess.DEVNULL)
@@ -146,7 +136,6 @@ def configure_distro(distro_name: str) -> int:
     _exit_success = 0
     _exit_failure = 1
 
-    # available_distros
     distros = wsl.list_distros()
     distro_names = [distro['name'] for distro in distros]
 
@@ -159,41 +148,30 @@ def configure_distro(distro_name: str) -> int:
               'Please convert it manually to WSL 2 before proceeding with this process.')
         return _exit_failure
     
-    # try:
-    #     wsl_distro_verification.is_distro_ready(distro_name)
-    # except DistroUnsupportedError:
-    #     pass
-    # else:
     if wsl_distro_verification.is_distro_ready(distro_name):
         print(f'{distro_name} is already configured to work with FancyWSL, so there is '
               'no need to reconfigure it again.')
         return _exit_failure
     
-    # print('Notes:')
-    # print('- This process may ask you for your sudo password multiple times, so be prepared to enter it!')
     print() # Blank line
+
     print(f'IMPORTANT NOTE:\nAfter this process has completed, the specified WSL distribution ({distro_name}) will '
           'automatically be shut down (ready to be started again), so save your work (if there is any) '
           'inside the distribution before proceeding.')
+    
     print() # Blank line
-    # print('Do you want to proceed? [Y/n] ', end='')
+
     user_confirmation = input('Do you want to proceed? [Y/n] ')
+
     print() # Blank line
 
     if len(user_confirmation) > 1 or user_confirmation.lower() not in ['y', 'n']:
         raise ValueError('Unknown value. Value can only be Y or N (in lowercase or uppercase).')
-    
-    # if user_confirmation.lower() not in ['y', 'n']:
-    #     raise ValueError('')
-    
+        
     if user_confirmation.lower() == 'n':
         print(f'Operation cancelled. The distribution "{distro_name}" is untouched.')
         return _exit_success
     
-    # try:
-    #     verify_wsl_distro_systemd_support(distro_name)
-    # except DistroUnsupportedError:
-    #     _enable_systemd_support(distro_name)
     if not wsl_distro_verification.is_booted_with_systemd(distro_name):
         _enable_systemd_support(distro_name)
 

@@ -1,11 +1,7 @@
 import logging
-from dbus_next.aio import MessageBus
-from dbus_next.service import (ServiceInterface, method,
-                               dbus_property, signal)
-from dbus_next import Variant, DBusError
-from ..shell.toast_notification import (show_windows_toast_notification,
-                                        close_windows_toast_notification,
-                                        ToastDismissalReason)
+from dbus_next.service import ServiceInterface, method, signal
+from winsdk.windows.ui.notifications import ToastDismissalReason
+from ..shell.toast_notification import show_windows_toast_notification, close_windows_toast_notification
 
 # Get logger for current module
 _logger = logging.getLogger(__name__)

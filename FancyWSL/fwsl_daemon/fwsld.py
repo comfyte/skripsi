@@ -9,8 +9,6 @@ _main_task: Task
 _persistent_tray_icon: PersistentTrayIcon
 
 def _cleanup_before_exit(*args):
-    # _logger.info('Received exit request.')
-    # _logger.info('User asked to quit.')
     _logger.info('Received exit request from user. Will exit in a moment...')
     _main_task.cancel()
 

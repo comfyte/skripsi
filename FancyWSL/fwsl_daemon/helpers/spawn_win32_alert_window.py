@@ -1,7 +1,7 @@
 import ctypes
 import logging
 
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('win32_alert_window')
 
 def spawn_win32_alert_window(title: str, message_body: str, type: str = 'basic'):
     if type != 'basic':

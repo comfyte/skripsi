@@ -27,5 +27,6 @@ class PersistentTrayIcon:
 
     def set_distro_connection_count(self, value: int):
         if self.instance:
-            text = self.__generate_hover_text_with_info(f'Connected to {value} distributions')
+            plural_suffix = '' if value == 1 else 's'
+            text = self.__generate_hover_text_with_info(f'Connected to {value} distribution{plural_suffix}')
             self.instance.update(hover_text=text)

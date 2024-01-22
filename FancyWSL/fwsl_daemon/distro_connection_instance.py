@@ -1,10 +1,8 @@
 from logging import getLogger
 from typing import Callable
 from asyncio import CancelledError
-
 from dbus_next.aio import MessageBus
 from dbus_next.auth import AuthAnnonymous
-
 from .helpers.platform_verifications import wsl_distro_verification
 from .services.notifications import NotificationHandlerService
 from .services.mpris import MediaControlService

@@ -6,8 +6,7 @@ from dbus_next.aio import MessageBus
 from dbus_next import Message, MessageType
 from ..shell.smtc import WindowsSMTC, MediaState, MediaPlaybackType, MediaPlaybackStatus
 
-# Get logger for current module
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger('mpris')
 
 def disregard_unregistered_client(original_function):
     @wraps(original_function)
@@ -18,7 +17,7 @@ def disregard_unregistered_client(original_function):
             key_name: str = e.args[0]
             if key_name.startswith(':'):
                 # It means that the current key_name is a client unique name.
-                logger.warning(f'Unknown client ("{key_name}") disregarded.')
+                _logger.warning(f'Unknown client ("{key_name}") disregarded.')
             else:
                 raise e
     return wrapper_function
@@ -63,17 +62,17 @@ class MediaControlService:
             [well_known_name, old_owner, new_owner] = message.body
             if old_owner == '' and new_owner != '':
                 unique_name = new_owner
-                logger.info(f'Detected a new MPRIS client with unique name "{unique_name}" and '
+                _logger.info(f'Detected a new MPRIS client with unique name "{unique_name}" and '
                             f'known name "{well_known_name}".')
                 self.__new_playback_instance(unique_name)
             elif old_owner != '' and new_owner == '':
                 unique_name = old_owner
-                logger.info(f'Client "{unique_name}" ("{well_known_name}") is not on bus anymore.')
+                _logger.info(f'Client "{unique_name}" ("{well_known_name}") is not on bus anymore.')
                 self.__destroy_playback_instance(unique_name)
 
             client_count = len(self.mpris_clients)
             is_plural = client_count != 1
-            logger.info(f'There {"are" if is_plural else "is"} now {client_count} MPRIS '
+            _logger.info(f'There {"are" if is_plural else "is"} now {client_count} MPRIS '
                         f'client{"s" if is_plural else ""} handled by FancyWSL '
                         f'({", ".join(self.mpris_clients.keys())}).')
     
@@ -177,7 +176,7 @@ class MediaControlService:
 # asynchronous stuff work yet. Please revert to the native Python handling soon after it's worked out!
 
 def _temporary_call_mpris_method(*, distro_name: str, destination: str, method_name: str) -> None:
-    logger.warn(f'Using a temporary hack for calling D-Bus method "{method_name}" on '
+    _logger.warn(f'Using a temporary hack for calling D-Bus method "{method_name}" on '
                 f'destination "{destination}".')
     
     dbus_send_command = ['dbus-send',
@@ -195,7 +194,7 @@ def _temporary_get_mpris_player_property(*,
                                                                 'CanPause',
                                                                 'CanGoPrevious',
                                                                 'CanGoNext']) -> bool:
-    logger.warn(f'Using a temporary hack for getting the "{property_name}" property '
+    _logger.warn(f'Using a temporary hack for getting the "{property_name}" property '
                 f'of MPRIS client "{destination}".')
     
     dbus_send_command = ['dbus-send',
@@ -224,4 +223,3 @@ def _temporary_get_mpris_player_property(*,
     else:
         raise ValueError(f'An error occured in getting the "{property_name}" property '
                          f'of the MPRIS client "{destination}".')
-    

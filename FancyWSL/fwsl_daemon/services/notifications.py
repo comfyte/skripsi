@@ -3,8 +3,7 @@ from dbus_next.service import ServiceInterface, method, signal
 from winsdk.windows.ui.notifications import ToastDismissalReason
 from ..shell.toast_notification import show_windows_toast_notification, close_windows_toast_notification
 
-# Get logger for current module
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('xdg_desktop_notifications')
 
 class NotificationHandlerService(ServiceInterface):
     def __init__(self, distro_name: str):

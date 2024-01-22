@@ -3,7 +3,7 @@ import re
 import logging
 from typing import TypedDict, Literal
 
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('obtain_bus_address')
 
 class BusAddressResult(TypedDict):
     full_address: str

@@ -10,7 +10,7 @@ from winsdk.windows.media import (MediaPlaybackStatus,
 from winsdk.windows.storage.streams import RandomAccessStreamReference
 import winsdk.windows.foundation as windows_foundation
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger('smtc')
 
 class MediaInfo(TypedDict):
     artist: str
@@ -39,7 +39,7 @@ class WindowsSMTC():
                  play_pause_callback,
                  go_previous_callback,
                  go_next_callback) -> None:
-        logger.info(f'Initialized WindowsSMTC for client "{current_client_id}".')
+        _logger.info(f'Initialized WindowsSMTC for client "{current_client_id}".')
 
         self.dbus_client_id = current_client_id
         self.distro_name = distro_name
@@ -72,7 +72,7 @@ class WindowsSMTC():
             self.__go_next_callback(self.dbus_client_id)
 
     def update_state(self, current_playback_state: MediaState):
-        logger.info('Received below details for updating SMTC state for MPRIS client '
+        _logger.info('Received below details for updating SMTC state for MPRIS client '
                     f'"{self.dbus_client_id}".\n' + pformat(current_playback_state))
 
         if 'media_type' in current_playback_state:
@@ -98,7 +98,7 @@ class WindowsSMTC():
                     )
 
                 elif current_media_info['album_art_url'] != '':
-                    logger.warn(f'("{self.dbus_client_id}") The album art URL value "{current_media_info["album_art_url"]}" is '
+                    _logger.warn(f'("{self.dbus_client_id}") The album art URL value "{current_media_info["album_art_url"]}" is '
                                 '(currently) unsupported.')
 
             self.__updater.update()
@@ -117,9 +117,9 @@ class WindowsSMTC():
             if 'can_go_next' in abilities:
                 self.__controls.is_next_enabled = abilities['can_go_next']
 
-        logger.info(f'SMTC state for MPRIS client "{self.dbus_client_id}" has successfully been updated.')
+        _logger.info(f'SMTC state for MPRIS client "{self.dbus_client_id}" has successfully been updated.')
         
     def destroy(self):
         self.__controls.is_enabled = False
-        logger.info(f'WindowsSMTC instance for client "{self.dbus_client_id}" is destroyed.')
+        _logger.info(f'WindowsSMTC instance for client "{self.dbus_client_id}" is destroyed.')
         # TODO: There must be more to be done here.

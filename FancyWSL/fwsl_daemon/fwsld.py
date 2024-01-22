@@ -1,6 +1,5 @@
 from logging import Logger, getLogger
 from asyncio import create_task, Task, CancelledError
-
 from .shell.persistent_tray_icon import PersistentTrayIcon
 from .distro_prober import distro_prober
 

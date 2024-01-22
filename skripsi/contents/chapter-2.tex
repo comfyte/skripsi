@@ -339,7 +339,7 @@ Bila disimpulkan kembali, perbandingan keempat metode di atas dapat dilihat pada
     \centering
     \caption{Perbandingan metode penghubungan dengan bus perpesanan D-Bus di WSL}
     \label{perbandingan-metode-penghubungan-dengan-dbus-di-wsl}
-    \begin{tabularx}{\textwidth}{|l|p{2.5cm}|X|X|X|} \hline
+    \begin{tabularx}{\textwidth}{|c|p{2.5cm}|X|X|X|} \hline
         \textbf{No.} & \textbf{Metode} & \textbf{Kebutuhan} & \textbf{Kelebihan} & \textbf{Kekurangan}\\ \hline
         1 & Soket Unix & Satu buah perangkat lunak di sisi Windows yang langsung mengakses berkas soket inti yang digunakan oleh bus sesi (\textit{session bus}) D-Bus di WSL & Sangat efisien karena hanya melibatkan soket lokal tanpa beban \textit{overhead} tambahan & Tidak tersedia untuk WSL2 yang merupakan syarat utama WSLg\\ \hline
         2 & \textit{Server} HTTP & Dua buah perangkat lunak yang masing-masing berjalan di lingkungan WSL dan lingkungan \textit{host} Windows & Lebih familiar mengingat penulis sering bekerja dalam pengembangan web & Sangat tidak efisien karena membawa beban \textit{overhead} berlebih (\textit{server} HTTP utuh) yang sesungguhnya tidak diperlukan\\ \hline
@@ -359,10 +359,10 @@ Dalam aspek bahasa dan platform pemrograman, dipertimbangkan berbagai hal sepert
     \centering
     \caption{Perbandingan platform dan bahasa pemrograman}
     \label{perbandingan-metode-pemilihan-platform-dan-bahasa-pemrograman}
-    \begin{tabularx}{\textwidth}{|c|X|X|} \hline
-        \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline
-        C\# & Tersedia (mengingat C\# adalah salah satu platform \textit{native} di Windows & Terbatas dan kurang terdokumentasi (\textit{undocumented})\\ \hline
-        Python & Tersedia melalui \textit{binding} pihak ketiga & Tersedia pustaka-pustaka (\textit{library}) yang beraneka ragam\\ \hline
+    \begin{tabularx}{\textwidth}{|c|l|X|X|} \hline
+        \textbf{No.} & \textbf{Platform} & \textbf{Integrasi \textit{Shell} Windows} & \textbf{Integrasi D-Bus}\\ \hline
+        1 & C\# & Tersedia (mengingat C\# adalah salah satu platform \textit{native} di Windows & Terbatas dan kurang terdokumentasi (\textit{undocumented})\\ \hline
+        2 & Python & Tersedia melalui \textit{binding} pihak ketiga & Tersedia pustaka-pustaka (\textit{library}) yang beraneka ragam\\ \hline
     \end{tabularx}
 \end{table}
 

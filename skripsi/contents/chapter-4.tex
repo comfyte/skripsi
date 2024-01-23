@@ -541,9 +541,19 @@ Pada pengujian ini, didefinisikan dua buah skenario beserta tugas (\textit{task}
     \item Saat pengguna sedang bekerja dengan komputer sambil mendengarkan musik di perangkat lunak Spotify (aplikasi versi Linux), lagu yang berputar berganti otomatis ke lagu selanjutnya. Pengguna terpukau oleh lagu itu sehingga pengguna ingin segera melihat judul lagu tersebut sebelum lagu yang berputar berganti kembali ke lagu berikutnya.
     \item Saat pengguna sedang bekerja dengan komputer sambil mendengarkan musik di perangkat lunak Spotify (aplikasi versi Linux), tiba-tiba terdapat panggilan masuk pada telepon genggam pengguna. Pengguna ingin segera menjeda (\textit{pause}) musik yang sedang terputar agar dapat segera menjawab telepon tersebut.
 \end{enumerate}
+
+Meskipun kedua skenario di atas dapat dikatakan skenario yang difabrikasi (pengguna akan cendering menggunakan aplikasi Spotify versi \textit{native} Windows alih-alih menjalankan versi Linux-nya di dalam WSL), pengujian dengan Spotify versi Linux ini penting sebagai simulasi untuk mengukur atensi dan \textit{awareness} partisipan terhadap informasi yang ingin disampaikan oleh perangkat lunak Linux yang berjalan di dalam WSL mengingat Spotify di Linux memanfaatkan kedua aspek utama yang menjadi fokus tugas akhir ini (notifikasi dan kontrol media).
+
 Kedua tugas tersebut dilakukan pada dua buah lingkungan, lingkungan tanpa FancyWSL dan lingkungan dengan FancyWSL, guna mengukur kebermanfaatan perangkat FancyWSL yang telah selesai dikembangkan.
 
-Guna meringankan beban partisipan (seperti kewajiban menginstal WSL secara mandiri), dilakukan pengujian secara \textit{remote} menggunakan bantuan perangkat lunak "Quick Assist" yang tersedia secara bawaan di sistem operasi Windows 10 dan Windows 11 versi terbaru; hal ini berefek pada demografi partisipan yang dapat berpartisipasi.
+Guna meringankan beban partisipan (seperti kewajiban menginstal WSL secara mandiri yang berpotensi menyebabkan pengunduhan dengan ukuran yang cukup besar dan juga modifikasi pada sistem milik partisipan), dilakukan pengujian secara \textit{remote} menggunakan bantuan perangkat lunak "Quick Assist" oleh Microsoft (lihat \autoref{quick-assist-icon}) yang tersedia secara bawaan di sistem operasi Windows 10 dan Windows 11 versi terbaru; hal ini berefek pada demografi partisipan yang dapat berpartisipasi.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.25\linewidth]{assets/Screenshot 2024-01-18 194804.png}
+    \caption{Ikon perangkat lunak Quick Assist}
+    \label{quick-assist-icon}
+\end{figure}
 
 Dalam pengumpulan ini, ditentukan target demografi yang cukup spesifik dengan keterangan sebagai berikut.
 \begin{itemize}

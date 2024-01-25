@@ -17,13 +17,13 @@ _toast_notifier = ToastNotificationManager.create_toast_notifier()
 _notification_id_counter: int = 1
 
 def show_windows_toast_notification(distro_name: str,
-                                    *,
-                                    app_name: str = '',
+                                    app_name: str,
                                     _id: int,
-                                    title: str = '',
+                                    title: str,
                                     body_content: str,
-                                    actions: list[tuple[str, str]] = None, #TODO
+                                    actions: list[tuple[str, str]], #TODO
                                     expire_timeout: int,
+                                    *,
                                     activated_callback: Callable,
                                     dismiss_callback: Callable) -> int:
     logger = getLogger(f'toast_notification.{distro_name}')
